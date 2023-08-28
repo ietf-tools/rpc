@@ -53,9 +53,9 @@
 
 <script setup>
 const people = [
-  { name: 'Alice Russo', roles: 'Format, PE, FinRev, mgr', expertise: 'Code Components, Cluster, IANA' },
-  { name: 'Jean Mahoney', roles: 'Format, PE, RE, FinRev, PUB', expertise: 'Code Components, Cluster, Formatting, IANA' },
-  { name: 'Sandy Ginoza', roles: 'Format, PE, FinRev', expertise: 'Formatting, IANA' },
+  { name: 'Ada Lovelace', roles: 'Format, PE, FinRev, mgr', expertise: 'Code Components, Cluster, IANA' },
+  { name: 'Margaret Hamilton', roles: 'Format, PE, RE, FinRev, PUB', expertise: 'Code Components, Cluster, Formatting, IANA' },
+  { name: 'Marie Curie', roles: 'Format, PE, FinRev', expertise: 'Formatting, IANA' }
 ]
 
 const createDialogShown = ref(false)

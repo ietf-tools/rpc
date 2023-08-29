@@ -1,7 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  app: {
-    baseURL: '/rpc/'
+  $development: {
+    app: {
+      baseURL: '/rpc-dev/'
+    }
+  },
+  $production: {
+    app: {
+      baseURL: '/rpc/'
+    }
   },
   colorMode: {
     preference: 'light',

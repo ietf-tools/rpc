@@ -1,6 +1,6 @@
 <template>
   <HeadlessTransitionRoot as="template" :show="isShown">
-    <HeadlessDialog as="div" class="relative z-50" @close="close">
+    <HeadlessDialog as="div" class="relative z-50" :initialFocus="nameIpt" @close="close">
       <HeadlessTransitionChild as="template" enter="ease-in-out duration-500" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-500" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-gray-500 dark:bg-black bg-opacity-75 dark:bg-opacity-50 transition-opacity" />
       </HeadlessTransitionChild>
@@ -8,10 +8,12 @@
         <div class="absolute inset-0 overflow-hidden">
           <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
             <HeadlessTransitionChild as="template" enter="transform transition ease-in-out duration-500 sm:duration-700" enter-from="translate-x-full" enter-to="translate-x-0" leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0" leave-to="translate-x-full">
-              <HeadlessDialogPanel class="pointer-events-auto w-screen max-w-md">
-                <form class="flex h-full flex-col divide-y divide-gray-200 bg-white dark:bg-neutral-800 shadow-xl">
+              <HeadlessDialogPanel class="pointer-events-auto w-screen max-w-2xl">
+                <form @submit.prevent="createUser" class="flex h-full flex-col divide-y divide-gray-200 bg-white dark:bg-neutral-800 shadow-xl">
                   <div class="h-0 flex-1 overflow-y-auto">
-                    <div class="bg-violet-700 px-4 py-6 sm:px-6">
+
+                    <!-- Header -->
+                    <div class="bg-violet-700 bg-gradient-to-tr from-violet-800 to-violet-600 px-4 py-6 sm:px-6">
                       <div class="flex items-center justify-between">
                         <HeadlessDialogTitle class="text-base font-semibold leading-6 text-white">New Team Member</HeadlessDialogTitle>
                         <div class="ml-3 flex h-7 items-center">
@@ -26,40 +28,110 @@
                         <p class="text-sm text-violet-300">Get started by filling in the information below to create a new team member.</p>
                       </div>
                     </div>
-                    <div class="flex flex-1 flex-col justify-between">
-                      <div class="divide-y divide-gray-200 px-4 sm:px-6">
-                        <div class="space-y-6 pb-5 pt-6">
-                          <div>
-                            <label for="name" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-400">Name</label>
-                            <div class="mt-2">
-                              <input type="text" name="name" id="name" class="block w-full rounded-md border-0 py-1.5 bg-white dark:bg-neutral-900 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-neutral-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-violet-600 sm:text-sm sm:leading-6" />
-                            </div>
-                          </div>
-                          <div>
-                            <label for="email" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-400">Email</label>
-                            <div class="mt-2">
-                              <input type="text" name="email" id="email" class="block w-full rounded-md border-0 py-1.5 bg-white dark:bg-neutral-900 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-neutral-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-violet-600 sm:text-sm sm:leading-6" />
-                            </div>
-                          </div>
-                          <div>
-                            <label for="datatracker" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-400">Datatracker Login Email</label>
-                            <div class="mt-2">
-                              <input type="text" name="datatracker" id="datatracker" class="block w-full rounded-md border-0 py-1.5 bg-white dark:bg-neutral-900 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-neutral-600 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-violet-600 sm:text-sm sm:leading-6" />
-                            </div>
-                          </div>
-                          <div>
-                            <label for="timezone" class="block text-sm font-medium leading-6 text-gray-900">Timezone</label>
-                            <select id="timezone" name="timezone" v-model="state.timezone" class="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-violet-600 sm:text-sm sm:leading-6">
-                              <option v-for="timezone of timezones" :key="timezone">{{ timezone }}</option>
-                            </select>
-                          </div>
+
+                    <!-- Divider container -->
+                    <div class="space-y-6 py-6 sm:space-y-0 sm:divide-y sm:divide-gray-200 dark:sm:divide-neutral-600 sm:py-0">
+                      <!-- Name -->
+                      <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                        <div>
+                          <label for="name" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Name</label>
+                        </div>
+                        <div class="sm:col-span-2">
+                          <input type="text" name="name" id="name" ref="nameIpt" v-model="state.name" class="form-input" />
+                        </div>
+                      </div>
+
+                      <!-- Email -->
+                      <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                        <div>
+                          <label for="email" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Email</label>
+                        </div>
+                        <div class="sm:col-span-2">
+                          <input type="text" name="email" id="email" v-model="state.email" class="form-input" />
+                        </div>
+                      </div>
+
+                      <!-- Datatracker Email -->
+                      <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                        <div>
+                          <label for="datatracker" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Datatracker Login Email</label>
+                        </div>
+                        <div class="sm:col-span-2">
+                          <input type="text" name="datatracker" id="datatracker" v-model="state.datatracker" class="form-input" />
+                        </div>
+                      </div>
+
+                      <!-- Timezone -->
+                      <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                        <div>
+                          <label for="timezone" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Timezone</label>
+                        </div>
+                        <div class="sm:col-span-2">
+                          <select id="timezone" name="timezone" v-model="state.timezone" class="form-select">
+                            <option v-for="timezone of timezones" :key="timezone">{{ timezone }}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Hours per week -->
+                      <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                        <div>
+                          <label for="hours" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Hours</label>
+                        </div>
+                        <div class="sm:col-span-2">
+                          <input type="number" name="hours" id="hours" v-model.number="state.hours" class="form-input" />
                         </div>
                       </div>
                     </div>
+
+                    <!-- Manager -->
+                    <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                      <div>
+                        <label for="manager" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Manager</label>
+                      </div>
+                      <div class="sm:col-span-2">
+                        <select id="manager" name="manager" v-model="state.manager" class="form-select">
+                          <option v-for="manager of managers" :key="manager">{{ manager }}</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <!-- Roles -->
+                    <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
+                      <div>
+                        <label for="roles" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Roles</label>
+                      </div>
+                      <div class="sm:col-span-2">
+                        <fieldset>
+                          <legend class="sr-only">Roles</legend>
+                          <div class="space-y-5">
+                            <div v-for="role of roles" :key="role.value" class="relative flex items-start">
+                              <div class="flex h-6 items-center">
+                                <input :id="`role-${role.value}`"
+                                  :aria-describedby="`role-${role.value}-description`"
+                                  :name="`role-${role.value}`"
+                                  type="checkbox"
+                                  :value="role.value"
+                                  v-model="state.roles"
+                                  :class="[role.caution ? 'border-rose-300 dark:border-rose-500 text-rose-700 dark:text-rose-700 hover:border-rose-400 focus:ring-rose-600' : 'border-gray-300 dark:border-neutral-500 text-violet-600 dark:text-violet-500 hover:border-violet-400 dark:hover:border-violet-500 focus:ring-violet-600 dark:focus:ring-violet-500', 'h-4 w-4 bg-white dark:bg-neutral-900 rounded border-2']"
+                                  />
+                              </div>
+                              <div class="ml-3 text-sm leading-6">
+                                <label :for="`role-${role.value}`" :class="[role.caution ? 'text-rose-800 dark:text-rose-400' : 'text-gray-900 dark:text-neutral-200', 'font-medium']">{{ role.label }}</label>
+                                <p :id="`role-${role.value}-description`" :class="[role.caution ? 'text-rose-700 dark:text-rose-500' : 'text-gray-500 dark:text-neutral-400', 'text-xs']">{{ role.description }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </fieldset>
+                      </div>
+                    </div>
+
                   </div>
+
+                  <!-- Action buttons -->
                   <div class="flex flex-shrink-0 justify-end px-4 py-4">
-                    <button type="button" class="rounded-md bg-white dark:bg-neutral-600 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-neutral-200 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-neutral-500 hover:bg-gray-50 dark:hover:bg-neutral-700" @click="close">Cancel</button>
-                    <button type="submit" class="ml-4 inline-flex justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-violet-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-600">Save</button>
+                    <button type="button" class="btn-secondary" @click="close">Cancel</button>
+                    <button type="submit" class="btn-primary ml-4">Save</button>
                   </div>
                 </form>
               </HeadlessDialogPanel>
@@ -69,9 +141,13 @@
       </div>
     </HeadlessDialog>
   </HeadlessTransitionRoot>
+  <ConfirmDialog v-model:isShown="state.confirmShown" title="Manager Role Selected" caption="Are you sure you want to create a new team member with the Manager role?" />
 </template>
 
 <script setup>
+
+// PROPS / EMITS
+
 defineProps({
   isShown: {
     type: Boolean,
@@ -85,14 +161,40 @@ const emit = defineEmits(['update:isShown'])
 // DATA
 
 const state = reactive({
-  timezone: process.client ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/New_York'
+  name: '',
+  email: '',
+  datatracker: '',
+  timezone: process.client ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/New_York',
+  hours: 20,
+  manager: '',
+  roles: [],
+  confirmShown: false
 })
 
+const managers = []
 const timezones = process.client ? Intl.supportedValuesOf('timeZone') : []
+const roles = [
+  { value: 'formatting', label: 'Formatter', description: 'An editor for docs that require extensive XML formatting.' },
+  { value: 'pe', label: 'Primary Editor', description: 'An editor who makes the first editing pass.' },
+  { value: 're', label: 'RFC Editor', description: 'A more experienced editor who makes a 2nd pass and also checks things like code components and IANA actions.' },
+  { value: 'finrev', label: 'Final Review', description: 'An editor who handles the interactions with authors during their final review (AUTH48).' },
+  { value: 'pub', label: 'Publisher', description: 'An editor who does the final-final reviews after the author has signed off and publishes the RFC to the website.' },
+  { value: 'manager', label: 'Manager', description: 'A manager can access restricted sections like Legal, Manage Team Members, Assign Docs, Change RFC Status, Withdraw Document and more.', caution: true },
+]
+
+const nameIpt = ref(null)
 
 // METHODS
 
 function close () {
-  emit('update:isShown')
+  if (!state.confirmShown) {
+    emit('update:isShown', false)
+  }
+}
+
+function createUser () {
+  if (state.roles.includes('manager')) {
+    state.confirmShown = true
+  }
 }
 </script>

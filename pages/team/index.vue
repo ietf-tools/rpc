@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-neutral-200">
@@ -26,19 +26,15 @@
                   <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-neutral-400 sm:pl-6">Name</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-neutral-400">Roles</th>
                   <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-neutral-400">Expertise</th>
-                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
-                    <span class="sr-only">Edit</span>
-                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
                 <tr v-for="person in people" :key="person.email">
-                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-neutral-100 sm:pl-6">{{ person.name }}</td>
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-neutral-100 sm:pl-6">
+                    <NuxtLink :to="`/team/${person.id}`" class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">{{ person.name }}</NuxtLink>
+                  </td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-neutral-400">{{ person.roles }}</td>
                   <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 dark:text-neutral-400">{{ person.expertise }}</td>
-                  <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                    <a href="#" class="text-violet-600 hover:text-indigo-900 dark:text-violet-400 dark:hover:text-violet-200">Edit<span class="sr-only">, {{ person.name }}</span></a>
-                  </td>
                 </tr>
               </tbody>
             </table>
@@ -53,9 +49,9 @@
 
 <script setup>
 const people = [
-  { name: 'Ada Lovelace', roles: 'Format, PE, FinRev, mgr', expertise: 'Code Components, Cluster, IANA' },
-  { name: 'Margaret Hamilton', roles: 'Format, PE, RE, FinRev, PUB', expertise: 'Code Components, Cluster, Formatting, IANA' },
-  { name: 'Marie Curie', roles: 'Format, PE, FinRev', expertise: 'Formatting, IANA' }
+  { id: 1, name: 'Ada Lovelace', roles: 'Format, PE, FinRev, mgr', expertise: 'Code Components, Cluster, IANA' },
+  { id: 2, name: 'Margaret Hamilton', roles: 'Format, PE, RE, FinRev, PUB', expertise: 'Code Components, Cluster, Formatting, IANA' },
+  { id: 3, name: 'Marie Curie', roles: 'Format, PE, FinRev', expertise: 'Formatting, IANA' }
 ]
 
 const createDialogShown = ref(false)

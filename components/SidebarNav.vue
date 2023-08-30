@@ -1,0 +1,126 @@
+<template>
+  <HeadlessTransitionRoot as="template" :show="siteStore.sidebarIsOpen">
+    <HeadlessDialog as="div" class="relative z-50 lg:hidden" @close="siteStore.sidebarIsOpen = false">
+      <HeadlessTransitionChild as="template" enter="transition-opacity ease-linear duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="transition-opacity ease-linear duration-300" leave-from="opacity-100" leave-to="opacity-0">
+        <div class="fixed inset-0 bg-gray-900/80" />
+      </HeadlessTransitionChild>
+
+      <div class="fixed inset-0 flex">
+        <HeadlessTransitionChild as="template" enter="transition ease-in-out duration-300 transform" enter-from="-translate-x-full" enter-to="translate-x-0" leave="transition ease-in-out duration-300 transform" leave-from="translate-x-0" leave-to="-translate-x-full">
+          <HeadlessDialogPanel class="relative mr-16 flex w-full max-w-xs flex-1">
+            <HeadlessTransitionChild as="template" enter="ease-in-out duration-300" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-300" leave-from="opacity-100" leave-to="opacity-0">
+              <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
+                <button type="button" class="-m-2.5 p-2.5" @click="siteStore.sidebarIsOpen = false">
+                  <span class="sr-only">Close sidebar</span>
+                  <Icon name="uil:times" class="h-6 w-6 text-white" aria-hidden="true" />
+                </button>
+              </div>
+            </HeadlessTransitionChild>
+            <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
+              <div class="flex h-16 shrink-0 items-center text-violet-500 dark:text-violet-300 font-light">
+                <Icon name="uil:edit-alt" class="w-6 h-auto mr-2" aria-hidden="true" />
+                RFC Production Center
+              </div>
+              <nav class="flex flex-1 flex-col">
+                <ul role="list" class="flex flex-1 flex-col gap-y-7">
+                  <li>
+                    <ul role="list" class="-mx-2 space-y-1">
+                      <li v-for="item in navigation" :key="item.name">
+                        <a :href="item.href" :class="[item.current ? 'bg-gray-50 text-violet-600' : 'text-gray-700 hover:text-violet-600 hover:bg-gray-50', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                          <component :is="item.icon" :class="[item.current ? 'text-violet-600' : 'text-gray-400 group-hover:text-violet-600', 'h-6 w-6 shrink-0']" aria-hidden="true" />
+                          {{ item.name }}
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                  <li>
+                    <div class="text-xs font-semibold leading-6 text-gray-400">Your teams</div>
+                    <ul role="list" class="-mx-2 mt-2 space-y-1">
+                      <li v-for="team in teams" :key="team.name">
+                        <a :href="team.href" :class="[team.current ? 'bg-gray-50 text-violet-600' : 'text-gray-700 hover:text-violet-600 hover:bg-gray-50', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                          <span :class="[team.current ? 'text-violet-600 border-violet-600' : 'text-gray-400 border-gray-200 group-hover:border-violet-600 group-hover:text-violet-600', 'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white']">{{ team.initial }}</span>
+                          <span class="truncate">{{ team.name }}</span>
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </HeadlessDialogPanel>
+        </HeadlessTransitionChild>
+      </div>
+    </HeadlessDialog>
+  </HeadlessTransitionRoot>
+
+  <!-- Static sidebar for desktop -->
+  <div class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+    <!-- Sidebar component, swap this element with another sidebar if you like -->
+    <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-violet-600 bg-white dark:bg-violet-900 bg-gradient-to-tr from-violet-50 to-white dark:from-violet-950 dark:to-violet-900 px-6">
+      <div class="flex h-16 shrink-0 items-center text-violet-500 dark:text-violet-300 font-light">
+        <Icon name="uil:edit-alt" class="w-6 h-auto mr-2" aria-hidden="true" />
+        RFC Production Center
+      </div>
+      <nav class="flex flex-1 flex-col">
+        <ul role="list" class="flex flex-1 flex-col gap-y-7">
+          <li>
+            <ul role="list" class="-mx-2 space-y-1">
+              <li v-for="item in navigation" :key="item.name">
+                <NuxtLink :to="item.href" :class="[item.href === currentBaseLink ? 'bg-violet-50 dark:bg-violet-600 text-violet-600 dark:text-white' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-violet-50 dark:hover:text-violet-100 dark:hover:bg-violet-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                  <component :is="item.icon" :class="[item.href === currentBaseLink ? 'text-violet-600 dark:text-white' : 'text-gray-400 dark:text-violet-400 group-hover:text-violet-600 dark:group-hover:text-violet-100', 'h-6 w-6 shrink-0']" aria-hidden="true" />
+                  {{ item.name }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <div class="text-xs font-semibold leading-6 text-gray-400 dark:text-violet-400">Misc</div>
+            <ul role="list" class="-mx-2 mt-2 space-y-1">
+              <li v-for="team in teams" :key="team.name">
+                <a :href="team.href" :class="[team.current ? 'bg-gray-50 text-violet-600' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-gray-50', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                  <span :class="[team.current ? 'text-violet-600 border-violet-600' : 'text-gray-400 dark:text-violet-400 border-gray-200 dark:border-violet-500 group-hover:border-violet-600 group-hover:text-violet-600', 'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white dark:bg-black/20']">{{ team.initial }}</span>
+                  <span class="truncate">{{ team.name }}</span>
+                </a>
+              </li>
+            </ul>
+          </li>
+          <li class="-mx-6 mt-auto">
+            <a href="https://datatracker.ietf.org" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-500 dark:text-violet-400 hover:bg-violet-500/5">
+              <Icon name="uil:arrow-left" class="h-8 w-8 text-gray-400 dark:text-violet-400" aria-hidden="true" />
+              <span>Go to Datatracker</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { useSiteStore } from '@/stores/site'
+import { Icon } from '#components'
+
+// STORES
+
+const siteStore = useSiteStore()
+
+// DATA
+
+const navigation = [
+  { name: 'Dashboard', href: '/', icon: h(Icon, { name: 'uil:dashboard' }), current: true },
+  { name: 'Queue', href: '/queue', icon: h(Icon, { name: 'uil:list-ui-alt' }), current: false },
+  { name: 'Documents', href: '/docs', icon: h(Icon, { name: 'uil:file-copy-alt' }), current: false },
+  { name: 'Team', href: '/team', icon: h(Icon, { name: 'uil:users-alt' }), current: false },
+  { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'uil:graph-bar' }), current: false },
+  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'uil:cell' }), current: false },
+]
+
+const teams = [
+  { id: 1, name: 'Manage RFC Numbers', href: '#', initial: '#', current: false },
+  { id: 2, name: 'Cluster Management', href: '#', initial: 'C', current: false },
+  { id: 3, name: 'Legal Requests', href: '#', initial: 'L', current: false },
+]
+
+const route = useRoute()
+const currentBaseLink = computed(() => route.path.indexOf('/', 1) > 0 ? `/` + route.path.split('/')[1] : route.path)
+</script>

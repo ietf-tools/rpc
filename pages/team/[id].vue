@@ -19,7 +19,7 @@
         <div class="flex items-center gap-x-4 sm:gap-x-6">
           <button type="button" class="hidden text-sm font-semibold leading-6 text-gray-900 sm:block">Link 1</button>
           <a href="#" class="hidden text-sm font-semibold leading-6 text-gray-900 sm:block">Edit</a>
-          <a href="#" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Send</a>
+          <a href="#" class="btn-primary">Edit</a>
 
           <HeadlessMenu as="div" class="relative sm:hidden">
             <HeadlessMenuButton class="-m-3 block p-3">

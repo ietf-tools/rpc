@@ -18,7 +18,7 @@
             </HeadlessTransitionChild>
             <div class="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
               <div class="flex h-16 shrink-0 items-center text-violet-500 dark:text-violet-300 font-light">
-                <Icon name="uil:edit-alt" class="w-6 h-auto mr-2" aria-hidden="true" />
+                <SvgoRpcIcon filled class="mr-2 text-xl" />
                 RFC Production Center
               </div>
               <nav class="flex flex-1 flex-col">
@@ -58,8 +58,8 @@
     <!-- Sidebar component, swap this element with another sidebar if you like -->
     <div class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 dark:border-violet-600 bg-white dark:bg-violet-900 bg-gradient-to-tr from-violet-50 to-white dark:from-violet-950 dark:to-violet-900 px-6">
       <div class="flex h-16 shrink-0 items-center text-violet-500 dark:text-violet-300 font-light">
-        <Icon name="uil:edit-alt" class="w-6 h-auto mr-2" aria-hidden="true" />
-        RFC Production Center
+        <SvgoRpcIcon filled class="mr-2 text-xl" />
+        <span class="font-medium mr-1">RFC</span> Production Center
       </div>
       <nav class="flex flex-1 flex-col">
         <ul role="list" class="flex flex-1 flex-col gap-y-7">
@@ -77,7 +77,7 @@
             <div class="text-xs font-semibold leading-6 text-gray-400 dark:text-violet-400">Misc</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
               <li v-for="team in teams" :key="team.name">
-                <a :href="team.href" :class="[team.current ? 'bg-gray-50 text-violet-600' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-gray-50', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                <a :href="team.href" :class="[team.current ? 'bg-gray-50 text-violet-600' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-gray-50 dark:hover:bg-violet-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
                   <span :class="[team.current ? 'text-violet-600 border-violet-600' : 'text-gray-400 dark:text-violet-400 border-gray-200 dark:border-violet-500 group-hover:border-violet-600 group-hover:text-violet-600', 'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white dark:bg-black/20']">{{ team.initial }}</span>
                   <span class="truncate">{{ team.name }}</span>
                 </a>
@@ -85,8 +85,8 @@
             </ul>
           </li>
           <li class="-mx-6 mt-auto">
-            <a href="https://datatracker.ietf.org" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-500 dark:text-violet-400 hover:bg-violet-500/5">
-              <Icon name="uil:arrow-left" class="h-8 w-8 text-gray-400 dark:text-violet-400" aria-hidden="true" />
+            <a href="https://datatracker.ietf.org" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-500 dark:text-violet-400 hover:text-violet-500 dark:hover:text-violet-200 hover:bg-violet-500/5">
+              <Icon name="solar:database-bold-duotone" class="h-8 w-8 opacity-70" aria-hidden="true" />
               <span>Go to Datatracker</span>
             </a>
           </li>
@@ -107,12 +107,12 @@ const siteStore = useSiteStore()
 // DATA
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: h(Icon, { name: 'uil:dashboard' }), current: true },
-  { name: 'Queue', href: '/queue', icon: h(Icon, { name: 'uil:list-ui-alt' }), current: false },
-  { name: 'Documents', href: '/docs', icon: h(Icon, { name: 'uil:file-copy-alt' }), current: false },
-  { name: 'Team', href: '/team', icon: h(Icon, { name: 'uil:users-alt' }), current: false },
-  { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'uil:graph-bar' }), current: false },
-  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'uil:cell' }), current: false },
+  { name: 'Dashboard', href: '/', icon: h(Icon, { name: 'solar:widget-6-bold-duotone' }), current: true },
+  { name: 'Queue', href: '/queue', icon: h(Icon, { name: 'solar:layers-minimalistic-bold-duotone' }), current: false },
+  { name: 'Documents', href: '/docs', icon: h(Icon, { name: 'solar:documents-minimalistic-line-duotone' }), current: false },
+  { name: 'Team', href: '/team', icon: h(Icon, { name: 'solar:users-group-rounded-bold-duotone' }), current: false },
+  { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'solar:chart-line-duotone' }), current: false },
+  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }), current: false },
 ]
 
 const teams = [

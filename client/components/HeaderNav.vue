@@ -20,8 +20,8 @@
           <HeadlessMenuButton class="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">
             <span class="sr-only">Site Theme</span>
             <ColorScheme placeholder="..." tag="span">
-              <Icon v-if="$colorMode.value === 'dark'" name="uil:moon" class="text-gray-500 dark:text-neutral-400 hover:text-violet-400 dark:hover:text-violet-400" size="1.25em" aria-hidden="true" />
-              <Icon v-else name="uil:sun" class="text-gray-500 dark:text-white hover:text-violet-400 dark:hover:text-violet-400" size="1.25em" aria-hidden="true" />
+              <Icon v-if="$colorMode.value === 'dark'" name="solar:moon-bold-duotone" class="text-gray-500 dark:text-neutral-400 hover:text-violet-400 dark:hover:text-violet-400" size="1.25em" aria-hidden="true" />
+              <Icon v-else name="solar:sun-2-line-duotone" class="text-gray-500 dark:text-white hover:text-violet-400 dark:hover:text-violet-400" size="1.25em" aria-hidden="true" />
             </ColorScheme>
           </HeadlessMenuButton>
 
@@ -30,19 +30,19 @@
               <div class="py-1">
                 <HeadlessMenuItem v-slot="{ active }">
                   <a @click="$colorMode.preference = 'dark'" :class="[active ? 'text-violet-500 dark:text-violet-300 bg-violet-50 dark:bg-violet-500/5' : 'text-gray-700 dark:text-gray-100', 'flex items-center px-4 py-2 text-sm cursor-pointer']">
-                    <Icon name="uil:moon" class="mr-3" />
+                    <Icon name="solar:moon-bold-duotone" class="mr-3" />
                     Dark
                   </a>
                 </HeadlessMenuItem>
                 <HeadlessMenuItem v-slot="{ active }">
                   <a @click="$colorMode.preference = 'light'" :class="[active ? 'text-violet-500 dark:text-violet-300 bg-violet-50 dark:bg-violet-500/5' : 'text-gray-700 dark:text-gray-100', 'flex items-center px-4 py-2 text-sm cursor-pointer']">
-                    <Icon name="uil:sun" class="mr-3" />
+                    <Icon name="solar:sun-2-line-duotone" class="mr-3" />
                     Light
                   </a>
                 </HeadlessMenuItem>
                 <HeadlessMenuItem v-slot="{ active }">
                   <a @click="$colorMode.preference = 'system'" :class="[active ? 'text-violet-500 dark:text-violet-300 bg-violet-50 dark:bg-violet-500/5' : 'text-gray-700 dark:text-gray-100', 'flex items-center px-4 py-2 text-sm cursor-pointer']">
-                    <Icon name="uil:desktop" class="mr-3" />
+                    <Icon name="solar:laptop-line-duotone" class="mr-3" />
                     System
                   </a>
                 </HeadlessMenuItem>
@@ -54,7 +54,7 @@
         <!-- View Notifications -->
         <button type="button" class="-m-2.5 mr-2 text-gray-400 dark:text-neutral-400 hover:text-gray-500 dark:hover:text-violet-400">
           <span class="sr-only">View notifications</span>
-          <Icon name="ci:bell" size="1.25em" aria-hidden="true" />
+          <Icon name="solar:bell-bold-duotone" size="1.25em" aria-hidden="true" />
         </button>
 
         <!-- Separator -->

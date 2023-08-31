@@ -13,8 +13,6 @@
 <script setup>
 const colorMode = useColorMode()
 
-colorMode.preference = 'light'
-
 useHead({
   link: [
     { rel: 'preconnect', href: 'https://rsms.me' },

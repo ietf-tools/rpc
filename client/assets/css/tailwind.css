@@ -16,3 +16,9 @@
     @apply form-input pl-3 pr-10;
   }
 }
+
+@layer utilities {
+  .z-1000 {
+    z-index: 1000;
+  }
+}

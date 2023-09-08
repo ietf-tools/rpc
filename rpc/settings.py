@@ -93,14 +93,16 @@ DATABASES = {
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
-    "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
+    "core.auth.ClaimCheckingOIDCAuthBackend",
     "django.contrib.auth.backends.ModelBackend",  # default backend
 )
 
-# OIDC RP configuration - do NOT check ID/secret into version control
+# OIDC configuration - do NOT check ID/secret into version control
 OIDC_RP_CLIENT_ID = os.environ["OIDC_RP_CLIENT_ID"]
 OIDC_RP_CLIENT_SECRET = os.environ["OIDC_RP_CLIENT_SECRET"]
 OIDC_RP_SIGN_ALGO = "RS256"
+OIDC_RP_SCOPES = "openid email profile"
+
 OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
 OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localhost:8000/api/openid/authorize/"  # URL for user agent
 OIDC_OP_TOKEN_ENDPOINT = "http://host.docker.internal:8000/api/openid/token/"

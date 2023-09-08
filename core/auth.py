@@ -28,3 +28,11 @@ class ClaimCheckingOIDCAuthBackend(OIDCAuthenticationBackend):
       except self.UserModel.DoesNotExist:
         pass
     return self.UserModel.objects.none()
+
+  def verify_claims(self, claims):
+    if not super().verify_claims(claims):
+      return False  # basic OIDC validation failed
+    # Check datatracker roles
+    claim_roles = claims.get("roles", [])
+    from pprint import pp; import sys; pp(claims); sys.stdout.flush()
+    return ["secr", "secretariat"] in claim_roles or ["auth", "rpc"] in claim_roles

@@ -36,6 +36,7 @@ AUTH_USER_MODEL = "core.User"
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
+    "mozilla_django_oidc",  # load after auth
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
@@ -87,6 +88,24 @@ DATABASES = {
         "PORT": 5432,
     }
 }
+
+
+# Authentication
+AUTHENTICATION_BACKENDS = (
+    "mozilla_django_oidc.auth.OIDCAuthenticationBackend",
+    "django.contrib.auth.backends.ModelBackend",  # default backend
+)
+
+# OIDC RP configuration - do NOT check ID/secret into version control
+OIDC_RP_CLIENT_ID = os.environ["OIDC_RP_CLIENT_ID"]
+OIDC_RP_CLIENT_SECRET = os.environ["OIDC_RP_CLIENT_SECRET"]
+OIDC_RP_SIGN_ALGO = "RS256"
+OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
+OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localhost:8000/api/openid/authorize/"  # URL for user agent
+OIDC_OP_TOKEN_ENDPOINT = "http://host.docker.internal:8000/api/openid/token/"
+OIDC_OP_USER_ENDPOINT = "http://host.docker.internal:8000/api/openid/userinfo/"
+
+SESSION_COOKIE_NAME = "rpcsessionid"  # need to set this if oidc provider is on same domain as client
 
 
 # Password validation

@@ -1,0 +1,2 @@
+Django==4.2.5
+mozilla-django-oidc==3.0.0

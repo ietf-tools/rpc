@@ -7,7 +7,8 @@ class ClaimCheckingOIDCAuthBackend(OIDCAuthenticationBackend):
   n.b., disregards the OIDC_USERNAME_ALGO setting used by the OIDCAuthenticationBackend
   """
   def create_user(self, claims):
-    new_user = super().create_user(claims)
+    new_user = super().create_user(claims)  # sets email and username
+    new_user.datatracker_subject = claims.get("sub")  # not permitted to be empty by OIDC Core spec
     new_user.first_name = claims.get("given_name", "")
     new_user.last_name = claims.get("family_name", "")
     new_user.save()
@@ -18,3 +19,12 @@ class ClaimCheckingOIDCAuthBackend(OIDCAuthenticationBackend):
     user.last_name = claims.get("family_name", "")
     user.save()
     return user
+
+  def filter_users_by_claims(self, claims):
+    sub = claims.get("sub", None)  # guaranteed to exist, but might as well not fail if it is missing
+    if sub is not None:
+      try:
+        return [self.UserModel.objects.get(datatracker_subject=sub)]
+      except self.UserModel.DoesNotExist:
+        pass
+    return self.UserModel.objects.none()

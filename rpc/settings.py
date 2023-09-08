@@ -105,6 +105,8 @@ OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localhost:8000/api/openid/authorize/"  
 OIDC_OP_TOKEN_ENDPOINT = "http://host.docker.internal:8000/api/openid/token/"
 OIDC_OP_USER_ENDPOINT = "http://host.docker.internal:8000/api/openid/userinfo/"
 
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
 SESSION_COOKIE_NAME = "rpcsessionid"  # need to set this if oidc provider is on same domain as client
 
 

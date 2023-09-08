@@ -1,3 +1,9 @@
-from django.db import models
+# Copyright The IETF Trust 2023, All Rights Reserved
+# -*- coding: utf-8 -*-
 
-# Create your models here.
+from django.contrib.auth.models import AbstractUser
+
+
+class User(AbstractUser):
+  """RPC tool user class"""
+  pass

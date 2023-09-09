@@ -2,10 +2,7 @@ from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
 
 class ClaimCheckingOIDCAuthBackend(OIDCAuthenticationBackend):
-  """Customized OIDC auth backend
-
-  n.b., disregards the OIDC_USERNAME_ALGO setting used by the OIDCAuthenticationBackend
-  """
+  """Customized OIDC auth backend"""
   def create_user(self, claims):
     new_user = super().create_user(claims)  # sets email and username
     new_user.datatracker_subject = claims.get("sub")  # not permitted to be empty by OIDC Core spec

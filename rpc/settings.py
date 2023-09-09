@@ -104,7 +104,9 @@ OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_RP_SCOPES = "openid email profile roles"
 
 OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
-OIDC_OP_AUTHORIZATION_ENDPOINT = "http://localhost:8000/api/openid/authorize/"  # URL for user agent
+OIDC_OP_AUTHORIZATION_ENDPOINT = (
+    "http://localhost:8000/api/openid/authorize/"  # URL for user agent
+)
 OIDC_OP_TOKEN_ENDPOINT = "http://host.docker.internal:8000/api/openid/token/"
 OIDC_OP_USER_ENDPOINT = "http://host.docker.internal:8000/api/openid/userinfo/"
 
@@ -113,7 +115,9 @@ OIDC_OP_USER_ENDPOINT = "http://host.docker.internal:8000/api/openid/userinfo/"
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
-SESSION_COOKIE_NAME = "rpcsessionid"  # need to set this if oidc provider is on same domain as client
+SESSION_COOKIE_NAME = (
+    "rpcsessionid"  # need to set this if oidc provider is on same domain as client
+)
 
 
 # Password validation

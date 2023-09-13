@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core.apps.CoreConfig",
-    "rpcauth.apps.AuthConfig",
+    "rpc.apps.RpcConfig",
+    "rpcauth.apps.RpcAuthConfig",
 ]
 
 MIDDLEWARE = [

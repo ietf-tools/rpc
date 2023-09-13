@@ -18,7 +18,7 @@ services:
     build:
       context: .
       dockerfile: docker/app.Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: sh /docker-init.sh
     volumes:
       - .:/workspace
     ports:

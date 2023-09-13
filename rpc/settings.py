@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "rpcauth.User"
 
 
 # Application definition
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "core.apps.CoreConfig",
+    "rpcauth.apps.AuthConfig",
 ]
 
 MIDDLEWARE = [
@@ -93,7 +94,7 @@ DATABASES = {
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
-    "core.auth.ClaimCheckingOIDCAuthBackend",
+    "rpcauth.backends.ClaimCheckingOIDCAuthBackend",
     "django.contrib.auth.backends.ModelBackend",  # default backend
 )
 

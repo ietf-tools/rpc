@@ -56,7 +56,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "rpc.urls"
+ROOT_URLCONF = "rpctracker.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "rpc.wsgi.application"
+WSGI_APPLICATION = "rpctracker.wsgi.application"
 
 
 # Database

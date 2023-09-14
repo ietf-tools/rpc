@@ -60,6 +60,12 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         required_claims = {"sub", "roles"}
         if required_claims.intersection(claims.keys()) != required_claims:
             return False
+
+        # Per https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse, must validate sub in userinfo
+        # response
+        if claims["sub"] != self.OIDC_RP_CLIENT_ID:
+            raise SuspiciousOperation("userinfo sub does not match client ID")
+
         # Check datatracker roles
         claim_roles = claims["roles"]
         return ["secr", "secretariat"] in claim_roles or ["auth", "rpc"] in claim_roles

@@ -35,8 +35,9 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         )
 
     def verify_claims(self, claims):
-        if not super().verify_claims(claims):
-            return False  # basic OIDC validation failed
+        required_claims = {"sub", "roles"}
+        if required_claims.intersection(claims.keys()) != required_claims:
+            return False
         # Check datatracker roles
-        claim_roles = claims.get("roles", [])
+        claim_roles = claims["roles"]
         return ["secr", "secretariat"] in claim_roles or ["auth", "rpc"] in claim_roles

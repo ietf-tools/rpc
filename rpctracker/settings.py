@@ -94,7 +94,7 @@ DATABASES = {
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
-    "rpcauth.backends.ClaimCheckingOIDCAuthBackend",
+    "rpcauth.backends.RpcOIDCAuthBackend",
     "django.contrib.auth.backends.ModelBackend",  # default backend
 )
 

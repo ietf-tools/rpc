@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = "core.User"
+AUTH_USER_MODEL = "rpcauth.User"
 
 
 # Application definition
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "core.apps.CoreConfig",
+    "rpc.apps.RpcConfig",
+    "rpcauth.apps.RpcAuthConfig",
 ]
 
 MIDDLEWARE = [
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "rpc.urls"
+ROOT_URLCONF = "rpctracker.urls"
 
 TEMPLATES = [
     {
@@ -73,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "rpc.wsgi.application"
+WSGI_APPLICATION = "rpctracker.wsgi.application"
 
 
 # Database
@@ -93,7 +94,7 @@ DATABASES = {
 
 # Authentication
 AUTHENTICATION_BACKENDS = (
-    "core.auth.ClaimCheckingOIDCAuthBackend",
+    "rpcauth.backends.RpcOIDCAuthBackend",
     "django.contrib.auth.backends.ModelBackend",  # default backend
 )
 
@@ -101,7 +102,7 @@ AUTHENTICATION_BACKENDS = (
 OIDC_RP_CLIENT_ID = os.environ["OIDC_RP_CLIENT_ID"]
 OIDC_RP_CLIENT_SECRET = os.environ["OIDC_RP_CLIENT_SECRET"]
 OIDC_RP_SIGN_ALGO = "RS256"
-OIDC_RP_SCOPES = "openid email profile roles"
+OIDC_RP_SCOPES = "openid profile roles"
 
 OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
 OIDC_OP_AUTHORIZATION_ENDPOINT = (

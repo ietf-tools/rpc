@@ -28,7 +28,7 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         try:
             # Rely on the OneToOne field to avoid creating duplicate Users for a DatatrackerPerson
             new_user = self.UserModel.objects.create(
-                username=f"dt-user-{subject_id}",
+                username=f"dt-person-{subject_id}",
                 datatracker_person=datatracker_person,
             )
         except IntegrityError:

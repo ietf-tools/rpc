@@ -8,7 +8,7 @@
 <h1>RPC Tool</h1>
 
 {% if user.is_authenticated %}
-  <p>Current user: {{ user.email }}</p>
+  <p>Current user: {% firstof user.datatracker_person.plain_name user.username %}</p>
   <form action="{% url 'oidc_logout' %}" method="post">
     {% csrf_token %}
     <input type="submit" value="logout">

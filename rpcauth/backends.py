@@ -43,6 +43,7 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         if plain_name is not None and plain_name != user.datatracker_person.plain_name:
             user.datatracker_person.plain_name = plain_name
             user.datatracker_person.save()
+        return user
 
     def filter_users_by_claims(self, claims):
         """Return list or queryset of users who satisfy claims

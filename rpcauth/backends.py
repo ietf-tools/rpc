@@ -1,6 +1,8 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from django.core.exceptions import SuspiciousOperation
 from django.db import IntegrityError
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
@@ -16,6 +18,11 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
       name - plain_name of the Person identified by sub
       roles - list of 2-tuples corresponding to Person's active roles
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._subject_id = None  # subject ID we are working with
+        self.OIDC_OP_ISSUER_ID = self.get_settings("OIDC_OP_ISSUER_ID")
 
     def create_user(self, claims):
         """Create a User following a successful auth"""
@@ -33,7 +40,9 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
             )
         except IntegrityError:
             # exception message gets logged - user only sees a failed auth
-            raise SuspiciousOperation(f"User already exists for datatracker person pk={subject_id}")
+            raise SuspiciousOperation(
+                f"User already exists for datatracker person pk={subject_id}"
+            )
         return new_user
 
     def update_user(self, user, claims):
@@ -56,16 +65,67 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
             datatracker_person__subject_id=claims["sub"],  # claim guaranteed to exist
         )
 
+    def verify_token(self, token, **kwargs):
+        payload = super().verify_token(token, **kwargs)
+        # Validation mandated by sect 3.1.3.7 of the spec not performed by base backend class
+        issuer_id = payload.get("iss", None)
+        if issuer_id is None or issuer_id != self.OIDC_OP_ISSUER_ID:
+            raise SuspiciousOperation(
+                'issuer "{}" does not match configured issuer "{}"'.format(
+                    issuer_id, self.OIDC_OP_ISSUER_ID
+                )
+            )
+        # Check audience. Per spec, we must reject the token if it "does not list the Client as a
+        # valid audience, or if it contains additional audiences not trusted by the Client." We only
+        # expect one audience from the datatracker, so let's assume any other audiences are untrusted.
+        audience = payload.get("aud", [])
+        if isinstance(audience, str):
+            audience = [audience]
+        if len(set(audience)) != 1 or audience[0] != self.OIDC_RP_CLIENT_ID:
+            raise SuspiciousOperation(
+                'token has invalid audience "{}"'.format(audience)
+            )
+        # azp should be present if token contains multiple audiences, but we rejected such a token already.
+        # Just check that, if present, azp is us
+        if "azp" in payload and payload["azp"] != self.OIDC_RP_CLIENT_ID:
+            raise SuspiciousOperation(
+                'token azp ("{}") is not our client id ("{}")'.format(
+                    payload["azp"], self.OIDC_RP_CLIENT_ID
+                )
+            )
+
+        if "exp" not in payload:
+            raise SuspiciousOperation("token has no expiration time")
+        if not isinstance(payload["exp"], int):
+            raise SuspiciousOperation('token exp claim ("{}") is not an integer')
+        expiration_time = datetime.datetime.fromtimestamp(
+            payload["exp"], tz=datetime.timezone.utc
+        )
+        if expiration_time < datetime.datetime.now(tz=datetime.timezone.utc):
+            raise SuspiciousOperation(f"token expired at {expiration_time}")
+
+        # remember the subject ID so we can validate claims later
+        if "sub" in payload:
+            self._subject_id = payload["sub"]
+        else:
+            raise SuspiciousOperation("No subject ID in token")
+        return payload
+
     def verify_claims(self, claims):
         """Verify that claims are sufficient to allow auth"""
         required_claims = {"sub", "roles"}
         if required_claims.intersection(claims.keys()) != required_claims:
             return False
 
-        # Per https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse, must validate sub in userinfo
-        # response
-        if claims["sub"] != self.OIDC_RP_CLIENT_ID:
-            raise SuspiciousOperation("userinfo sub does not match client ID")
+        # Per https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse,
+        # client must validate sub in userinfo response. The base class does not do that
+        # for us.
+        if claims["sub"] != self._subject_id:
+            raise SuspiciousOperation(
+                'userinfo sub ("{}") does not match token sub("{}")'.format(
+                    claims["sub"], self._subject_id
+                )
+            )
 
         # Check datatracker roles
         claim_roles = claims["roles"]

@@ -132,7 +132,6 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         if required_claims.intersection(claims.keys()) != required_claims:
             return False
 
-
         # Check datatracker roles
         claim_roles = claims["roles"]
         return ["secr", "secretariat"] in claim_roles or ["auth", "rpc"] in claim_roles

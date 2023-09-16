@@ -51,7 +51,9 @@ class RpcOIDCAuthBackendTests(TestCase):
         self.assertIn("does not match configured issuer", str(cm.exception))
 
         # invalid audience
-        token_mock.return_value["iss"] = "http://issuer.example.com/openid"  # restore valid
+        token_mock.return_value[
+            "iss"
+        ] = "http://issuer.example.com/openid"  # restore valid
         token_mock.return_value["aud"] = "not-the-client"
         with self.assertRaises(SuspiciousOperation) as cm:
             self.backend.verify_token(fake_token)
@@ -130,7 +132,9 @@ class RpcOIDCAuthBackendTests(TestCase):
         self.assertIn("No subject ID claim", str(cm.exception))
 
         with self.assertRaises(SuspiciousOperation) as cm:
-            self.assertFalse(self.backend.verify_claims({"sub": "wrong-test-client-id", "roles": []}))
+            self.assertFalse(
+                self.backend.verify_claims({"sub": "wrong-test-client-id", "roles": []})
+            )
         self.assertIn("does not match token sub", str(cm.exception))
 
         # bad roles, good sub
@@ -150,6 +154,6 @@ class RpcOIDCAuthBackendTests(TestCase):
         )
         self.assertTrue(
             self.backend.verify_claims(
-                {"sub": "test-subject-id", "roles": [["secr", "secretariat"]]}
+                {"sub": "test-subject -id", "roles": [["secr", "secretariat"]]}
             )
         )

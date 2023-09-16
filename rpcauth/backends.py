@@ -66,6 +66,7 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         )
 
     def verify_token(self, token, **kwargs):
+        """Verify the ID token"""
         payload = super().verify_token(token, **kwargs)
         # Validation mandated by sect 3.1.3.7 of the spec not performed by base backend class
         issuer_id = payload.get("iss", None)
@@ -97,7 +98,9 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         if "exp" not in payload:
             raise SuspiciousOperation("token has no expiration time")
         if not isinstance(payload["exp"], int):
-            raise SuspiciousOperation('token exp claim ("{}") is not an integer')
+            raise SuspiciousOperation(
+                'token exp ("{}") is not an integer'.format(payload["exp"])
+            )
         expiration_time = datetime.datetime.fromtimestamp(
             payload["exp"], tz=datetime.timezone.utc
         )
@@ -112,20 +115,23 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
         return payload
 
     def verify_claims(self, claims):
-        """Verify that claims are sufficient to allow auth"""
+        """Verify that userinfo claims are sufficient to allow auth"""
+        # Per https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse,
+        # client must validate sub in userinfo response or do nothing else with the
+        # response.
+        if "sub" not in claims:
+            raise SuspiciousOperation("No subject ID claim")
+        elif claims["sub"] != self._subject_id:
+            raise SuspiciousOperation(
+                'userinfo sub ("{}") does not match token sub ("{}")'.format(
+                    claims["sub"], self._subject_id
+                )
+            )
+
         required_claims = {"sub", "roles"}
         if required_claims.intersection(claims.keys()) != required_claims:
             return False
 
-        # Per https://openid.net/specs/openid-connect-core-1_0.html#UserInfoResponse,
-        # client must validate sub in userinfo response. The base class does not do that
-        # for us.
-        if claims["sub"] != self._subject_id:
-            raise SuspiciousOperation(
-                'userinfo sub ("{}") does not match token sub("{}")'.format(
-                    claims["sub"], self._subject_id
-                )
-            )
 
         # Check datatracker roles
         claim_roles = claims["roles"]

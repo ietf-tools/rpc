@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def create_rpc_people(self):
         # From "Manage Team Members" wireframe
         bjenkins = RpcPersonFactory(
-            person__name="B. Jenkins",
+            datatracker_person__plain_name="B. Jenkins",
             can_hold_role=[
                 "formatting",
                 "first_editor",
@@ -35,19 +35,19 @@ class Command(BaseCommand):
             ],
         )
         RpcPersonFactory(
-            person__name="A. Travis",
+            datatracker_person__plain_name="A. Travis",
             can_hold_role=["formatting", "first_editor", "final_review_editor"],
             capable_of=["codecomp-abnf", "clusters-beginner", "ianaconsid-beginner"],
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="Chuck Brown",
+            datatracker_person__plain_name="Chuck Brown",
             can_hold_role=["formatting"],
             capable_of=["clusters-beginner"],
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="C. Simmons",
+            datatracker_person__plain_name="C. Simmons",
             can_hold_role=[
                 "formatting",
                 "first_editor",
@@ -64,7 +64,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="F. Fermat",
+            datatracker_person__plain_name="F. Fermat",
             can_hold_role=[
                 "formatting",
                 "first_editor",
@@ -81,13 +81,13 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="K. Strawberry",
+            datatracker_person__plain_name="K. Strawberry",
             can_hold_role=["formatting", "first_editor"],
             capable_of=["ianaconsid-beginner", "xmlfmt-beginner"],
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="O. Bleu",
+            datatracker_person__plain_name="O. Bleu",
             can_hold_role=[
                 "formatting",
                 "first_editor",
@@ -105,7 +105,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="Patricia Parker",
+            datatracker_person__plain_name="Patricia Parker",
             can_hold_role=[
                 "formatting",
                 "first_editor",
@@ -123,7 +123,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="S. Bexar",
+            datatracker_person__plain_name="S. Bexar",
             can_hold_role=[
                 "formatting",
                 "first_editor",
@@ -142,13 +142,13 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="T. Langfeld",
+            datatracker_person__plain_name="T. Langfeld",
             can_hold_role=["formatting", "first_editor"],
             capable_of=["ianaconsid-beginner", "xmlfmt-beginner"],
             manager=bjenkins,
         )
         RpcPersonFactory(
-            person__name="U. Garrison",
+            datatracker_person__plain_name="U. Garrison",
             can_hold_role=["formatting"],
             capable_of=["xmlfmt-expert"],
             manager=bjenkins,

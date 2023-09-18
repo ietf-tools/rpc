@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import include, path
 
 from rpc import views
+from rpc import api as rpc_api
 
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("", views.index),
+    path("api/rpc/rpc_person/", rpc_api.rpc_person),
 ]

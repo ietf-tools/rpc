@@ -27,3 +27,13 @@ class DatatrackerPerson(models.Model):
 
     def __str__(self):
         return self.plain_name or f"Person {self.subject_id}"
+
+
+class Document(models.Model):
+    """Document known to the datatracker"""
+
+    # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
+    datatracker_id = models.BigIntegerField(unique=True)
+
+    def __str__(self):
+        return f"Doc {self.datatracker_id}"

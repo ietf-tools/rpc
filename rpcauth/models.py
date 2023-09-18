@@ -8,7 +8,7 @@ from django.db import models
 class User(AbstractUser):
     """RPC tool user class"""
     datatracker_person = models.OneToOneField(
-        "rpc.DatatrackerPerson",
+        "datatracker.DatatrackerPerson",
         null=True,
         on_delete=models.SET_NULL,
         help_text="Datatracker person associated with this user",

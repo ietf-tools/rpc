@@ -60,8 +60,22 @@ def forward(apps, schema_editor):
         desc="Historic value similar to noDerivativesTrust200902",
     )
 
+    DispositionName = apps.get_model("rpc", "DispositionName")
+    DispositionName.objects.create(
+        slug="in_progress", name="In Progress", desc="RfcToBe is a work in progress"
+    )
+    DispositionName.objects.create(
+        slug="published", name="Published", desc="RfcToBe has been published as an RFC"
+    )
+    DispositionName.objects.create(
+        slug="withdrawn", name="Withdrawn", desc="RfcToBe has been withdrawn"
+    )
+
 
 def reverse(apps, schema_editor):
+    DispositionName = apps.get_model("rpc", "DispositionName")
+    DispositionName.objects.all().delete()
+
     TlpBoilerplateChoiceName = apps.get_model("rpc", "TlpBoilerplateChoiceName")
     TlpBoilerplateChoiceName.objects.filter(
         slug__in=[

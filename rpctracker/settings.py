@@ -104,6 +104,7 @@ OIDC_RP_CLIENT_SECRET = os.environ["OIDC_RP_CLIENT_SECRET"]
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_RP_SCOPES = "openid profile roles"
 
+OIDC_OP_ISSUER_ID = "http://localhost:8000/api/openid"
 OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
 OIDC_OP_AUTHORIZATION_ENDPOINT = (
     "http://localhost:8000/api/openid/authorize/"  # URL for user agent

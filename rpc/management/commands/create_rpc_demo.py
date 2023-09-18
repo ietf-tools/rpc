@@ -1,20 +1,15 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 
-from ...factories import RfcToBeFactory, RpcPersonFactory
+from ...factories import RpcPersonFactory
 
 
 class Command(BaseCommand):
     help = "Populate data for RPC Tools Refresh demo"
 
     def handle(self, *args, **options):
-        # Refuse to run in production
-        if settings.SERVER_MODE == "production":
-            raise CommandError("This command is not allowed in production mode")
-
         self.create_rpc_people()
         self.create_documents()
 

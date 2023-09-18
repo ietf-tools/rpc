@@ -182,14 +182,14 @@ class Assignment(models.Model):
 
 
 class RfcAuthor(models.Model):
-    person = models.ForeignKey(
+    datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
     auth48_approved = models.DateTimeField(null=True)
 
     def __str__(self):
-        return f"{self.person} as author of {self.rfc_to_be}"
+        return f"{self.datatracker_person} as author of {self.rfc_to_be}"
 
 
 class FinalApproval(models.Model):
@@ -208,7 +208,7 @@ class FinalApproval(models.Model):
 
 
 class ActionHolder(models.Model):
-    person = models.ForeignKey(
+    datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     since_when = models.DateTimeField(default=timezone.now)
@@ -216,7 +216,7 @@ class ActionHolder(models.Model):
     comment = models.TextField(blank=True)
 
     def __str__(self):
-        return f"{'Completed' if self.completed else 'Pending'} action held by {self.person}"
+        return f"{'Completed' if self.completed else 'Pending'} action held by {self.datatracker_person}"
 
 
 class RpcRelatedDocument(models.Model):
@@ -295,7 +295,7 @@ class RpcAuthorComment(models.Model):
         rjs.rpcauthorcomment_set.all()  # comments about
     """
 
-    person = models.ForeignKey(
+    datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     comment = models.TextField()
@@ -308,7 +308,7 @@ class RpcAuthorComment(models.Model):
 
     def __str__(self):
         return "RpcAuthorComment about {} by {} on {}".format(
-            self.person,
+            self.datatracker_person,
             self.by,
             self.time.strftime("%Y-%m-%d"),
         )

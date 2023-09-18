@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "datatracker.apps.DatatrackerConfig",
     "rpc.apps.RpcConfig",
     "rpcauth.apps.RpcAuthConfig",
 ]

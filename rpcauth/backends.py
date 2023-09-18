@@ -7,7 +7,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.db import IntegrityError
 from mozilla_django_oidc.auth import OIDCAuthenticationBackend
 
-from rpc.models import DatatrackerPerson
+from datatracker.models import DatatrackerPerson
 
 
 class RpcOIDCAuthBackend(OIDCAuthenticationBackend):

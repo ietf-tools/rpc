@@ -65,7 +65,7 @@ class RfcToBe(models.Model):
 
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
-    labels = models.ManyToManyField("Label")
+    labels = models.ManyToManyField("Label", through="RfcToBeLabel")
 
     #     history = HistoricalRecords()
 
@@ -88,6 +88,15 @@ class RfcToBe(models.Model):
         return (
             f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
         )
+
+
+class RfcToBeLabel(models.Model):
+    """Through model for linking Label to RfcToBe
+
+    This exists so we can specify on_delete=models.PROTECT for the label FK.
+    """
+    rfctobe = models.ForeignKey("RfcToBe", on_delete=models.CASCADE)
+    label = models.ForeignKey("Label", on_delete=models.PROTECT)
 
 
 class Name(models.Model):

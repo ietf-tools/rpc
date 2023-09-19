@@ -37,7 +37,19 @@ class Document(models.Model):
 
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
-    labels = models.ManyToManyField("rpc.Label")
+    labels = models.ManyToManyField("rpc.Label", through="DocumentLabel")
 
     def __str__(self):
         return f"Doc {self.datatracker_id}"
+
+
+class DocumentLabel(models.Model):
+    """Through model for linking Label to Document
+
+    This exists so we can specify on_delete=models.PROTECT for the label FK.
+    """
+
+    document = models.ForeignKey("Document", on_delete=models.CASCADE)
+    label = models.ForeignKey("rpc.Label", on_delete=models.PROTECT)
+
+

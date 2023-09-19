@@ -63,6 +63,10 @@ class RfcToBe(models.Model):
     external_deadline = models.DateTimeField(null=True)
     internal_goal = models.DateTimeField(null=True)
 
+    # Labels applied to this instance. To track history, see
+    # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
+    labels = models.ManyToManyField("Label", through="RfcToBeLabel")
+
     #     history = HistoricalRecords()
 
     class Meta:
@@ -84,6 +88,15 @@ class RfcToBe(models.Model):
         return (
             f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
         )
+
+
+class RfcToBeLabel(models.Model):
+    """Through model for linking Label to RfcToBe
+
+    This exists so we can specify on_delete=models.PROTECT for the label FK.
+    """
+    rfctobe = models.ForeignKey("RfcToBe", on_delete=models.CASCADE)
+    label = models.ForeignKey("Label", on_delete=models.PROTECT)
 
 
 class Name(models.Model):
@@ -208,12 +221,47 @@ class FinalApproval(models.Model):
 
 
 class ActionHolder(models.Model):
+    """Someone needs to do what the comment says to/about a document
+
+    Notes:
+        * An AD may need to approve normative changes during auth48,
+          and may need to do this more than once (change one is approved,
+          then change two is discovered)
+        * Can be attached to a datatracker doc prior to an RfcToBe being created
+    """
+
+    target_document = models.ForeignKey(
+        "datatracker.Document",
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="actionholder_set",
+    )
+    target_rfctobe = models.ForeignKey(
+        RfcToBe,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="actionholder_set",
+    )
+
     datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     since_when = models.DateTimeField(default=timezone.now)
     completed = models.DateTimeField(null=True)
+    deadline = models.DateTimeField(null=True)
     comment = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    models.Q(target_document__isnull=True)
+                    ^ models.Q(target_rfctobe__isnull=True)
+                ),
+                name="actionholder_exactly_one_target",
+                violation_error_message="exactly one target field must be set",
+            )
+        ]
 
     def __str__(self):
         return f"{'Completed' if self.completed else 'Pending'} action held by {self.datatracker_person}"
@@ -284,6 +332,19 @@ class RpcDocumentComment(models.Model):
     def __str__(self):
         target = self.document if self.document else self.rfc_to_be
         return f"RpcDocumentComment about {target} by {self.by} on {self.time:%Y-%m-%d}"
+
+
+class Label(models.Model):
+    """Badges that can be put on other objects"""
+
+    ### Will have to have LabelHistory on objects that have collections of labels
+    ### That is, we need to compute when something had a label and how long
+
+    slug = models.CharField(max_length=64, primary_key=True)
+    is_exception = models.BooleanField(default=False)
+    color = models.CharField(
+        max_length=7, default="#FF0000"
+    )  # todo consider using django-colorfield's ColorField
 
 
 class RpcAuthorComment(models.Model):

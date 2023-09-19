@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Update system packages
 RUN apt-get update \
     && apt-get -qy upgrade \
-    && apt-get -y install --no-install-recommends ca-certificates curl gnupg apt-utils dialog 2>&1
+    && apt-get -y install --no-install-recommends apt-utils ca-certificates curl dialog gnupg lsb-core 2>&1
 
 # Add Node.js Source
 RUN mkdir -p /etc/apt/keyrings \

@@ -1,3 +1,5 @@
+version: '3.8'
+
 # Relies on secrets.env containing
 #  - POSTGRES_PASSWORD
 #  - OIDC_RP_CLIENT_ID
@@ -9,8 +11,6 @@ services:
     volumes:
       - postgresdb-data:/var/lib/postgresql/data
     restart: unless-stopped
-    env_file:
-      - secrets.env
     environment:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc

@@ -35,6 +35,10 @@
 
   "postStartCommand": "/docker-start.sh",
 
+  "containerEnv": {
+    "EDITOR_VSCODE": "true"
+  },
+
 	// Configure tool-specific properties.
 	"customizations": {
     "vscode": {
@@ -71,8 +75,8 @@
           "python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
       }
     }
-  }
+  },
 
 	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "devcontainer"
+	"remoteUser": "dev"
 }

@@ -1,3 +1,5 @@
+version: '3.8'
+
 # Relies on secrets.env containing
 #  - POSTGRES_PASSWORD
 #  - OIDC_RP_CLIENT_ID
@@ -5,20 +7,21 @@
 #
 services:
   db:
-    image: postgres:12
+    image: postgres:14
     volumes:
       - postgresdb-data:/var/lib/postgresql/data
-    env_file:
-      - secrets.env
+    restart: unless-stopped
     environment:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
+      - POSTGRES_PASSWORD=abcd1234
+      - POSTGRES_HOST_AUTH_METHOD=trust
 
   app:
     build:
       context: .
       dockerfile: docker/app.Dockerfile
-    command: sh /docker-init.sh
+    command: sleep infinity
     volumes:
       - .:/workspace
     ports:
@@ -28,10 +31,24 @@ services:
     environment:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
+      - POSTGRES_PASSWORD=abcd1234
     depends_on:
       - db
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+        - PGADMIN_DEFAULT_EMAIL=dev@ietf.org
+        - PGADMIN_DEFAULT_PASSWORD=dev
+        - PGADMIN_CONFIG_LOGIN_BANNER="Login with dev@ietf.org / dev"
+        - PGADMIN_DISABLE_POSTFIX=True
+        - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+        - SCRIPT_NAME=/pgadmin
+    volumes:
+        - ./docker/configs/pgadmin-servers.json:/pgadmin4/servers.json
 
 volumes:
   postgresdb-data:

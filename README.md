@@ -4,7 +4,9 @@
 
 <!-- [![Release](https://img.shields.io/github/release/ietf-tools/rpc.svg?style=flat&maxAge=300)](https://github.com/ietf-tools/rpc/releases) -->
 [![License](https://img.shields.io/github/license/ietf-tools/rpc)](https://github.com/ietf-tools/rpc/blob/main/LICENSE)
-![Node Version](https://img.shields.io/badge/node.js-18.x-green?logo=node.js&logoColor=white)
+![Python Version](https://img.shields.io/badge/python-3.11-blue?logo=python&logoColor=white)
+![Django Version](https://img.shields.io/badge/django-4-teal?logo=django&logoColor=white)
+![Node Version](https://img.shields.io/badge/node.js-20-green?logo=node.js&logoColor=white)
 ![Nuxt Version](https://img.shields.io/badge/nuxt-3-green?logo=nuxt.js&logoColor=white)
 ![Vue Version](https://img.shields.io/badge/vue-3-green?logo=vue.js&logoColor=white)
 

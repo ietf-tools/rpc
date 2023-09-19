@@ -3,7 +3,7 @@ version: '3.8'
 services:
     app:
         ports:
-            - 'CUSTOM_PORT:5000'
+            - 'CUSTOM_PORT:8088'
         volumes:
             - .:/workspace
             - /workspace/__pycache__

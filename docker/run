@@ -13,7 +13,7 @@ Run rpc dev environment using docker-compose.
 EOF
 }
 
-CUSTOM_PORT=5000
+CUSTOM_PORT=8088
 FORCE_REBUILD=0
 
 while getopts "hp:r" opt; do
@@ -31,8 +31,8 @@ while getopts "hp:r" opt; do
             echo "Will force rebuild the app container..."
             ;;
         *)
-            CUSTOM_PORT=5000
-            echo "Using port 5000..."
+            CUSTOM_PORT=8088
+            echo "Using port 8088..."
             ;;
     esac
 done
@@ -47,7 +47,7 @@ else
 fi
 
 # Remove mounted temp directories
-rm -rf .parcel-cache __pycache__
+rm -rf __pycache__
 
 # Create extended docker-compose definition
 sed -e "s/CUSTOM_PORT/$CUSTOM_PORT/" \

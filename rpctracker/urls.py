@@ -24,6 +24,6 @@ from rpc import api as rpc_api
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
-    path("", views.index),
+    path("login/", views.index),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
 ]

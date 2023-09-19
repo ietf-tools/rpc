@@ -7,9 +7,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USERNAME=dev
 ARG USER_UID=1000
 ARG USER_GID=$USER_UID
-COPY docker/scripts/app-setup-debian.sh /tmp/library-scripts/docker-setup-debian.sh
-RUN sed -i 's/\r$//' /tmp/library-scripts/docker-setup-debian.sh && chmod +x /tmp/library-scripts/docker-setup-debian.sh
-RUN bash /tmp/library-scripts/docker-setup-debian.sh "${USERNAME}" "${USER_UID}" "${USER_GID}"
+COPY docker/scripts/app-setup.sh /tmp/library-scripts/docker-setup.sh
+RUN sed -i 's/\r$//' /tmp/library-scripts/docker-setup.sh && chmod +x /tmp/library-scripts/docker-setup.sh
+RUN bash /tmp/library-scripts/docker-setup.sh "${USERNAME}" "${USER_UID}" "${USER_GID}"
+
+# Setup nginx
+COPY docker/configs/nginx-proxy.conf /etc/nginx/sites-available/default
+COPY docker/configs/nginx-502.html /var/www/html/502.html
 
 # Copy the startup file
 COPY docker/scripts/app-init.sh /docker-init.sh

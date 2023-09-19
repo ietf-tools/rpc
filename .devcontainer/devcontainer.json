@@ -22,7 +22,18 @@
 	// "features": {},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	"forwardPorts": [8088],
+
+  "portsAttributes": {
+    "8001": {
+      "label": "Django",
+      "onAutoForward": "ignore"
+    },
+    "8088": {
+      "label": "NGINX",
+      "onAutoForward": "notify"
+    }
+  },
 
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
 	// "runServices": [],

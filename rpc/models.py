@@ -63,7 +63,8 @@ class RfcToBe(models.Model):
     external_deadline = models.DateTimeField(null=True)
     internal_goal = models.DateTimeField(null=True)
 
-    # Labels applied to this instance. Check SimpleHistory treatment of many-to-many relation
+    # Labels applied to this instance. To track history, see
+    # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
     labels = models.ManyToManyField("Label")
 
     #     history = HistoricalRecords()

@@ -334,7 +334,7 @@ class Label(models.Model):
     slug = models.CharField(max_length=64, primary_key=True)
     is_exception = models.BooleanField(default=False)
     color = models.CharField(
-        min_length=7, max_length=7, default="#FF0000"
+        max_length=7, default="#FF0000"
     )  # todo consider using django-colorfield's ColorField
 
 

@@ -35,5 +35,8 @@ class Document(models.Model):
     # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
     datatracker_id = models.BigIntegerField(unique=True)
 
+    # Labels applied to this instance. Check SimpleHistory treatment of many-to-many relation
+    labels = models.ManyToManyField("Label")
+
     def __str__(self):
         return f"Doc {self.datatracker_id}"

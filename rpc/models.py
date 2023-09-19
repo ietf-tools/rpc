@@ -63,6 +63,9 @@ class RfcToBe(models.Model):
     external_deadline = models.DateTimeField(null=True)
     internal_goal = models.DateTimeField(null=True)
 
+    # Labels applied to this instance. Check SimpleHistory treatment of many-to-many relation
+    labels = models.ManyToManyField("Label")
+
     #     history = HistoricalRecords()
 
     class Meta:
@@ -208,11 +211,22 @@ class FinalApproval(models.Model):
 
 
 class ActionHolder(models.Model):
+    """Someone needs to do what the comment says to/about a document
+
+    Notes:
+        * An AD may need to approve normative changes during auth48,
+          and may need to do this more than once (change one is approved,
+          then change two is discovered)
+        * Can be attached to a datatracker doc prior to an RfcToBe being created
+    """
+
+    # todo attach to RfcToBe or datatracker.Document
     datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     since_when = models.DateTimeField(default=timezone.now)
     completed = models.DateTimeField(null=True)
+    deadline = models.DateTimeField(null=True)
     comment = models.TextField(blank=True)
 
     def __str__(self):
@@ -284,6 +298,19 @@ class RpcDocumentComment(models.Model):
     def __str__(self):
         target = self.document if self.document else self.rfc_to_be
         return f"RpcDocumentComment about {target} by {self.by} on {self.time:%Y-%m-%d}"
+
+
+class Label(models.Model):
+    """Badges that can be put on other objects"""
+
+    ### Will have to have LabelHistory on objects that have collections of labels
+    ### That is, we need to compute when something had a label and how long
+
+    slug = models.CharField(max_length=64, primary_key=True)
+    is_exception = models.BooleanField(default=False)
+    color = models.CharField(
+        min_length=7, max_length=7, default="#FF0000"
+    )  # todo consider using django-colorfield's ColorField
 
 
 class RpcAuthorComment(models.Model):

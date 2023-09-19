@@ -1,13 +1,15 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from django.db import models
+from django.utils import timezone
 
 
 class RpcPerson(models.Model):
     datatracker_person = models.ForeignKey(
-        "datatracker.DatatrackerPerson",
-        on_delete=models.PROTECT
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     can_hold_role = models.ManyToManyField("RpcRole")
     capable_of = models.ManyToManyField("Capability")
@@ -61,7 +63,7 @@ class RfcToBe(models.Model):
     external_deadline = models.DateTimeField(null=True)
     internal_goal = models.DateTimeField(null=True)
 
-#     history = HistoricalRecords()
+    #     history = HistoricalRecords()
 
     class Meta:
         constraints = [
@@ -79,7 +81,9 @@ class RfcToBe(models.Model):
         ]
 
     def __str__(self):
-        return f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
+        return (
+            f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
+        )
 
 
 class Name(models.Model):
@@ -111,6 +115,10 @@ class TlpBoilerplateChoiceName(Name):
 
 
 class StreamName(Name):
+    pass
+
+
+class DocRelationshipName(Name):
     pass
 
 
@@ -148,3 +156,159 @@ class Capability(models.Model):
 
     def __str__(self):
         return self.name
+
+
+ASSIGNMENT_STATE_CHOICES = (
+    ("assigned", "assigned"),
+    ("in progress", "in progress"),
+    ("done", "done"),
+)
+
+
+class Assignment(models.Model):
+    """Assignment of an RpcPerson to an RfcToBe"""
+
+    rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    person = models.ForeignKey(RpcPerson, on_delete=models.PROTECT)
+    role = models.ForeignKey(RpcRole, on_delete=models.PROTECT)
+    state = models.CharField(
+        max_length=32, choices=ASSIGNMENT_STATE_CHOICES, default="assigned"
+    )
+    comment = models.TextField(blank=True)
+    time_spent = models.DurationField(default=datetime.timedelta(0))  # tbd
+
+    def __str__(self):
+        return f"{self.person} assigned as {self.role} for {self.rfc_to_be}"
+
+
+class RfcAuthor(models.Model):
+    datatracker_person = models.ForeignKey(
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
+    )
+    rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    auth48_approved = models.DateTimeField(null=True)
+
+    def __str__(self):
+        return f"{self.datatracker_person} as author of {self.rfc_to_be}"
+
+
+class FinalApproval(models.Model):
+    rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    approver = models.ForeignKey(
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
+    )
+    requested = models.DateTimeField(default=timezone.now)
+    approved = models.DateTimeField(null=True)
+
+    def __str__(self):
+        if self.approved:
+            return f"final approval from {self.approver}"
+        else:
+            return f"request for final approval from {self.approver}"
+
+
+class ActionHolder(models.Model):
+    datatracker_person = models.ForeignKey(
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
+    )
+    since_when = models.DateTimeField(default=timezone.now)
+    completed = models.DateTimeField(null=True)
+    comment = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"{'Completed' if self.completed else 'Pending'} action held by {self.datatracker_person}"
+
+
+class RpcRelatedDocument(models.Model):
+    """Relationship between an RFC-to-be and a draft, RFC, or RFC-to-be
+
+    rtb = RfcToBe.objects.get(...)  # or Document.objects.get(...)
+    rtb.rpcrelateddocument_set.all()  # relationships where rtb is source
+    rtb.rpcrelateddocument_target_set()  # relationships where rtb is target
+    """
+
+    relationship = models.ForeignKey("DocRelationshipName", on_delete=models.PROTECT)
+    source = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    target_document = models.ForeignKey(
+        "datatracker.Document",
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="rpcrelateddocument_target_set",
+    )
+    target_rfctobe = models.ForeignKey(
+        RfcToBe,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="rpcrelateddocument_target_set",
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    models.Q(target_document__isnull=True)
+                    ^ models.Q(target_rfctobe__isnull=True)
+                ),
+                name="rpcrelateddocument_exactly_one_target",
+                violation_error_message="exactly one target field must be set",
+            )
+        ]
+
+    def __str__(self):
+        target = self.target_document if self.target_document else self.target_rfctobe
+        return f"{self.relationship} relationship from {self.source} to {target}"
+
+
+class RpcDocumentComment(models.Model):
+    """Private RPC comment about a draft, RFC or RFC-to-be"""
+
+    document = models.ForeignKey(
+        "datatracker.Document", null=True, on_delete=models.PROTECT
+    )
+    rfc_to_be = models.ForeignKey(RfcToBe, null=True, on_delete=models.PROTECT)
+    comment = models.TextField()
+    by = models.ForeignKey("datatracker.DatatrackerPerson", on_delete=models.PROTECT)
+    time = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    models.Q(document__isnull=True) ^ models.Q(rfc_to_be__isnull=True)
+                ),
+                name="rpcdocumentcomment_exactly_one_target",
+                violation_error_message="exactly one of document or rfc_to_be must be set",
+            )
+        ]
+
+    def __str__(self):
+        target = self.document if self.document else self.rfc_to_be
+        return f"RpcDocumentComment about {target} by {self.by} on {self.time:%Y-%m-%d}"
+
+
+class RpcAuthorComment(models.Model):
+    """Private RPC comment about an author
+
+    Notes:
+        rjs = Person(...)
+        rjs.rpcauthorcomments_by.all()  # comments by
+        rjs.rpcauthorcomment_set.all()  # comments about
+    """
+
+    datatracker_person = models.ForeignKey(
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
+    )
+    comment = models.TextField()
+    by = models.ForeignKey(
+        "datatracker.DatatrackerPerson",
+        on_delete=models.PROTECT,
+        related_name="rpcauthorcomments_by",
+    )
+    time = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return "RpcAuthorComment about {} by {} on {}".format(
+            self.datatracker_person,
+            self.by,
+            self.time.strftime("%Y-%m-%d"),
+        )

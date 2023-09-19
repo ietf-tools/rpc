@@ -154,6 +154,6 @@ class RpcOIDCAuthBackendTests(TestCase):
         )
         self.assertTrue(
             self.backend.verify_claims(
-                {"sub": "test-subject -id", "roles": [["secr", "secretariat"]]}
+                {"sub": "test-subject-id", "roles": [["secr", "secretariat"]]}
             )
         )

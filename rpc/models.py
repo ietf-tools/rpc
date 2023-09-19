@@ -221,7 +221,19 @@ class ActionHolder(models.Model):
         * Can be attached to a datatracker doc prior to an RfcToBe being created
     """
 
-    # todo attach to RfcToBe or datatracker.Document
+    target_document = models.ForeignKey(
+        "datatracker.Document",
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="actionholder_set",
+    )
+    target_rfctobe = models.ForeignKey(
+        RfcToBe,
+        null=True,
+        on_delete=models.PROTECT,
+        related_name="actionholder_set",
+    )
+
     datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
@@ -229,6 +241,18 @@ class ActionHolder(models.Model):
     completed = models.DateTimeField(null=True)
     deadline = models.DateTimeField(null=True)
     comment = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                check=(
+                    models.Q(target_document__isnull=True)
+                    ^ models.Q(target_rfctobe__isnull=True)
+                ),
+                name="actionholder_exactly_one_target",
+                violation_error_message="exactly one target field must be set",
+            )
+        ]
 
     def __str__(self):
         return f"{'Completed' if self.completed else 'Pending'} action held by {self.datatracker_person}"

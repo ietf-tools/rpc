@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+    app:
+        ports:
+            - 'CUSTOM_PORT:5000'
+        volumes:
+            - .:/workspace
+            - /workspace/__pycache__
+    db:
+        ports:
+            - '5432'
+    pgadmin:
+        ports:
+            - '5433'

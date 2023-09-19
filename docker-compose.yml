@@ -21,7 +21,7 @@ services:
     build:
       context: .
       dockerfile: docker/app.Dockerfile
-    command: sh /docker-init.sh
+    command: sleep infinity
     volumes:
       - .:/workspace
     ports:

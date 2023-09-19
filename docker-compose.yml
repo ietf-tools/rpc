@@ -5,14 +5,17 @@
 #
 services:
   db:
-    image: postgres:12
+    image: postgres:14
     volumes:
       - postgresdb-data:/var/lib/postgresql/data
+    restart: unless-stopped
     env_file:
       - secrets.env
     environment:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
+      - POSTGRES_PASSWORD=abcd1234
+      - POSTGRES_HOST_AUTH_METHOD=trust
 
   app:
     build:
@@ -28,10 +31,24 @@ services:
     environment:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
+      - POSTGRES_PASSWORD=abcd1234
     depends_on:
       - db
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    environment:
+        - PGADMIN_DEFAULT_EMAIL=dev@ietf.org
+        - PGADMIN_DEFAULT_PASSWORD=dev
+        - PGADMIN_CONFIG_LOGIN_BANNER="Login with dev@ietf.org / dev"
+        - PGADMIN_DISABLE_POSTFIX=True
+        - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+        - SCRIPT_NAME=/pgadmin
+    volumes:
+        - ./docker/configs/pgadmin-servers.json:/pgadmin4/servers.json
 
 volumes:
   postgresdb-data:

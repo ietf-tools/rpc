@@ -37,7 +37,7 @@ class Document(models.Model):
 
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
-    labels = models.ManyToManyField("Label")
+    labels = models.ManyToManyField("rpc.Label")
 
     def __str__(self):
         return f"Doc {self.datatracker_id}"

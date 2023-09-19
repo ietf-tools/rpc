@@ -6,28 +6,28 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Update system packages
 RUN apt-get update \
     && apt-get -qy upgrade \
-    && apt-get -y install --no-install-recommends apt-utils dialog 2>&1
+    && apt-get -y install --no-install-recommends ca-certificates curl gnupg apt-utils dialog 2>&1
 
 # Add Node.js Source
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+RUN mkdir -p /etc/apt/keyrings \
+    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_20.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 # Add PostgreSQL Source
-RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list
-RUN wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
+RUN echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list \
+    && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
 
 # Install the packages we need
 RUN apt-get update --fix-missing && apt-get install -qy \
 	bash \
 	build-essential \
-	curl \
 	gcc \
 	git \
-	gnupg \
 	jq \
 	less \
 	make \
 	nano \
-	netcat \
+	netcat-openbsd \
 	nodejs \
 	postgresql-client-14 \
 	unzip \

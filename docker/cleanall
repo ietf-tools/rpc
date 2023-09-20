@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# Ensure the run script is in our directory.
+dirname=$(dirname $0)
+if [ "$dirname" = "." -o "$dirname" = "" ] ; then
+    :
+else
+    echo "Changing to directory $dirname"
+    cd $dirname || exit 1
+fi
+
 read -p "Stop and remove all containers, volumes and images for this project? [y/N] " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]

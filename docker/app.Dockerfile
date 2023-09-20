@@ -11,6 +11,8 @@ COPY docker/scripts/app-setup.sh /tmp/library-scripts/docker-setup.sh
 RUN sed -i 's/\r$//' /tmp/library-scripts/docker-setup.sh && chmod +x /tmp/library-scripts/docker-setup.sh
 RUN bash /tmp/library-scripts/docker-setup.sh "${USERNAME}" "${USER_UID}" "${USER_GID}"
 
+COPY docker/configs/.tmux.conf /home/dev/.tmux.conf
+
 # Setup nginx
 COPY docker/configs/nginx-proxy.conf /etc/nginx/sites-available/default
 COPY docker/configs/nginx-502.html /var/www/html/502.html

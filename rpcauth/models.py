@@ -7,9 +7,10 @@ from django.db import models
 
 class User(AbstractUser):
     """RPC tool user class"""
-    datatracker_person = models.OneToOneField(
-        "datatracker.DatatrackerPerson",
+
+    datatracker_subject_id = models.CharField(
+        max_length=255,  # per OpenID Core 1.0, 255 ASCII chars is the limit
         null=True,
-        on_delete=models.SET_NULL,
-        help_text="Datatracker person associated with this user",
+        unique=True,
+        help_text="Datatracker's subject ID for this Person",
     )

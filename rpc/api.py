@@ -36,8 +36,10 @@ def submissions(request):
     {
         "submitted": [
             {
+                "pk": 123456,
                 "name": "draft-foo-bar",
-                "submitted_date" : "2023-09-19",
+                "stream": "ietf",
+                "submitted" : "2023-09-19"
             }
             ...
         ]
@@ -66,8 +68,7 @@ def submissions(request):
     with get_api_client() as api_client:
         api = rpcapi.DefaultApi(api_client)
         response = api.submitted_to_rpc()
-        for record in response.submitted_to_rpc:
-            submitted.append({"name": record.name, "submitted_date": record.submitted})
+        submitted.extend(response.to_dict()["submitted_to_rpc"])
     return JsonResponse({"submitted": submitted}, safe=False)
 
 

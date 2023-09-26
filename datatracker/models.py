@@ -5,16 +5,12 @@ from django.db import models
 
 
 class DatatrackerPerson(models.Model):
-    """Person known to the datatracker
-
-      Relationships:
-    * subject_id - the datatracker's OIDC subject id used to link this record to a
-      datatracker Person record. This is a string representation of the Person pk for
-      now and likely forever.
-    """
+    """Person known to the datatracker"""
 
     # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
-    datatracker_id = models.BigIntegerField(unique=True)
+    datatracker_id = models.BigIntegerField(
+        unique=True, help_text="ID of the Person in the datatracker"
+    )
 
     def __str__(self):
         return f"Datatracker Person {self.datatracker_id}"

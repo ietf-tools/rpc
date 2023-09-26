@@ -30,6 +30,8 @@ cd ..
 echo "Running migrations..."
 ./manage.py migrate --no-input || true
 
+sudo touch /.dev-ready
+
 if [ -z "$EDITOR_VSCODE" ]; then
   echo "-----------------------------------------------------------------"
   echo "Ready!"

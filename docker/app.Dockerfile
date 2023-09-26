@@ -32,8 +32,5 @@ RUN groupmod --gid $USER_GID $USERNAME \
 # Switch to local dev user
 USER dev:dev
 
-# Install current python dependencies
-COPY requirements.txt /tmp/pip-tmp/
-RUN pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location -r /tmp/pip-tmp/requirements.txt
+# Install pylint dependencies
 RUN pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location pylint pylint-common pylint-django
-RUN sudo rm -rf /tmp/pip-tmp

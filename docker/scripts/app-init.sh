@@ -8,6 +8,11 @@ git config --global --add safe.directory /workspace
 # Turn off git info in zsh prompt (causes slowdowns)
 git config oh-my-zsh.hide-info 1
 
+# Install requirements.txt dependencies
+wget -O rpcapi.yaml https://raw.githubusercontent.com/ietf-tools/datatracker/feat/rpc-api/rpcapi.yaml
+npx --yes @openapitools/openapi-generator-cli generate -i rpcapi.yaml -g python -o openapi/rpcapi_client -c openapi/config.yaml
+pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location -r requirements.txt
+
 # Run nginx
 echo "Starting nginx..."
 sudo nginx

@@ -10,6 +10,18 @@ from .models import RpcPerson
 
 def rpc_person(request):
     response = []
+    # use bulk endpoint to get names
+
+    with get_api_client() as api_client:
+        api = rpcapi.DefaultApi(api_client)
+        name_map = api.get_persons(
+            list(
+                RpcPerson.objects.values_list(
+                    "datatracker_person__datatracker_id", flat=True
+                )
+            )
+        )
+
     for rpc_pers in RpcPerson.objects.all():
         capabilities = []
         for capability in rpc_pers.capable_of.all():
@@ -17,11 +29,13 @@ def rpc_person(request):
         roles = []
         for role in rpc_pers.can_hold_role.all():
             roles.append(dict(id=role.pk, name=role.name))
-
+        # Look up the name, but allow for the slim possibility an RpcPerson was created between
+        # when we looked up the name_map and when we started this loop.
+        name = name_map.get(str(rpc_pers.datatracker_person.datatracker_id), None)
         response.append(
             dict(
                 id=rpc_pers.pk,
-                name=rpc_pers.datatracker_person.plain_name(), # First use of stashed plain_name. Should we instead S2S query a batch of pks to get fresh names here?
+                name=name or rpc_pers.plain_name(),
                 capabilities=capabilities,
                 roles=roles,
             )

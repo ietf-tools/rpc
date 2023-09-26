@@ -13,20 +13,11 @@ class DatatrackerPerson(models.Model):
       now and likely forever.
     """
 
-    subject_id = models.CharField(
-        max_length=255,  # per OpenID Core 1.0, 255 ASCII chars is the limit
-        unique=True,
-        help_text="Datatracker's subject ID for this Person",
-    )
-
-    plain_name = models.CharField(
-        max_length=255,
-        blank=True,
-        help_text="Datatracker's plain name for this Person",
-    )
+    # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
+    datatracker_id = models.BigIntegerField(unique=True)
 
     def __str__(self):
-        return self.plain_name or f"Person {self.subject_id}"
+        return f"Datatracker Person {self.datatracker_id}"
 
 
 class Document(models.Model):
@@ -51,5 +42,3 @@ class DocumentLabel(models.Model):
 
     document = models.ForeignKey("Document", on_delete=models.CASCADE)
     label = models.ForeignKey("rpc.Label", on_delete=models.PROTECT)
-
-

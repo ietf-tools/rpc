@@ -32,6 +32,7 @@ services:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
       - POSTGRES_PASSWORD=abcd1234
+      - RPC_API_TOKEN=devtoken
     depends_on:
       - db
     extra_hosts:

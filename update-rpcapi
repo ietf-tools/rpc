@@ -1,0 +1,16 @@
+#!/bin/sh -ex
+#
+# Run outside of the dev containers!
+#
+# Run this after updating rpcapi.yaml
+#
+docker run --rm \
+  -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+  -i /local/rpcapi.yaml \
+  -g python \
+  -o /local/openapi/rpcapi_client \
+  -c /local/openapi/config.yaml
+
+echo
+echo "Updated API. Run 'pip install -r requirements.txt' in the dev container"
+

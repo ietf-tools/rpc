@@ -13,8 +13,7 @@ class DatatrackerPersonFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = DatatrackerPerson
 
-    subject_id = factory.Faker("pystr_format", string_format="######")
-    plain_name = factory.Faker("name")
+    datatracker_id = factory.Faker("pystr_format", string_format="######")
 
 
 class DocumentFactory(factory.django.DjangoModelFactory):

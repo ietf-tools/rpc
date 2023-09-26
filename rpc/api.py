@@ -18,7 +18,7 @@ def rpc_person(request):
         response.append(
             dict(
                 id=rpc_pers.pk,
-                name=rpc_pers.datatracker_person.plain_name, # First use of stashed plain_name. Should we instead S2S query a batch of pks to get fresh names here?
+                name=rpc_pers.datatracker_person.plain_name(), # First use of stashed plain_name. Should we instead S2S query a batch of pks to get fresh names here?
                 capabilities=capabilities,
                 roles=roles,
             )

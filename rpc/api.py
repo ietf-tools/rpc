@@ -2,6 +2,9 @@
 
 from django.http import JsonResponse
 
+import rpcapi
+from datatracker.models import get_api_client  # todo put this somewhere real
+
 from .models import RpcPerson
 
 
@@ -59,7 +62,13 @@ def submissions(request):
     Those queries overreturn - there may be things, particularly not from the IETF stream that are already in the queue.
     This api will filter those out.
     """
-    return JsonResponse({"submitted": []}, safe=False)
+    submitted = []
+    with get_api_client() as api_client:
+        api = rpcapi.DefaultApi(api_client)
+        response = api.submitted_to_rpc()
+        for record in response.submitted_to_rpc:
+            submitted.append({"name": record.name, "submitted_date": record.submitted})
+    return JsonResponse({"submitted": submitted}, safe=False)
 
 
 def queue(request):

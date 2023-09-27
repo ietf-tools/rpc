@@ -1,7 +1,8 @@
 #!/bin/sh -e
 # Run this in the container after updating rpcapi.yaml
 #
-npx --yes @openapitools/openapi-generator-cli generate -i rpcapi.yaml -g python -o openapi/rpcapi_client -c openapi/config.yaml
+# Configure the generator in openapitools.json
+npx --yes @openapitools/openapi-generator-cli generate
 pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location -r requirements.txt
 
 echo

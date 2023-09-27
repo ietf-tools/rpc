@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 4,
+  "generator-cli": {
+    "version": "7.0.1",
+    "generators": {
+      "default": {
+        "generatorName": "python",
+        "inputSpec": "#{cwd}/rpcapi.yaml",
+        "output": "#{cwd}/openapi/rpcapi_client",
+        "additionalProperties": {
+          "packageName": "rpcapi_client",
+          "disallowAdditionalPropertiesIfNotPresent": false
+        }
+      }
+    }
+  }
+}

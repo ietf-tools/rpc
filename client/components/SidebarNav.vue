@@ -107,12 +107,12 @@ const siteStore = useSiteStore()
 // DATA
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: h(Icon, { name: 'solar:widget-6-bold-duotone' }), current: true },
-  { name: 'Queue', href: '/queue', icon: h(Icon, { name: 'solar:layers-minimalistic-bold-duotone' }), current: false },
-  { name: 'Documents', href: '/docs', icon: h(Icon, { name: 'solar:documents-minimalistic-line-duotone' }), current: false },
-  { name: 'Team', href: '/team', icon: h(Icon, { name: 'solar:users-group-rounded-bold-duotone' }), current: false },
-  { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'solar:chart-line-duotone' }), current: false },
-  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }), current: false },
+  { name: 'Dashboard', href: '/', icon: h(Icon, { name: 'solar:widget-6-bold-duotone' }) },
+  { name: 'Queue', href: '/queue', icon: h(Icon, { name: 'solar:layers-minimalistic-bold-duotone' }) },
+  { name: 'Documents', href: '/docs', icon: h(Icon, { name: 'solar:documents-minimalistic-line-duotone' }) },
+  { name: 'Team', href: '/team', icon: h(Icon, { name: 'solar:users-group-rounded-bold-duotone' }) },
+  { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'solar:chart-line-duotone' }) },
+  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }) },
 ]
 
 const teams = [

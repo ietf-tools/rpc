@@ -14,7 +14,7 @@ updates:
     reviewers:
       - ngpixel
     groups:
-      all:
+      npm-dependencies:
         patterns:
           - "*"
     versioning-strategy: "increase"

@@ -1,4 +1,0 @@
-additionalProperties:
-  packageName: rpcapi_client
-  # Set to false for OAS/JSON schema spec compliant behavior
-  disallowAdditionalPropertiesIfNotPresent: false

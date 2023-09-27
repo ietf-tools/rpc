@@ -1,20 +1,11 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
-import os
+import rpcapi_client
+from rpcapi_client.rest import ApiException
+from datatracker.rpcapi import ApiClient
 
-import rpcapi
-from rpcapi.rest import ApiException
-
-from django.conf import settings
 from django.db import models
-
-
-def get_api_client():
-    """Get an RPC API client"""
-    config = rpcapi.Configuration(host=settings.DATATRACKER_RPC_API_BASE)
-    config.api_key["ApiKeyAuth"] = settings.DATATRACKER_RPC_API_TOKEN
-    return rpcapi.ApiClient(config)
 
 
 class DatatrackerPerson(models.Model):
@@ -29,8 +20,8 @@ class DatatrackerPerson(models.Model):
         return f"Datatracker Person {self.datatracker_id}"
 
     def plain_name(self):
-        with get_api_client() as api_client:
-            api_instance = rpcapi.DefaultApi(api_client)
+        with ApiClient() as api_client:
+            api_instance = rpcapi_client.DefaultApi(api_client)
             try:
                 person = api_instance.get_person_by_id(int(self.datatracker_id))
             except ApiException as e:

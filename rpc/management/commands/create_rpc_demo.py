@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from django.core.management.base import BaseCommand
+from django.db.utils import IntegrityError
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
@@ -17,7 +18,7 @@ class Command(BaseCommand):
         self.create_documents()
 
     @with_rpcapi
-    def create_rpc_people(self, rpcapi):
+    def create_rpc_people(self, *, rpcapi: rpcapi_client.DefaultApi):
         # From "Manage Team Members" wireframe
         bjenkins = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
@@ -197,4 +198,3 @@ class Command(BaseCommand):
         #     rfc_number=rfc_number,
         #     draft=WgRfcFactory(alias2__name=f"rfc{rfc_number}")
         # )
-        pass

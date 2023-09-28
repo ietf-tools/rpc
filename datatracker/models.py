@@ -3,7 +3,7 @@
 
 import rpcapi_client
 from rpcapi_client.rest import ApiException
-from datatracker.rpcapi import ApiClient
+from datatracker.rpcapi import with_rpcapi
 
 from django.db import models
 
@@ -19,14 +19,13 @@ class DatatrackerPerson(models.Model):
     def __str__(self):
         return f"Datatracker Person {self.datatracker_id}"
 
-    def plain_name(self):
-        with ApiClient() as api_client:
-            api_instance = rpcapi_client.DefaultApi(api_client)
-            try:
-                person = api_instance.get_person_by_id(int(self.datatracker_id))
-            except ApiException as e:
-                print(f"ApiException: {e}")
-                person = None
+    @with_rpcapi
+    def plain_name(self, *, rpcapi: rpcapi_client.DefaultApi):
+        try:
+            person = rpcapi.get_person_by_id(int(self.datatracker_id))
+        except ApiException as e:
+            print(f"ApiException: {e}")
+            person = None
         return None if person is None else person.plain_name
 
 

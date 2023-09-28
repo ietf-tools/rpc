@@ -4,7 +4,7 @@
 from django.core.management.base import BaseCommand
 
 import rpcapi_client
-from datatracker.rpcapi import ApiClient
+from datatracker.rpcapi import with_rpcapi
 
 from ...factories import RpcPersonFactory
 
@@ -16,33 +16,32 @@ class Command(BaseCommand):
         self.create_rpc_people()
         self.create_documents()
 
-    def create_rpc_people(self):
+    @with_rpcapi
+    def create_rpc_people(self, rpcapi):
         # From "Manage Team Members" wireframe
-        with ApiClient() as api_client:
-            api = rpcapi_client.client.DefaultApi(api_client)
-            bjenkins = RpcPersonFactory(
-                datatracker_person__datatracker_id=api.create_demo_person(
-                    rpcapi_client.client.CreateDemoPersonRequest(name="B. Jenkins"),
-                ).person_pk,
-                can_hold_role=[
-                    "formatting",
-                    "first_editor",
-                    "second_editor",
-                    "final_review_editor",
-                    "publisher",
-                    "manager",
-                ],
-                capable_of=[
-                    "codecomp-abnf",
-                    "codecomp-xml",
-                    "codecomp-yang",
-                    "clusters-expert",
-                    "ianaconsid-intermediate",
-                    "xmlfmt-intermediate",
-                ],
-            )
+        bjenkins = RpcPersonFactory(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
+                rpcapi_client.CreateDemoPersonRequest(name="B. Jenkins"),
+            ).person_pk,
+            can_hold_role=[
+                "formatting",
+                "first_editor",
+                "second_editor",
+                "final_review_editor",
+                "publisher",
+                "manager",
+            ],
+            capable_of=[
+                "codecomp-abnf",
+                "codecomp-xml",
+                "codecomp-yang",
+                "clusters-expert",
+                "ianaconsid-intermediate",
+                "xmlfmt-intermediate",
+            ],
+        )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="A. Travis"),
             ).person_pk,
             can_hold_role=["formatting", "first_editor", "final_review_editor"],
@@ -50,7 +49,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="Chuck Brown"),
             ).person_pk,
             can_hold_role=["formatting"],
@@ -58,7 +57,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="C. Simmons"),
             ).person_pk,
             can_hold_role=[
@@ -77,7 +76,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="F. Fermat"),
             ).person_pk,
             can_hold_role=[
@@ -96,7 +95,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="K. Strawberry"),
             ).person_pk,
             can_hold_role=["formatting", "first_editor"],
@@ -104,7 +103,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="O. Bleu"),
             ).person_pk,
             can_hold_role=[
@@ -124,7 +123,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="Patricia Parker"),
             ).person_pk,
             can_hold_role=[
@@ -144,7 +143,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="S. Bexar"),
             ).person_pk,
             can_hold_role=[
@@ -165,7 +164,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="T. Langfeld"),
             ).person_pk,
             can_hold_role=["formatting", "first_editor"],
@@ -173,7 +172,7 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
         RpcPersonFactory(
-            datatracker_person__datatracker_id=api.create_demo_person(
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="U. Garrison"),
             ).person_pk,
             can_hold_role=["formatting"],

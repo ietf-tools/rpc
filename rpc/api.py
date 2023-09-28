@@ -12,8 +12,8 @@ def rpc_person(request):
     response = []
     # use bulk endpoint to get names
 
-    with get_api_client() as api_client:
-        api = rpcapi.DefaultApi(api_client)
+    with ApiClient() as api_client:
+        api = rpcapi_client.DefaultApi(api_client)
         name_map = api.get_persons(
             list(
                 RpcPerson.objects.values_list(

@@ -4,21 +4,24 @@
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <DocumentTable
-              :columns="columns"
-              :data="documents"
-              row-key="id"
-            />
+            <div v-if="!pending">
+              <DocumentTable
+                :columns="columns"
+                :data="documents.queue.filter(d => d.assignments.length > 0)"
+                row-key="id"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error" :caption="state.notifDialogMessage" />
+    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error"
+                        :caption="state.notifDialogMessage"/>
   </div>
 </template>
 
 <script setup>
-import { DateTime } from 'luxon'
+import {DateTime} from 'luxon'
 
 definePageMeta({
   layout: 'queue'
@@ -79,10 +82,15 @@ const columns = [
   }
 ]
 
-const documents = [
-  { id: 1, name: 'draft-ietf-foo-bar-04', estimatedCompletion: '2023-07-25', deadline: '2023-08-28', currentState: 'EDIT', status: 'overdue', holder: { id: 1, name: 'Ada Lovelace' } },
-  { id: 2, name: 'draft-irtf-abcrg-edf-05', estimatedCompletion: '2023-07-19', deadline: '2023-08-27', currentState: 'RE', status: 'overdue', holder: { id: 2, name: 'Marie Curie' } },
-  { id: 3, name: 'draft-irtf-abcrg-edf-05', deadline: '2023-08-27', currentState: 'AUTH48', status: 'on track', holder: { id: 2, name: 'Marie Curie' } },
-]
+const {data: documents, pending, refresh} = await useFetch('/api/rpc/queue/', {
+  baseURL: '/',
+  server: false,
+})
+
+// const documents = [
+//   { id: 1, name: 'draft-ietf-foo-bar-04', estimatedCompletion: '2023-07-25', deadline: '2023-08-28', currentState: 'EDIT', status: 'overdue', holder: { id: 1, name: 'Ada Lovelace' } },
+//   { id: 2, name: 'draft-irtf-abcrg-edf-05', estimatedCompletion: '2023-07-19', deadline: '2023-08-27', currentState: 'RE', status: 'overdue', holder: { id: 2, name: 'Marie Curie' } },
+//   { id: 3, name: 'draft-irtf-abcrg-edf-05', deadline: '2023-08-27', currentState: 'AUTH48', status: 'on track', holder: { id: 2, name: 'Marie Curie' } },
+// ]
 
 </script>

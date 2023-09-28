@@ -8,7 +8,7 @@
             <div v-if="!pending">
               <DocumentTable
                 :columns="columns"
-                :data="documents"
+                :data="documents.submitted"
                 row-key="id"
               />
             </div>
@@ -63,8 +63,7 @@ const columns = [
 
 const {data: documents, pending, refresh} = await useFetch('/api/rpc/submissions/', {
   baseURL: '/',
-  server: false,
-  transform: (resp) => resp.submitted
+  server: false
 })
 
 </script>

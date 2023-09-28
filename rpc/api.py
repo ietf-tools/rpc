@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import RpcPerson
+from .models import RfcToBe, RpcPerson
 
 
 @with_rpcapi
@@ -123,4 +123,15 @@ def queue(request):
         ]
     }
     """
-    return JsonResponse({"queue": []}, safe=False)
+    return JsonResponse({"queue": [
+        {
+            "name": str(rfc_to_be),
+            "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
+            "cluster": rfc_to_be.cluster,
+            "action_holders": [],
+            "assignments": [],
+            "requested_approvals": [],
+            "labels": [],
+        }
+        for rfc_to_be in RfcToBe.objects.all()
+    ]}, safe=False)

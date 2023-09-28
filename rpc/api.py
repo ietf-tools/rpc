@@ -2,8 +2,8 @@
 
 from django.http import JsonResponse
 
-import rpcapi
-from datatracker.models import get_api_client  # todo put this somewhere real
+import rpcapi_client
+from datatracker.rpcapi import ApiClient
 
 from .models import RpcPerson
 
@@ -79,8 +79,8 @@ def submissions(request):
     This api will filter those out.
     """
     submitted = []
-    with get_api_client() as api_client:
-        api = rpcapi.DefaultApi(api_client)
+    with ApiClient() as api_client:
+        api = rpcapi_client.DefaultApi(api_client)
         response = api.submitted_to_rpc()
         submitted.extend(response.to_dict()["submitted_to_rpc"])
     return JsonResponse({"submitted": submitted}, safe=False)

@@ -192,6 +192,8 @@ const currentTab = computed(() => {
 const { data: documents, pending, refresh } = await useFetch('/api/rpc/submissions/', {
   baseURL: '/',
   server: false,
+  lazy: true,
+  data: () => ([]),
   transform: (resp) => resp?.submitted ?? [],
   onRequestError ({ error }) {
     state.notifDialogMessage = error

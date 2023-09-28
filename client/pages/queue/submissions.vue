@@ -4,21 +4,25 @@
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <DocumentTable
-              :columns="columns"
-              :data="documents"
-              row-key="id"
-            />
+            <!-- Check pending - avoids console message about data being null -->
+            <div v-if="!pending">
+              <DocumentTable
+                :columns="columns"
+                :data="documents"
+                row-key="id"
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error" :caption="state.notifDialogMessage" />
+    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error"
+                        :caption="state.notifDialogMessage"/>
   </div>
 </template>
 
 <script setup>
-import { DateTime } from 'luxon'
+import {DateTime} from 'luxon'
 
 definePageMeta({
   layout: 'queue'
@@ -40,7 +44,13 @@ const columns = [
     label: 'Document',
     field: 'name',
     classes: 'text-sm font-medium',
-    link: row => `/docs/${row.id}`
+    link: row => `http://localhost:8000/doc/${row.name}`
+  },
+  {
+    key: 'stream',
+    label: 'Stream',
+    field: 'stream',
+    classes: 'text-sm font-medium'
   },
   {
     key: 'submitted',
@@ -51,10 +61,10 @@ const columns = [
   }
 ]
 
-const documents = [
-  { id: 1, name: 'draft-ietf-foo-bar-03', submitted: '2023-08-28' },
-  { id: 2, name: 'draft-ietf-foo-basbis-19', submitted: '2023-08-27' },
-  { id: 3, name: 'draft-irtf-abcrg-edf-05', submitted: '2023-08-27' },
-]
+const {data: documents, pending, refresh} = await useFetch('/api/rpc/submissions/', {
+  baseURL: '/',
+  server: false,
+  transform: (resp) => resp.submitted
+})
 
 </script>

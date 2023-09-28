@@ -26,4 +26,5 @@ urlpatterns = [
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("login/", views.index),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
+    path("api/rpc/submissions/", rpc_api.submissions),
 ]

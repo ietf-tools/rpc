@@ -7,7 +7,7 @@ from django.db.utils import IntegrityError
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from ...factories import RpcPersonFactory
+from ...factories import RfcToBeFactory, RpcPersonFactory
 
 
 class Command(BaseCommand):
@@ -181,15 +181,29 @@ class Command(BaseCommand):
             manager=bjenkins,
         )
 
-    # todo bring this to life
-    def create_documents(self):
-        # WgDraftFactory(states=[("draft-iesg", "pub-req")])
-        #
-        # # Draft sent to RPC and in progress as an RfcToBe
-        # RfcToBeFactory(
-        #     rfc_number=None,
-        #     draft__states=[("draft-iesg", "rfcqueue")]
-        # )
+    @with_rpcapi
+    def create_documents(self, *, rpcapi: rpcapi_client.DefaultApi):
+        rpcapi.create_demo_draft(
+            rpcapi_client.CreateDemoDraftRequest(
+                name="draft-ietf-foo-pubreq-00",
+                states=[("draft-iesg", "pub-req")],
+            )
+        )
+
+        # Draft sent to RPC and in progress as an RfcToBe
+        queued = rpcapi.create_demo_draft(
+            rpcapi_client.CreateDemoDraftRequest(
+                name="draft-ietf-foo-in-queue-00",
+                states = [("draft-iesg", "rfcqueue")]
+            )
+        )
+        try:
+            RfcToBeFactory(
+                rfc_number=None,
+                draft__pk=queued.doc_id,
+            )
+        except IntegrityError:
+            pass
         #
         # # Draft published as an RFC
         # rfc_number = next_rfc_number()[0]

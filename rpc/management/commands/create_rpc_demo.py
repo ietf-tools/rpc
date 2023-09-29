@@ -227,8 +227,11 @@ class Command(BaseCommand):
         **kwargs are passed through to the create_demo_draft call
         """
         dtdoc = rpcapi.create_demo_draft(rpcapi_client.CreateDemoDraftRequest(**kwargs))
-        RfcToBeFactory(
-            rfc_number=rfc_number,
-            draft__pk=dtdoc.doc_id,
-            draft__name=dtdoc.name,
-        )
+        try:
+            RfcToBeFactory(
+                rfc_number=rfc_number,
+                draft__pk=dtdoc.doc_id,
+                draft__name=dtdoc.name,
+            )
+        except IntegrityError:
+            print(f">>> Warning: Failed to create RfcToBe for {dtdoc.name}, already exists?")

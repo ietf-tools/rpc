@@ -35,13 +35,13 @@
 const secondaryNavigation = [
   { name: 'All-time', href: '#', current: true },
   { name: 'Last 30 days', href: '#', current: false },
-  { name: 'Last 90 days', href: '#', current: false },
+  { name: 'Last 90 days', href: '#', current: false }
 ]
 
 const stats = [
   { name: 'Submissions', value: '17', change: '+4.75%', changeType: 'positive' },
   { name: 'Pending assignment', value: '10', change: '+54.02%', changeType: 'negative' },
   { name: 'Exceptions', value: '3', change: '-1.39%', changeType: 'negative' },
-  { name: 'In Process', value: '23', change: '+10.18%', changeType: 'negative' },
+  { name: 'In Process', value: '23', change: '+10.18%', changeType: 'negative' }
 ]
 </script>

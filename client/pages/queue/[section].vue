@@ -14,6 +14,9 @@
         <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week ago)</em></div>
       </div>
     </div>
+
+    <!-- TABS -->
+
     <div class="flex justify-center items-center">
       <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4" aria-label="Tabs">
         <NuxtLink
@@ -41,6 +44,9 @@
         <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300" aria-hidden="true" />
       </button>
     </div>
+
+    <!-- DATA TABLE -->
+
     <div class="mt-2 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -61,10 +67,16 @@
 
 <script setup>
 import { DateTime } from 'luxon'
+import Fuse from 'fuse.js/dist/fuse.basic.esm'
+import { useSiteStore } from '@/stores/site'
 
 // ROUTING
 
 const route = useRoute()
+
+// STORES
+
+const siteStore = useSiteStore()
 
 // DATA
 
@@ -198,15 +210,35 @@ const currentTab = computed(() => {
 })
 
 const filteredDocuments = computed(() => {
+  let docs = []
+
+  // -> Filter based on selected tab
   switch (currentTab.value) {
     case 'submissions':
-      return documents.value
+      docs = documents.value
+      break
     case 'pending':
-      return documents.value?.filter(d => d.assignments?.length === 0)
+      docs = documents.value?.filter(d => d.assignments?.length === 0)
+      break
     case 'inprocess':
-      return documents.value?.filter(d => d.assignments?.length > 0)
+      docs = documents.value?.filter(d => d.assignments?.length > 0)
+      break
     default:
-      return []
+      docs = []
+      break
+  }
+
+  // -> Fuzzy search
+  if (siteStore.search) {
+    const fuse = new Fuse(docs, {
+      keys: [
+        'name',
+        'rfc'
+      ]
+    })
+    return fuse.search(siteStore.search).map(n => n.item)
+  } else {
+    return docs
   }
 })
 
@@ -230,5 +262,10 @@ const { data: documents, pending, refresh } = await useFetch(
       state.notifDialogMessage = response.statusText ?? error
       state.notifDialogShown = true
     }
-  })
+  }
+)
+
+onMounted(() => {
+  siteStore.search = ''
+})
 </script>

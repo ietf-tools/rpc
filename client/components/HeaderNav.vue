@@ -12,7 +12,7 @@
       <form class="relative flex flex-1" action="#" method="GET">
         <label for="search-field" class="sr-only">Search</label>
         <Icon name="uil:search" class="pointer-events-none absolute inset-y-0 left-0 h-full w-5 text-gray-400" aria-hidden="true" />
-        <input id="search-field" class="block h-full w-full border-0 py-0 pl-8 pr-0 bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-200 placeholder:text-gray-400 dark:placeholder:text-neutral-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search" />
+        <input id="search-field" v-model="siteStore.search" class="block h-full w-full border-0 py-0 pl-8 pr-0 bg-white dark:bg-neutral-900 text-gray-900 dark:text-neutral-200 placeholder:text-gray-400 dark:placeholder:text-neutral-400 focus:ring-0 sm:text-sm" placeholder="Search..." type="search" name="search" />
       </form>
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <!-- Site Theme Switcher -->

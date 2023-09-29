@@ -5,6 +5,10 @@ export default defineNuxtConfig({
     classSuffix: '',
     fallback: 'light'
   },
+  devServer: {
+    port: 3000,
+    url: 'http://localhost:8088'
+  },
   devtools: {
     enabled: true
   },

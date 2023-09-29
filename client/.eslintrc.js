@@ -8,8 +8,10 @@ module.exports = {
     'vue/setup-compiler-macros': true
   },
   extends: [
+    'standard',
+    'plugin:nuxt/recommended'
     // 'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
-    'plugin:vue/vue3-strongly-recommended' // Priority B: Strongly Recommended (Improving Readability)
+    // 'plugin:vue/vue3-strongly-recommended' // Priority B: Strongly Recommended (Improving Readability)
   ],
   globals: {
     d3: true
@@ -25,6 +27,7 @@ module.exports = {
     'vue/script-setup-uses-vars': 'error',
     'vue/multi-word-component-names': 'off',
     'vue/max-attributes-per-line': 'off',
-    'vue/singleline-html-element-content-newline': 'off'
+    'vue/singleline-html-element-content-newline': 'off',
+    'no-undef': 'off'
   }
 }

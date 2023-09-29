@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-const colorMode = useColorMode()
+// const colorMode = useColorMode()
 
 useHead({
   link: [
@@ -25,7 +25,7 @@ useHead({
     class: 'h-full'
   },
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - RPC Production Center` : 'RPC Production Center';
+    return titleChunk ? `${titleChunk} - RPC Production Center` : 'RPC Production Center'
   }
 })
 </script>

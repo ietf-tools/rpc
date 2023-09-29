@@ -3,7 +3,7 @@
     <table class="min-w-full divide-y divide-gray-300 dark:divide-neutral-600">
       <thead class="bg-gray-50 dark:bg-neutral-800">
         <tr>
-          <th class="w-4">&nbsp;</th>
+          <th class="pl-3 w-9">&nbsp;</th>
           <th
             v-for="col of columns"
             :key="col.key"
@@ -47,7 +47,7 @@
       </tbody>
     </table>
     <div v-if="loading" class="w-full">
-      <div class="h-0.5 w-full bg-emerald-100 overflow-hidden">
+      <div class="h-0.5 w-full bg-emerald-100 dark:bg-emerald-900 overflow-hidden">
         <div class="progress w-full h-full bg-emerald-500 left-right" />
       </div>
     </div>
@@ -69,7 +69,7 @@ import { isFunction, orderBy } from 'lodash-es'
 const props = defineProps({
   data: {
     type: Array,
-    default: () => ([]),
+    default: () => ([])
   },
   columns: {
     type: Array,
@@ -88,7 +88,7 @@ const props = defineProps({
 
 // DATA
 
-const state =  reactive({
+const state = reactive({
   sortField: '',
   sortDirection: 'asc'
 })
@@ -121,17 +121,17 @@ function sortBy (fieldName) {
 }
 
 .left-right {
-    transform-origin: 0% 50%;
+  transform-origin: 0% 50%;
 }
-    @keyframes progress {
-    0% {
-        transform:  translateX(0) scaleX(0);
-    }
-    40% {
-        transform:  translateX(0) scaleX(0.4);
-    }
-    100% {
-        transform:  translateX(100%) scaleX(0.5);
-    }
+@keyframes progress {
+  0% {
+    transform: translateX(0) scaleX(0);
+  }
+  40% {
+    transform: translateX(0) scaleX(0.4);
+  }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
 }
 </style>

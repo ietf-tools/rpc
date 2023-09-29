@@ -14,30 +14,40 @@
         <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week ago)</em></div>
       </div>
     </div>
-    <nav class="mx-auto isolate flex divide-x divide-gray-200 dark:divider-neutral-700 rounded-lg shadow max-w-7xl my-4" aria-label="Tabs">
-      <NuxtLink
-        v-for="(tab, tabIdx) in tabs"
-        :key="tab.id"
-        :href="`/queue/${tab.id}`"
-        :class="[
-          tab.id === currentTab ? 'bg-white dark:bg-violet-950 text-violet-700 dark:text-violet-300' : 'bg-white dark:bg-neutral-900 text-gray-500 dark:text-neutral-400 hover:text-gray-700 hover:dark:text-neutral-200',
-          tabIdx === 0 ? 'rounded-l-lg' : '', tabIdx === tabs.length - 1 ? 'rounded-r-lg' : '',
-          'group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-center text-sm font-medium hover:bg-gray-50 hover:dark:bg-neutral-800 focus:z-10'
-        ]"
-        :aria-current="tab.id === currentTab ? 'page' : undefined"
-      >
-        <Icon :name="tab.icon" class="h-5 w-5 mr-2" aria-hidden="true" />
-        <span>{{ tab.name }}</span>
-        <span aria-hidden="true" :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']" />
-      </NuxtLink>
-    </nav>
-    <div class="mt-8 flow-root">
+    <div class="flex justify-center items-center">
+      <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4" aria-label="Tabs">
+        <NuxtLink
+          v-for="(tab, tabIdx) in tabs"
+          :key="tab.id"
+          :href="`/queue/${tab.id}`"
+          :class="[
+            tab.id === currentTab ? 'bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-300' : 'bg-white dark:bg-neutral-700 text-gray-500 dark:text-neutral-300 hover:text-gray-700 hover:dark:text-neutral-200',
+            tabIdx === 0 ? 'rounded-l-lg' : '', tabIdx === tabs.length - 1 ? 'rounded-r-lg' : '',
+            'group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-center text-sm font-medium hover:bg-gray-50 hover:dark:bg-neutral-800 focus:z-10'
+          ]"
+          :aria-current="tab.id === currentTab ? 'page' : undefined"
+        >
+          <Icon :name="tab.icon" class="h-5 w-5 mr-2" aria-hidden="true" />
+          <span>{{ tab.name }}</span>
+          <span aria-hidden="true" :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']" />
+        </NuxtLink>
+      </nav>
+      <button type="button" @click="refresh" class="btn-secondary ml-3">
+        <span class="sr-only">Refresh</span>
+        <Icon name="solar:refresh-line-duotone" size="1.5em" :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']" aria-hidden="true" />
+      </button>
+      <button type="button" @click="" class="btn-secondary ml-3">
+        <span class="sr-only">Filter</span>
+        <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300" aria-hidden="true" />
+      </button>
+    </div>
+    <div class="mt-2 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
             <DocumentTable
               :columns="columns"
-              :data="documents"
+              :data="filteredDocuments"
               row-key="id"
               :loading="pending"
             />
@@ -187,28 +197,30 @@ const currentTab = computed(() => {
   return route.params.section || 'submissions'
 })
 
+const filteredDocuments = computed(() => {
+  switch (currentTab.value) {
+    case 'submissions':
+      return documents.value
+    case 'pending':
+      return documents.value?.filter(d => d.assignments?.length === 0)
+    case 'inprocess':
+      return documents.value?.filter(d => d.assignments?.length > 0)
+    default:
+      return []
+  }
+})
+
 // INIT
 
 const { data: documents, pending, refresh } = await useFetch(
   () => currentTab.value === 'submissions' ? '/api/rpc/submissions/' : '/api/rpc/queue/', {
+    key: 'queue',
     baseURL: '/',
     server: false,
     lazy: true,
     data: () => ([]),
     transform: (resp) => {
-      // choose documents to list
-      if (currentTab.value === 'submissions') {
-        return resp?.submitted ?? []
-      }
-      const docs = resp?.queue ?? []
-      switch (currentTab.value) {
-        case 'pending':
-          return docs.filter(d => d.assignments.length === 0)
-        case 'inprocess':
-          return docs.filter(d => d.assignments.length > 0)
-        default:
-          return []
-      }
+      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : (resp?.queue ?? [])
     },
     onRequestError ({ error }) {
       state.notifDialogMessage = error

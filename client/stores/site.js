@@ -5,5 +5,5 @@ export const useSiteStore = defineStore('site', {
     sidebarIsOpen: false
   }),
   getters: { },
-  actions: { },
+  actions: { }
 })

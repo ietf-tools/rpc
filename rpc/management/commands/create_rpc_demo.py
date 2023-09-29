@@ -191,19 +191,24 @@ class Command(BaseCommand):
         )
 
         # Draft sent to RPC and in progress as an RfcToBe
-        queued = rpcapi.create_demo_draft(
-            rpcapi_client.CreateDemoDraftRequest(
-                name="draft-ietf-foo-in-queue-00",
-                states = [("draft-iesg", "rfcqueue")]
-            )
+        self._demo_rfctobe_factory(
+            rpcapi=rpcapi,
+            name="draft-ietf-tasty-cheese-00",
+            states=[("draft-iesg", "rfcqueue")],
         )
-        try:
-            RfcToBeFactory(
-                rfc_number=None,
-                draft__pk=queued.doc_id,
-            )
-        except IntegrityError:
-            pass
+
+        self._demo_rfctobe_factory(
+            rpcapi=rpcapi,
+            name="draft-ietf-where-is-my-hat-00",
+            states=[("draft-iesg", "rfcqueue")],
+        )
+
+        self._demo_rfctobe_factory(
+            rpcapi=rpcapi,
+            name="draft-irtf-improving-lizard-qol-00",
+            stream="irtf",
+            states=[("draft-iesg", "idexists")],
+        )
         #
         # # Draft published as an RFC
         # rfc_number = next_rfc_number()[0]
@@ -212,3 +217,18 @@ class Command(BaseCommand):
         #     rfc_number=rfc_number,
         #     draft=WgRfcFactory(alias2__name=f"rfc{rfc_number}")
         # )
+
+    @with_rpcapi
+    def _demo_rfctobe_factory(
+        self, *, rpcapi: rpcapi_client.DefaultApi, rfc_number=None, **kwargs
+    ):
+        """Create a document on the back end and generate an RfcToBe linked to it
+
+        **kwargs are passed through to the create_demo_draft call
+        """
+        dtdoc = rpcapi.create_demo_draft(rpcapi_client.CreateDemoDraftRequest(**kwargs))
+        RfcToBeFactory(
+            rfc_number=rfc_number,
+            draft__pk=dtdoc.doc_id,
+            draft__name=dtdoc.name,
+        )

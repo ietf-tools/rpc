@@ -127,6 +127,7 @@ def queue(request):
         {
             "id": rfc_to_be.pk,
             "name": rfc_to_be.draft.name if rfc_to_be.draft else "",
+            "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
             "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
             "cluster": rfc_to_be.cluster,
             "action_holders": [],
@@ -134,5 +135,5 @@ def queue(request):
             "requested_approvals": [],
             "labels": [],
         }
-        for rfc_to_be in RfcToBe.objects.all()
+        for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
     ]}, safe=False)

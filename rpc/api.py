@@ -3,24 +3,22 @@
 from django.http import JsonResponse
 
 import rpcapi_client
-from datatracker.rpcapi import ApiClient
+from datatracker.rpcapi import with_rpcapi
 
-from .models import RpcPerson
+from .models import RfcToBe, RpcPerson
 
 
-def rpc_person(request):
+@with_rpcapi
+def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     response = []
     # use bulk endpoint to get names
-
-    with ApiClient() as api_client:
-        api = rpcapi_client.DefaultApi(api_client)
-        name_map = api.get_persons(
-            list(
-                RpcPerson.objects.values_list(
-                    "datatracker_person__datatracker_id", flat=True
-                )
+    name_map = rpcapi.get_persons(
+        list(
+            RpcPerson.objects.values_list(
+                "datatracker_person__datatracker_id", flat=True
             )
         )
+    )
 
     for rpc_pers in RpcPerson.objects.all():
         capabilities = []
@@ -44,7 +42,8 @@ def rpc_person(request):
     return JsonResponse(response, safe=False)
 
 
-def submissions(request):
+@with_rpcapi
+def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Return documents in datatracker that have been submitted to the RPC but are not yet in the queue
 
     {
@@ -79,10 +78,8 @@ def submissions(request):
     This api will filter those out.
     """
     submitted = []
-    with ApiClient() as api_client:
-        api = rpcapi_client.DefaultApi(api_client)
-        response = api.submitted_to_rpc()
-        submitted.extend(response.to_dict()["submitted_to_rpc"])
+    response = rpcapi.submitted_to_rpc()
+    submitted.extend(response.to_dict()["submitted_to_rpc"])
     return JsonResponse({"submitted": submitted}, safe=False)
 
 
@@ -126,4 +123,16 @@ def queue(request):
         ]
     }
     """
-    return JsonResponse({"queue": []}, safe=False)
+    return JsonResponse({"queue": [
+        {
+            "id": rfc_to_be.pk,
+            "name": str(rfc_to_be),
+            "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
+            "cluster": rfc_to_be.cluster,
+            "action_holders": [],
+            "assignments": [],
+            "requested_approvals": [],
+            "labels": [],
+        }
+        for rfc_to_be in RfcToBe.objects.all()
+    ]}, safe=False)

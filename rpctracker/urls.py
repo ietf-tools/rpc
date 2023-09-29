@@ -27,4 +27,5 @@ urlpatterns = [
     path("login/", views.index),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
+    path("api/rpc/queue/", rpc_api.queue),
 ]

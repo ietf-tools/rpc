@@ -189,34 +189,34 @@ const currentTab = computed(() => {
 
 // INIT
 
-const {data: documents, pending, refresh} = await useFetch(
+const { data: documents, pending, refresh } = await useFetch(
   () => currentTab.value === 'submissions' ? '/api/rpc/submissions/' : '/api/rpc/queue/', {
-  baseURL: '/',
-  server: false,
-  lazy: true,
-  data: () => ([]),
-  transform: (resp) => {
-    // choose documents to list
-    if (currentTab.value === 'submissions') {
-      return resp?.submitted ?? []
+    baseURL: '/',
+    server: false,
+    lazy: true,
+    data: () => ([]),
+    transform: (resp) => {
+      // choose documents to list
+      if (currentTab.value === 'submissions') {
+        return resp?.submitted ?? []
+      }
+      const docs = resp?.queue ?? []
+      switch (currentTab.value) {
+        case 'pending':
+          return docs.filter(d => d.assignments.length === 0)
+        case 'inprocess':
+          return docs.filter(d => d.assignments.length > 0)
+        default:
+          return []
+      }
+    },
+    onRequestError ({ error }) {
+      state.notifDialogMessage = error
+      state.notifDialogShown = true
+    },
+    onResponseError ({ response, error }) {
+      state.notifDialogMessage = response.statusText ?? error
+      state.notifDialogShown = true
     }
-    const docs = resp?.queue ?? []
-    switch (currentTab.value) {
-      case 'pending':
-        return docs.filter(d => d.assignments.length === 0)
-      case 'inprocess':
-        return docs.filter(d => d.assignments.length > 0)
-      default:
-        return []
-    }
-  },
-  onRequestError ({ error }) {
-    state.notifDialogMessage = error
-    state.notifDialogShown = true
-  },
-  onResponseError ({ response, error }) {
-    state.notifDialogMessage = response.statusText ?? error
-    state.notifDialogShown = true
-  }
-})
+  })
 </script>

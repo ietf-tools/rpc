@@ -126,7 +126,7 @@ def queue(request):
     return JsonResponse({"queue": [
         {
             "id": rfc_to_be.pk,
-            "name": str(rfc_to_be),
+            "name": rfc_to_be.draft.name if rfc_to_be.draft else "",
             "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
             "cluster": rfc_to_be.cluster,
             "action_holders": [],

@@ -24,7 +24,7 @@
       <tbody v-if="!loading" class="text-sm divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
         <tr v-for="row of rows" :key="row[rowKey]">
           <td class="pl-3">
-            <Icon name="uil:file-alt" size="1.25rem" class="text-gray-400 dark:text-neutral-500" />
+            <Icon name="uil:file-alt" size="1.25em" class="text-gray-400 dark:text-neutral-500" />
           </td>
           <td
             v-for="col of columns"

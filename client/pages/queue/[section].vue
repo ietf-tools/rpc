@@ -10,15 +10,20 @@
         </p>
       </div>
       <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
-        <div class="text-sm">Backlog <strong class="text-rose-700">larger <Icon name="uil:angle-double-up" class="text-lg -mt-0.5" /></strong> than a week ago</div>
-        <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week ago)</em></div>
+        <div class="text-sm">Backlog <strong class="text-rose-700">larger
+          <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>
+        </strong> than a week ago
+        </div>
+        <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week
+          ago)</em></div>
       </div>
     </div>
 
     <!-- TABS -->
 
     <div class="flex justify-center items-center">
-      <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4" aria-label="Tabs">
+      <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4"
+           aria-label="Tabs">
         <NuxtLink
           v-for="(tab, tabIdx) in tabs"
           :key="tab.id"
@@ -30,18 +35,22 @@
           ]"
           :aria-current="tab.id === currentTab ? 'page' : undefined"
         >
-          <Icon :name="tab.icon" class="h-5 w-5 mr-2" aria-hidden="true" />
+          <Icon :name="tab.icon" class="h-5 w-5 mr-2" aria-hidden="true"/>
           <span>{{ tab.name }}</span>
-          <span aria-hidden="true" :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']" />
+          <span aria-hidden="true"
+                :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']"/>
         </NuxtLink>
       </nav>
       <button type="button" @click="refresh" class="btn-secondary ml-3">
         <span class="sr-only">Refresh</span>
-        <Icon name="solar:refresh-line-duotone" size="1.5em" :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']" aria-hidden="true" />
+        <Icon name="solar:refresh-line-duotone" size="1.5em"
+              :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
+              aria-hidden="true"/>
       </button>
       <button type="button" @click="" class="btn-secondary ml-3">
         <span class="sr-only">Filter</span>
-        <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300" aria-hidden="true" />
+        <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
+              aria-hidden="true"/>
       </button>
     </div>
 
@@ -61,7 +70,8 @@
         </div>
       </div>
     </div>
-    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error" :caption="state.notifDialogMessage" />
+    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error"
+                        :caption="state.notifDialogMessage"/>
   </div>
 </template>
 
@@ -95,6 +105,14 @@ const tabs = [
 
 // COMPUTED
 
+const deadlineCol = {
+  key: 'deadline',
+  label: 'Deadline',
+  field: 'deadline',
+  format: val => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+  classes: 'text-xs'
+}
+
 const columns = computed(() => {
   const cols = [
     {
@@ -103,21 +121,20 @@ const columns = computed(() => {
       field: 'name',
       classes: 'text-sm font-medium',
       link: row => `/docs/${row.name}`
-    },
-    {
-      key: 'stream',
-      label: 'Stream',
-      field: 'stream',
-      classes: 'text-sm font-medium'
-    },
-    {
+    }
+  ]
+  if (['submissions', 'exceptions'].includes(currentTab.value)) {
+    cols.push({
       key: 'submitted',
       label: 'Submitted',
       field: 'submitted',
-      format: val => DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY),
+      format: val => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
       classes: 'text-xs'
-    }
-  ]
+    })
+  }
+  if (currentTab.value === 'pending') {
+    cols.push(deadlineCol)
+  }
   if (currentTab.value === 'published') {
     cols.unshift({
       key: 'rfc',
@@ -143,13 +160,7 @@ const columns = computed(() => {
         format: val => val?.name || 'Unknown',
         link: row => `/team/${row.holder?.id}`
       },
-      {
-        key: 'deadline',
-        label: 'Deadline',
-        field: 'deadline',
-        format: val => DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY),
-        classes: 'text-xs'
-      }
+      deadlineCol
     ])
   }
   if (currentTab.value === 'inprocess') {
@@ -221,7 +232,10 @@ const filteredDocuments = computed(() => {
       docs = documents.value?.filter(d => d.assignments?.length === 0)
       break
     case 'inprocess':
-      docs = documents.value?.filter(d => d.assignments?.length > 0)
+      docs = documents.value?.filter(d => d.assignments?.length > 0).map(d => ({
+        ...d,
+        currentState: `${d.assignments[0].role} (${d.assignments[0].state})`
+      }))
       break
     default:
       docs = []

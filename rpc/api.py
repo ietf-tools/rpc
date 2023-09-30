@@ -143,9 +143,10 @@ def queue(request):
                     "assignments": [
                         {
                             "name": assignment.person.datatracker_person.plain_name(),
+                            "role": assignment.role.name,
                             "state": assignment.state,
                         }
-                        for assignment in rfc_to_be.assignment_set.all()
+                        for assignment in rfc_to_be.assignment_set.exclude(state="done")
                     ],
                     "requested_approvals": [],
                     "labels": [],

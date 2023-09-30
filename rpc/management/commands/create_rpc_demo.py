@@ -1,6 +1,8 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
+import datetime
+
 from django.core.management.base import BaseCommand
 from django.db.utils import IntegrityError
 
@@ -201,6 +203,8 @@ class Command(BaseCommand):
             rpcapi=rpcapi,
             name="draft-ietf-where-is-my-hat-00",
             states=[("draft-iesg", "rfcqueue")],
+            external_deadline=datetime.datetime.now(datetime.timezone.utc)
+            + datetime.timedelta(days=30),
         )
 
         self._demo_rfctobe_factory(
@@ -220,18 +224,30 @@ class Command(BaseCommand):
 
     @with_rpcapi
     def _demo_rfctobe_factory(
-        self, *, rpcapi: rpcapi_client.DefaultApi, rfc_number=None, **kwargs
+        self,
+        *,
+        rpcapi: rpcapi_client.DefaultApi,
+        name,
+        states=None,
+        stream="ietf",
+        **kwargs,
     ):
         """Create a document on the back end and generate an RfcToBe linked to it
 
-        **kwargs are passed through to the create_demo_draft call
+        **kwargs are passed through to the RfcToBeFactory
         """
-        dtdoc = rpcapi.create_demo_draft(rpcapi_client.CreateDemoDraftRequest(**kwargs))
+        dtdoc = rpcapi.create_demo_draft(
+            rpcapi_client.CreateDemoDraftRequest(
+                name=name, states=states, stream=stream
+            )
+        )
         try:
             RfcToBeFactory(
-                rfc_number=rfc_number,
+                **kwargs,
                 draft__pk=dtdoc.doc_id,
                 draft__name=dtdoc.name,
             )
         except IntegrityError:
-            print(f">>> Warning: Failed to create RfcToBe for {dtdoc.name}, already exists?")
+            print(
+                f">>> Warning: Failed to create RfcToBe for {dtdoc.name}, already exists?"
+            )

@@ -10,19 +10,22 @@ import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
 from ...factories import RfcToBeFactory, RpcPersonFactory
+from ...models import RpcPerson
 
 
 class Command(BaseCommand):
     help = "Populate data for RPC Tools Refresh demo"
 
     def handle(self, *args, **options):
+        self.people: dict[str, RpcPerson] = {}
         self.create_rpc_people()
         self.create_documents()
 
     @with_rpcapi
     def create_rpc_people(self, *, rpcapi: rpcapi_client.DefaultApi):
         # From "Manage Team Members" wireframe
-        bjenkins = RpcPersonFactory(
+
+        self.people["bjenkins"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="B. Jenkins"),
             ).person_pk,
@@ -43,23 +46,23 @@ class Command(BaseCommand):
                 "xmlfmt-intermediate",
             ],
         )
-        RpcPersonFactory(
+        self.people["atravis"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="A. Travis"),
             ).person_pk,
             can_hold_role=["formatting", "first_editor", "final_review_editor"],
             capable_of=["codecomp-abnf", "clusters-beginner", "ianaconsid-beginner"],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["cbrown"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="Chuck Brown"),
             ).person_pk,
             can_hold_role=["formatting"],
             capable_of=["clusters-beginner"],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["csimmons"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="C. Simmons"),
             ).person_pk,
@@ -76,9 +79,9 @@ class Command(BaseCommand):
                 "ianaconsid-beginner",
                 "xmlfmt-intermediate",
             ],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["ffermat"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="F. Fermat"),
             ).person_pk,
@@ -95,17 +98,17 @@ class Command(BaseCommand):
                 "ianaconsid-beginner",
                 "xmlfmt-expert",
             ],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["kstrawberry"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="K. Strawberry"),
             ).person_pk,
             can_hold_role=["formatting", "first_editor"],
             capable_of=["ianaconsid-beginner", "xmlfmt-beginner"],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["obleu"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="O. Bleu"),
             ).person_pk,
@@ -123,9 +126,9 @@ class Command(BaseCommand):
                 "ianaconsid-intermediate",
                 "xmlfmt-intermediate",
             ],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["pparker"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="Patricia Parker"),
             ).person_pk,
@@ -143,9 +146,9 @@ class Command(BaseCommand):
                 "ianaconsid-expert",
                 "xmlfmt-expert",
             ],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["sbexar"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="S. Bexar"),
             ).person_pk,
@@ -164,23 +167,23 @@ class Command(BaseCommand):
                 "ianaconsid-expert",
                 "xmlfmt-expert",
             ],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["tlangfeld"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="T. Langfeld"),
             ).person_pk,
             can_hold_role=["formatting", "first_editor"],
             capable_of=["ianaconsid-beginner", "xmlfmt-beginner"],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
-        RpcPersonFactory(
+        self.people["ugarrison"] = RpcPersonFactory(
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="U. Garrison"),
             ).person_pk,
             can_hold_role=["formatting"],
             capable_of=["xmlfmt-expert"],
-            manager=bjenkins,
+            manager=self.people["bjenkins"],
         )
 
     @with_rpcapi
@@ -251,3 +254,4 @@ class Command(BaseCommand):
             print(
                 f">>> Warning: Failed to create RfcToBe for {dtdoc.name}, already exists?"
             )
+

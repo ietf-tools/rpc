@@ -24,7 +24,8 @@ class DatatrackerPerson(models.Model):
         try:
             person = rpcapi.get_person_by_id(int(self.datatracker_id))
         except ApiException as e:
-            print(f"ApiException: {e}")
+            if e.status != 404:
+                print(f"Unexpected status: {e.status}")
             person = None
         return None if person is None else person.plain_name
 
@@ -35,12 +36,19 @@ class Document(models.Model):
     # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
     datatracker_id = models.BigIntegerField(unique=True)
 
+    name = models.CharField(
+        max_length=255, unique=True, help_text="Name of draft"
+    )
+
+    stream = models.CharField(
+        max_length=32, help_text="Stream of draft"
+    )
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
     labels = models.ManyToManyField("rpc.Label", through="DocumentLabel")
 
     def __str__(self):
-        return f"Doc {self.datatracker_id}"
+        return self.name
 
 
 class DocumentLabel(models.Model):

@@ -8,7 +8,7 @@ from django.utils import timezone
 
 
 class RpcPerson(models.Model):
-    datatracker_person = models.ForeignKey(
+    datatracker_person = models.OneToOneField(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     can_hold_role = models.ManyToManyField("RpcRole")
@@ -17,7 +17,7 @@ class RpcPerson(models.Model):
     manager = models.ForeignKey(
         "RpcPerson",
         null=True,
-        on_delete=models.PROTECT,
+        on_delete=models.RESTRICT,
         limit_choices_to={"can_hold_role__slug": "manager"},
         related_name="managed_people",
     )

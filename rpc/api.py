@@ -33,7 +33,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
         response.append(
             dict(
                 id=rpc_pers.pk,
-                name=name or rpc_pers.plain_name(),
+                name=name or rpc_pers.datatracker_person.plain_name(),
                 capabilities=capabilities,
                 roles=roles,
             )
@@ -94,10 +94,9 @@ def queue(request):
                     [
                         {
                             "name": "some persons name", # if there is an action holder (may evolve to a datatracker person pk)
-                            "deadline" : "yyyy-mm-dd", # if the action holder has a deadline
+                            "since" : "yyyy-mm-ddThh:mm:ss",  # time when was the action holder was added
+                            "deadline" : "yyyy-mm-ddThh:mm:ss", # if the action holder has a deadline
                             "comment" : "whatever the comment string contained",
-                            "by" : "some rpc person's name", # May evolve to be a rpcperson_pk
-                            "time" : "time of the comment"
                         }
                         ...
                     ]
@@ -123,16 +122,37 @@ def queue(request):
         ]
     }
     """
-    return JsonResponse({"queue": [
+    return JsonResponse(
         {
-            "id": rfc_to_be.pk,
-            "name": str(rfc_to_be),
-            "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
-            "cluster": rfc_to_be.cluster,
-            "action_holders": [],
-            "assignments": [],
-            "requested_approvals": [],
-            "labels": [],
-        }
-        for rfc_to_be in RfcToBe.objects.all()
-    ]}, safe=False)
+            "queue": [
+                {
+                    "id": rfc_to_be.pk,
+                    "name": rfc_to_be.draft.name if rfc_to_be.draft else "",
+                    "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
+                    "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
+                    "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,
+                    "action_holders": [
+                        {
+                            "name": ah.datatracker_person.plain_name(),
+                            "deadline": ah.deadline,
+                            "since": ah.since_when,
+                            "comment": ah.comment,
+                        }
+                        for ah in rfc_to_be.actionholder_set.filter(completed__isnull=True)
+                    ],
+                    "assignments": [
+                        {
+                            "name": assignment.person.datatracker_person.plain_name(),
+                            "role": assignment.role.name,
+                            "state": assignment.state,
+                        }
+                        for assignment in rfc_to_be.assignment_set.exclude(state="done")
+                    ],
+                    "requested_approvals": [],
+                    "labels": [],
+                }
+                for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
+            ]
+        },
+        safe=False,
+    )

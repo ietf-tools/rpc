@@ -1,6 +1,7 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
+import datetime
 import factory
 
 from django.db.models import Max
@@ -28,6 +29,7 @@ from .models import (
 class RpcPersonFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RpcPerson
+        django_get_or_create = ("datatracker_person",)
 
     datatracker_person = factory.SubFactory(
         "datatracker.factories.DatatrackerPersonFactory"
@@ -109,6 +111,9 @@ class RfcToBeFactory(factory.django.DjangoModelFactory):
     intended_std_level = factory.LazyAttribute(lambda o: o.submitted_std_level)
     intended_boilerplate = factory.LazyAttribute(lambda o: o.submitted_boilerplate)
     intended_stream = factory.LazyAttribute(lambda o: o.submitted_stream)
+    external_deadline = factory.Faker(
+        "date_time_between", start_date="+1d", end_date="+15d", tzinfo=datetime.timezone.utc
+    )
 
 
 class AprilFirstRfcToBeFactory(RfcToBeFactory):
@@ -140,6 +145,7 @@ class RpcAuthorCommentFactory(factory.django.DjangoModelFactory):
 class ClusterFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Cluster
+        django_get_or_create = ("number",)
 
     number = factory.LazyFunction(
         lambda: 1 + (Cluster.objects.aggregate(Max("number"))["number__max"] or 0)

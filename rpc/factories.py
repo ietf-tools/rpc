@@ -111,6 +111,9 @@ class RfcToBeFactory(factory.django.DjangoModelFactory):
     intended_std_level = factory.LazyAttribute(lambda o: o.submitted_std_level)
     intended_boilerplate = factory.LazyAttribute(lambda o: o.submitted_boilerplate)
     intended_stream = factory.LazyAttribute(lambda o: o.submitted_stream)
+    external_deadline = factory.Faker(
+        "date_time_between", start_date="+1d", end_date="+15d", tzinfo=datetime.timezone.utc
+    )
 
 
 class AprilFirstRfcToBeFactory(RfcToBeFactory):

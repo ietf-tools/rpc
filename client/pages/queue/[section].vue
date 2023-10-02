@@ -192,7 +192,9 @@ const columns = computed(() => {
     cols.push({
       key: 'cluster',
       label: 'Cluster',
-      field: 'cluster'
+      field: 'cluster',
+      icon: 'pajamas:group',
+      link: val => val ? `/clusters/${val.cluster}` : ''
     })
   }
   if (currentTab.value === 'published') {

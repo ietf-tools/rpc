@@ -117,7 +117,7 @@ const navigation = [
 
 const teams = [
   { id: 1, name: 'Manage RFC Numbers', href: '#', initial: '#', current: false },
-  { id: 2, name: 'Cluster Management', href: '#', initial: 'C', current: false },
+  { id: 2, name: 'Cluster Management', href: '/clusters', initial: 'C', current: false },
   { id: 3, name: 'Legal Requests', href: '#', initial: 'L', current: false },
 ]
 

@@ -9,8 +9,13 @@ from django.db.utils import IntegrityError
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from ...factories import RfcToBeFactory, RpcPersonFactory
-from ...models import RpcPerson
+from ...factories import (
+    AssignmentFactory,
+    ClusterFactory,
+    RfcToBeFactory,
+    RpcPersonFactory,
+)
+from ...models import RfcToBe, RpcPerson
 
 
 class Command(BaseCommand):
@@ -188,11 +193,29 @@ class Command(BaseCommand):
 
     @with_rpcapi
     def create_documents(self, *, rpcapi: rpcapi_client.DefaultApi):
+        # submission, not yet an RfcToBe (not shown on "The Queue" wireframe)
         rpcapi.create_demo_draft(
             rpcapi_client.CreateDemoDraftRequest(
-                name="draft-ietf-foo-pubreq-00",
+                name="draft-ietf-ietf-lizard-qol-00",
                 states=[("draft-iesg", "pub-req")],
             )
+        )
+
+        # submission, in cluster, pending assignment
+        cluster783 = ClusterFactory(number=783)
+        self._demo_rfctobe_factory(
+            rpcapi=rpcapi,
+            name="draft-ietf-foo-bar-03",
+            states=[("draft-iesg", "rfcqueue")],
+            cluster=cluster783,
+            order_in_cluster=1,
+        )
+        self._demo_rfctobe_factory(
+            rpcapi=rpcapi,
+            name="draft-ietf-foo-basbis-19",
+            states=[("draft-iesg", "rfcqueue")],
+            cluster=cluster783,
+            order_in_cluster=2,
         )
 
         # Draft sent to RPC and in progress as an RfcToBe
@@ -201,13 +224,29 @@ class Command(BaseCommand):
             name="draft-ietf-tasty-cheese-00",
             states=[("draft-iesg", "rfcqueue")],
         )
+        AssignmentFactory(
+            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese-00"),
+            role__slug="first_editor",
+            person=self.people["atravis"],
+            state="assigned",
+        )
+        AssignmentFactory(
+            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese-00"),
+            role__slug="formatting",
+            person=self.people["kstrawberry"],
+            state="in progress",
+        )
 
         self._demo_rfctobe_factory(
             rpcapi=rpcapi,
-            name="draft-ietf-where-is-my-hat-00",
+            name="draft-ietf-where-is-my-hat-04",
             states=[("draft-iesg", "rfcqueue")],
-            external_deadline=datetime.datetime.now(datetime.timezone.utc)
-            + datetime.timedelta(days=30),
+        )
+        AssignmentFactory(
+            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-where-is-my-hat-04"),
+            role__slug="second_editor",
+            person=self.people["sbexar"],
+            state="in progress",
         )
 
         self._demo_rfctobe_factory(
@@ -216,6 +255,15 @@ class Command(BaseCommand):
             stream="irtf",
             states=[("draft-iesg", "idexists")],
         )
+        AssignmentFactory(
+            rfc_to_be=RfcToBe.objects.get(
+                draft__name="draft-irtf-improving-lizard-qol-00"
+            ),
+            role__slug="final_review_editor",
+            person=self.people["sbexar"],
+            state="assigned",
+        )
+
         #
         # # Draft published as an RFC
         # rfc_number = next_rfc_number()[0]
@@ -247,11 +295,10 @@ class Command(BaseCommand):
         try:
             RfcToBeFactory(
                 **kwargs,
-                draft__pk=dtdoc.doc_id,
+                draft__datatracker_id=dtdoc.doc_id,
                 draft__name=dtdoc.name,
             )
         except IntegrityError:
             print(
                 f">>> Warning: Failed to create RfcToBe for {dtdoc.name}, already exists?"
             )
-

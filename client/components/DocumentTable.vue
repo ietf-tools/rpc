@@ -39,9 +39,13 @@
               :to="col.link(row)"
               class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100"
             >
+              <Icon v-if="col.icon" :name="col.icon" aria-hidden="true" />
               {{ col.format ? col.format(row[col.field]) : row[col.field] }}
             </NuxtLink>
-            <span v-else>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
+            <span v-else>
+              <Icon v-if="col.icon" :name="col.icon" class="h-2 w-2 mr-1" aria-hidden="true" />
+              {{ col.format ? col.format(row[col.field]) : row[col.field] }}
+            </span>
           </td>
         </tr>
       </tbody>

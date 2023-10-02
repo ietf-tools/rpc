@@ -138,7 +138,9 @@ def queue(request):
                             "since": ah.since_when,
                             "comment": ah.comment,
                         }
-                        for ah in rfc_to_be.actionholder_set.filter(completed__isnull=True)
+                        for ah in rfc_to_be.actionholder_set.filter(
+                            completed__isnull=True
+                        )
                     ],
                     "assignments": [
                         {
@@ -160,9 +162,9 @@ def queue(request):
 
 def clusters(request):
     """Return cluster index"""
-    return JsonResponse({
-        "clusters": [cluster.number for cluster in Cluster.objects.all()]
-    })
+    return JsonResponse(
+        [{"number": cluster.number} for cluster in Cluster.objects.all()], safe=False
+    )
 
 
 def cluster(request, number):
@@ -172,13 +174,15 @@ def cluster(request, number):
     except (Cluster.DoesNotExist, Cluster.MultipleObjectsReturned):
         return JsonResponse({"error": "Not found"}, status=404)
 
-    return JsonResponse({
-        "number": cluster.number,
-        "documents": [
-            {
-                "name": rfctobe.draft.name if rfctobe.draft else None,
-                "rfc_number": rfctobe.rfc_number,
-            }
-            for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
-        ]
-    })
+    return JsonResponse(
+        {
+            "number": cluster.number,
+            "documents": [
+                {
+                    "name": rfctobe.draft.name if rfctobe.draft else None,
+                    "rfc_number": rfctobe.rfc_number,
+                }
+                for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
+            ],
+        }
+    )

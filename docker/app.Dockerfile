@@ -17,6 +17,12 @@ COPY docker/configs/.tmux.conf /home/dev/.tmux.conf
 COPY docker/configs/nginx-proxy.conf /etc/nginx/sites-available/default
 COPY docker/configs/nginx-502.html /var/www/html/502.html
 
+# Enable manage.py completion for bash/zsh
+RUN mkdir -p /usr/local/share/django/extras
+RUN wget -O /usr/local/share/django/extras/django_bash_completion \
+    https://github.com/django/django/raw/main/extras/django_bash_completion
+RUN echo "source /usr/local/share/django/extras/django_bash_completion" >> /home/$USERNAME/.profile
+
 # Copy the startup file
 COPY docker/scripts/app-init.sh /docker-init.sh
 COPY docker/scripts/app-start.sh /docker-start.sh

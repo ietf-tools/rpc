@@ -1,6 +1,7 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
 
+import datetime
 import factory
 
 from django.db.models import Max
@@ -28,6 +29,7 @@ from .models import (
 class RpcPersonFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = RpcPerson
+        django_get_or_create = ("datatracker_person",)
 
     datatracker_person = factory.SubFactory(
         "datatracker.factories.DatatrackerPersonFactory"
@@ -140,6 +142,7 @@ class RpcAuthorCommentFactory(factory.django.DjangoModelFactory):
 class ClusterFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Cluster
+        django_get_or_create = ("number",)
 
     number = factory.LazyFunction(
         lambda: 1 + (Cluster.objects.aggregate(Max("number"))["number__max"] or 0)

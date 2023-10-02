@@ -24,7 +24,8 @@ class DatatrackerPerson(models.Model):
         try:
             person = rpcapi.get_person_by_id(int(self.datatracker_id))
         except ApiException as e:
-            print(f"ApiException: {e}")
+            if e.status != 404:
+                print(f"Unexpected status: {e.status}")
             person = None
         return None if person is None else person.plain_name
 

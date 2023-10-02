@@ -33,7 +33,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
         response.append(
             dict(
                 id=rpc_pers.pk,
-                name=name or rpc_pers.plain_name(),
+                name=name or rpc_pers.datatracker_person.plain_name(),
                 capabilities=capabilities,
                 roles=roles,
             )
@@ -130,7 +130,7 @@ def queue(request):
                     "name": rfc_to_be.draft.name if rfc_to_be.draft else "",
                     "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
                     "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
-                    "cluster": rfc_to_be.cluster,
+                    "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,
                     "action_holders": [
                         {
                             "name": ah.datatracker_person.plain_name(),

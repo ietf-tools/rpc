@@ -8,7 +8,7 @@ from django.utils import timezone
 
 
 class RpcPerson(models.Model):
-    datatracker_person = models.ForeignKey(
+    datatracker_person = models.OneToOneField(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
     )
     can_hold_role = models.ManyToManyField("RpcRole")

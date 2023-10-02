@@ -155,7 +155,7 @@ class Migration(migrations.Migration):
                 ('can_hold_role', models.ManyToManyField(to='rpc.rpcrole')),
                 ('capable_of', models.ManyToManyField(to='rpc.capability')),
                 ('datatracker_person', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
-                ('manager', models.ForeignKey(limit_choices_to={'can_hold_role__slug': 'manager'}, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='managed_people', to='rpc.rpcperson')),
+                ('manager', models.ForeignKey(limit_choices_to={'can_hold_role__slug': 'manager'}, null=True, on_delete=django.db.models.deletion.RESTRICT, related_name='managed_people', to='rpc.rpcperson')),
             ],
         ),
         migrations.CreateModel(

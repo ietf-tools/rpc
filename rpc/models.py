@@ -17,7 +17,7 @@ class RpcPerson(models.Model):
     manager = models.ForeignKey(
         "RpcPerson",
         null=True,
-        on_delete=models.PROTECT,
+        on_delete=models.RESTRICT,
         limit_choices_to={"can_hold_role__slug": "manager"},
         related_name="managed_people",
     )

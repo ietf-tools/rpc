@@ -23,7 +23,8 @@
 
     <div class="flex justify-center items-center">
       <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4"
-           aria-label="Tabs">
+        aria-label="Tabs"
+        >
         <NuxtLink
           v-for="(tab, tabIdx) in tabs"
           :key="tab.id"
@@ -34,11 +35,12 @@
             'group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-center text-sm font-medium hover:bg-gray-50 hover:dark:bg-neutral-800 focus:z-10'
           ]"
           :aria-current="tab.id === currentTab ? 'page' : undefined"
-        >
-          <Icon :name="tab.icon" class="h-5 w-5 mr-2" aria-hidden="true"/>
+          >
+          <Icon :name="tab.icon" :class="['h-5 w-5 mr-2', tab.iconAnimation ? `group-hover:animate-${tab.iconAnimation}` : '']" aria-hidden="true"/>
           <span>{{ tab.name }}</span>
           <span aria-hidden="true"
-                :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']"/>
+            :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']"
+            />
         </NuxtLink>
       </nav>
       <button type="button" @click="refresh" class="btn-secondary ml-3">
@@ -70,8 +72,12 @@
         </div>
       </div>
     </div>
-    <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error"
-                        :caption="state.notifDialogMessage"/>
+    <NotificationDialog
+      v-model:isShown="state.notifDialogShown"
+      type="negative"
+      title="Fetch Error"
+      :caption="state.notifDialogMessage"
+      />
   </div>
 </template>
 
@@ -97,9 +103,9 @@ const state = reactive({
 
 const tabs = [
   { id: 'submissions', name: 'Submissions', icon: 'uil:bolt-alt' },
-  { id: 'pending', name: 'Pending Assignment', icon: 'uil:clock' },
+  { id: 'pending', name: 'Pending Assignment', icon: 'uil:clock', iconAnimation: 'spin' },
   { id: 'exceptions', name: 'Exceptions', icon: 'uil:exclamation-triangle' },
-  { id: 'inprocess', name: 'In Process', icon: 'uil:atom' },
+  { id: 'inprocess', name: 'In Process', icon: 'uil:atom', iconAnimation: 'spin' },
   { id: 'published', name: 'Recently Published', icon: 'uil:check-circle' }
 ]
 

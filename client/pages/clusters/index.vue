@@ -31,7 +31,7 @@
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div v-for="document of selectedCluster?.documents">
-            <DocumentCard :document="document" />
+            <DocumentCard :document="document"/>
           </div>
         </div>
       </div>
@@ -39,6 +39,13 @@
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
             Add an editor
+            <draggable class="min-h-100" v-model="editors" group="editors" item-key="id" handle=".handle">
+              <template #item="{element}">
+                <div class="handle block max-w-xs p-2 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                  {{ element.name }}
+                </div>
+              </template>
+            </draggable>
           </div>
         </div>
       </div>
@@ -58,6 +65,7 @@
 </template>
 
 <script setup>
+const route = useRoute()
 useHead({
   title: 'Manage Clusters'
 })
@@ -69,10 +77,11 @@ const selectedCluster = computed(() => {
   }
   return null
 })
+
 // DATA
 
 const state = reactive({
-  selectedClusterNumber: '',
+  selectedClusterNumber: route.query?.cluster ? route.query.cluster : '',
   createDialogShown: false,
   notifDialogShown: false,
   notifDialogMessage: ''
@@ -92,4 +101,10 @@ const { data: clusters, pending, refresh } = await useFetch('/api/rpc/clusters/'
     state.notifDialogShown = true
   }
 })
+
+const { data: editors } = await useFetch('/api/rpc/rpc_person/', {
+  baseURL: '/',
+  server: false
+})
+
 </script>

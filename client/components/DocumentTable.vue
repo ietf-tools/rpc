@@ -37,15 +37,23 @@
             <NuxtLink
               v-if="col.link"
               :to="col.link(row)"
-              class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100"
+              :class="[
+                'text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100',
+                col.icon ? 'flex items-center' : '',
+              ]"
             >
-              <Icon v-if="col.icon" :name="col.icon" aria-hidden="true" />
-              {{ col.format ? col.format(row[col.field]) : row[col.field] }}
+              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" aria-hidden="true" />
+              <span>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
             </NuxtLink>
-            <span v-else>
-              <Icon v-if="col.icon" :name="col.icon" class="h-2 w-2 mr-1" aria-hidden="true" />
-              {{ col.format ? col.format(row[col.field]) : row[col.field] }}
-            </span>
+            <div
+              v-else
+              :class="[
+                col.icon ? 'flex items-center' : '',
+              ]"
+              >
+              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" aria-hidden="true" />
+              <span>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
+            </div>
           </td>
         </tr>
       </tbody>

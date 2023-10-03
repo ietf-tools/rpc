@@ -163,7 +163,20 @@ def queue(request):
 def clusters(request):
     """Return cluster index"""
     return JsonResponse(
-        [{"number": cluster.number} for cluster in Cluster.objects.all()], safe=False
+        [
+            {
+                "number": cluster.number,
+                "documents": [
+                    {
+                        "name": rfctobe.draft.name if rfctobe.draft else None,
+                        "rfc_number": rfctobe.rfc_number,
+                    }
+                    for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
+                ],
+            }
+            for cluster in Cluster.objects.all()
+        ],
+        safe=False,
     )
 
 

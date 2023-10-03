@@ -3,11 +3,15 @@
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-neutral-200">
-          Manage Clusters
+          Cluster Management
         </h1>
-        <p class="mt-2 text-sm text-gray-700 dark:text-neutral-400">
-          Document clusters known to this tool.
-        </p>
+        <div>
+          <label for="cluster-select">Cluster: </label>
+          <select id="cluster-select" v-model="state.selectedClusterNumber">
+            <option disabled value="">Select</option>
+            <option v-for="cluster in clusters">{{ cluster.number }}</option>
+          </select>
+        </div>
       </div>
       <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex">
         <button type="button" class="btn-secondary mr-3">
@@ -26,34 +30,28 @@
     <div class="mt-8 flow-root">
       <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div v-for="document in selectedCluster?.documents">
+            <DocumentCard :document="document" />
+          </div>
+        </div>
+      </div>
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <table class="min-w-full divide-y divide-gray-300 dark:divide-neutral-600">
-              <thead class="bg-gray-50 dark:bg-neutral-800">
-              <tr>
-                <th scope="col"
-                    class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 dark:text-neutral-400 sm:pl-6">
-                  Number
-                </th>
-              </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
-              <tr v-for="cluster in clusters" :key="cluster.number">
-                <td
-                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-neutral-100 sm:pl-6">
-                  <NuxtLink :to="`/clusters/${cluster.number}`"
-                            class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
-                    {{ cluster.number }}
-                  </NuxtLink>
-                </td>
-              </tr>
-              </tbody>
-            </table>
+            Add an editor
+          </div>
+        </div>
+      </div>
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            Document list
           </div>
         </div>
       </div>
     </div>
 
-<!--    <UserCreateDialog v-model:isShown="state.createDialogShown"/>-->
+    <!--    <UserCreateDialog v-model:isShown="state.createDialogShown"/>-->
     <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error"
                         :caption="state.notifDialogMessage"/>
   </div>
@@ -64,9 +62,17 @@ useHead({
   title: 'Manage Clusters'
 })
 
+// COMPUTED
+const selectedCluster = computed(() => {
+  if (clusters && clusters.value && state.selectedClusterNumber) {
+    return clusters.value.find(cluster => String(cluster.number) === state.selectedClusterNumber)
+  }
+  return null
+})
 // DATA
 
 const state = reactive({
+  selectedClusterNumber: '',
   createDialogShown: false,
   notifDialogShown: false,
   notifDialogMessage: ''

@@ -154,11 +154,11 @@ const columns = computed(() => {
   if (['exceptions', 'inprocess'].includes(currentTab.value)) {
     cols.push(...[
       {
-        key: 'holder',
-        label: 'Action Holder',
-        field: 'holder',
+        key: 'assignee',
+        label: 'Assignee (should allow multiple)',
+        field: 'assignee',
         format: val => val?.name || 'Unknown',
-        link: row => `/team/${row.holder?.id}`
+        link: row => `/team/${row.assignee?.id}`
       },
       deadlineCol
     ])
@@ -236,7 +236,8 @@ const filteredDocuments = computed(() => {
     case 'inprocess':
       docs = documents.value?.filter(d => d.assignments?.length > 0).map(d => ({
         ...d,
-        currentState: `${d.assignments[0].role} (${d.assignments[0].state})`
+        currentState: `${d.assignments[0].role} (${d.assignments[0].state})`,
+        assignee: d.assignments[0]
       }))
       break
     default:

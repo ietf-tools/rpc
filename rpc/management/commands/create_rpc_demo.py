@@ -13,6 +13,7 @@ from ...factories import (
     AssignmentFactory,
     ClusterFactory,
     RfcToBeFactory,
+    RfcToBeActionHolderFactory,
     RpcPersonFactory,
 )
 from ...models import RfcToBe, RpcPerson
@@ -262,6 +263,15 @@ class Command(BaseCommand):
             role__slug="final_review_editor",
             person=self.people["sbexar"],
             state="assigned",
+        )
+        RfcToBeActionHolderFactory(
+           target_rfctobe=RfcToBe.objects.get(
+                draft__name="draft-irtf-improving-lizard-qol-00"
+            ),
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
+                rpcapi_client.CreateDemoPersonRequest(name="Artimus Ad"),
+            ).person_pk,
+            deadline=datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(days=14)
         )
 
         #

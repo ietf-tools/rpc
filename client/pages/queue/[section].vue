@@ -157,8 +157,17 @@ const columns = computed(() => {
         key: 'assignee',
         label: 'Assignee (should allow multiple)',
         field: 'assignee',
-        format: val => val?.name || 'Unknown',
+        format: val => val?.name || 'No assignments',
         link: row => `/team/${row.assignee?.id}`
+      }
+    ])
+    cols.push(...[
+      {
+        key: 'holder',
+        label: 'Action Holder (should allow multiple)',
+        field: 'holder',
+        format: val => val?.name || 'No Action Holders',
+        link: row => `/team/${row.holder?.id}`
       },
       deadlineCol
     ])
@@ -237,7 +246,8 @@ const filteredDocuments = computed(() => {
       docs = documents.value?.filter(d => d.assignments?.length > 0).map(d => ({
         ...d,
         currentState: `${d.assignments[0].role} (${d.assignments[0].state})`,
-        assignee: d.assignments[0]
+        assignee: d.assignments[0],
+        holder: d.action_holders[0]
       }))
       break
     default:

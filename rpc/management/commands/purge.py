@@ -3,7 +3,7 @@
 from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from datatracker.models import DatatrackerPerson, Document
-from ...models import Assignment, Cluster, RfcToBe, RpcPerson
+from ...models import ActionHolder, Assignment, Cluster, RfcToBe, RpcPerson
 
 
 class Command(BaseCommand):
@@ -17,6 +17,7 @@ class Command(BaseCommand):
             raise CommandError("Must confirm with '--yes-im-sure' on the command line")
 
         Assignment.objects.all().delete()
+        ActionHolder.objects.all().delete()
         RfcToBe.objects.all().delete()
         RpcPerson.objects.all().delete()
         DatatrackerPerson.objects.all().delete()

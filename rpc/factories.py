@@ -121,13 +121,14 @@ class AprilFirstRfcToBeFactory(RfcToBeFactory):
     draft = None
 
 
-class ActionHolderFactory(factory.django.DjangoModelFactory):
+class RfcToBeActionHolderFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = ActionHolder
 
     datatracker_person = factory.SubFactory(
         "datatracker.factories.DatatrackerPersonFactory"
     )
+    target_rfctobe = factory.SubFactory(RfcToBeFactory)
     comment = factory.Faker("sentence")
 
 

@@ -13,6 +13,7 @@ from .models import (
     Cluster,
     DispositionName,
     FinalApproval,
+    Label,
     RfcAuthor,
     RfcToBe,
     RpcAuthorComment,
@@ -213,3 +214,8 @@ class StreamNameFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = StreamName
         django_get_or_create = ("slug",)
+
+class LabelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Label
+        django_get_or_create= ("slug", )

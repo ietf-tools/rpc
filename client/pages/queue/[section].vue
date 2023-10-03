@@ -121,6 +121,12 @@ const columns = computed(() => {
       field: 'name',
       classes: 'text-sm font-medium',
       link: row => `/docs/${row.name}`
+    },
+    {
+      key: 'labels',
+      label: 'Labels',
+      field: 'labels',
+      classes: 'text-xs font-small',
     }
   ]
   if (['submissions', 'exceptions'].includes(currentTab.value)) {

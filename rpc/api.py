@@ -135,7 +135,7 @@ def queue(request):
                         for label in rfc_to_be.labels.all()
                     ],
                     "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
-                    "deadline": f"{rfc_to_be.external_deadline:%Y-%m-%d}",  # todo what about internal_goal?
+                    "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
                     "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,
                     "action_holders": [
                         {

@@ -12,7 +12,9 @@ from datatracker.rpcapi import with_rpcapi
 from ...factories import (
     AssignmentFactory,
     ClusterFactory,
+    LabelFactory,
     RfcToBeFactory,
+    RfcToBeActionHolderFactory,
     RpcPersonFactory,
 )
 from ...models import RfcToBe, RpcPerson
@@ -193,6 +195,8 @@ class Command(BaseCommand):
 
     @with_rpcapi
     def create_documents(self, *, rpcapi: rpcapi_client.DefaultApi):
+
+
         # submission, not yet an RfcToBe (not shown on "The Queue" wireframe)
         rpcapi.create_demo_draft(
             rpcapi_client.CreateDemoDraftRequest(
@@ -219,11 +223,12 @@ class Command(BaseCommand):
         )
 
         # Draft sent to RPC and in progress as an RfcToBe
-        self._demo_rfctobe_factory(
+        rfctobe = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
             name="draft-ietf-tasty-cheese-00",
             states=[("draft-iesg", "rfcqueue")],
         )
+        rfctobe.labels.add(LabelFactory(slug="delicious"))
         AssignmentFactory(
             rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese-00"),
             role__slug="first_editor",
@@ -237,11 +242,12 @@ class Command(BaseCommand):
             state="in progress",
         )
 
-        self._demo_rfctobe_factory(
+        rfctobe = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
             name="draft-ietf-where-is-my-hat-04",
             states=[("draft-iesg", "rfcqueue")],
         )
+        rfctobe.labels.add(LabelFactory(slug="is_a_trap", is_exception=True))
         AssignmentFactory(
             rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-where-is-my-hat-04"),
             role__slug="second_editor",
@@ -262,6 +268,15 @@ class Command(BaseCommand):
             role__slug="final_review_editor",
             person=self.people["sbexar"],
             state="assigned",
+        )
+        RfcToBeActionHolderFactory(
+           target_rfctobe=RfcToBe.objects.get(
+                draft__name="draft-irtf-improving-lizard-qol-00"
+            ),
+            datatracker_person__datatracker_id=rpcapi.create_demo_person(
+                rpcapi_client.CreateDemoPersonRequest(name="Artimus Ad"),
+            ).person_pk,
+            deadline=datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(days=14)
         )
 
         #
@@ -293,11 +308,12 @@ class Command(BaseCommand):
             )
         )
         try:
-            RfcToBeFactory(
+            rfctobe = RfcToBeFactory(
                 **kwargs,
                 draft__datatracker_id=dtdoc.doc_id,
                 draft__name=dtdoc.name,
             )
+            return rfctobe
         except IntegrityError:
             print(
                 f">>> Warning: Failed to create RfcToBe for {dtdoc.name}, already exists?"

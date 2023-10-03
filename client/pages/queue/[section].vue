@@ -127,6 +127,12 @@ const columns = computed(() => {
       field: 'name',
       classes: 'text-sm font-medium',
       link: row => `/docs/${row.name}`
+    },
+    {
+      key: 'labels',
+      label: 'Labels',
+      field: 'labels',
+      classes: 'text-xs font-small',
     }
   ]
   if (['submissions', 'exceptions'].includes(currentTab.value)) {
@@ -160,10 +166,19 @@ const columns = computed(() => {
   if (['exceptions', 'inprocess'].includes(currentTab.value)) {
     cols.push(...[
       {
+        key: 'assignee',
+        label: 'Assignee (should allow multiple)',
+        field: 'assignee',
+        format: val => val?.name || 'No assignments',
+        link: row => `/team/${row.assignee?.id}`
+      }
+    ])
+    cols.push(...[
+      {
         key: 'holder',
-        label: 'Action Holder',
+        label: 'Action Holder (should allow multiple)',
         field: 'holder',
-        format: val => val?.name || 'Unknown',
+        format: val => val?.name || 'No Action Holders',
         link: row => `/team/${row.holder?.id}`
       },
       deadlineCol
@@ -242,7 +257,9 @@ const filteredDocuments = computed(() => {
     case 'inprocess':
       docs = documents.value?.filter(d => d.assignments?.length > 0).map(d => ({
         ...d,
-        currentState: `${d.assignments[0].role} (${d.assignments[0].state})`
+        currentState: `${d.assignments[0].role} (${d.assignments[0].state})`,
+        assignee: d.assignments[0],
+        holder: d.action_holders[0]
       }))
       break
     default:

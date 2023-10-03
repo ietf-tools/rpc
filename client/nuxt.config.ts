@@ -10,7 +10,11 @@ export default defineNuxtConfig({
     url: 'http://localhost:8088'
   },
   devtools: {
-    enabled: true
+    enabled: true,
+
+    timeline: {
+      enabled: true
+    }
   },
   headlessui: {
     prefix: 'Headless'

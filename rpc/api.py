@@ -122,12 +122,18 @@ def queue(request):
         ]
     }
     """
-    return JsonResponse(
-        {
+    queue = {
             "queue": [
                 {
                     "id": rfc_to_be.pk,
                     "name": rfc_to_be.draft.name if rfc_to_be.draft else "",
+                    "labels": [
+                        {
+                            "slug": label.slug,
+                            "is_exception": label.is_exception,
+                        }
+                        for label in rfc_to_be.labels.all()
+                    ],
                     "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
                     "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
                     "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,
@@ -151,13 +157,11 @@ def queue(request):
                         for assignment in rfc_to_be.assignment_set.exclude(state="done")
                     ],
                     "requested_approvals": [],
-                    "labels": [],
                 }
                 for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
             ]
-        },
-        safe=False,
-    )
+        }
+    return JsonResponse(queue, safe=False)
 
 
 def clusters(request):

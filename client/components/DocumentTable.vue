@@ -42,7 +42,7 @@
                 col.icon ? 'flex items-center' : '',
               ]"
             >
-              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" />
+              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" aria-hidden="true" />
               <span>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
             </NuxtLink>
             <div
@@ -51,7 +51,7 @@
                 col.icon ? 'flex items-center' : '',
               ]"
               >
-              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" />
+              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" aria-hidden="true" />
               <span>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
             </div>
           </td>

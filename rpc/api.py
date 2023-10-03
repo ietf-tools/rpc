@@ -5,7 +5,7 @@ from django.http import JsonResponse
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import RfcToBe, RpcPerson
+from .models import Cluster, RfcToBe, RpcPerson
 
 
 @with_rpcapi
@@ -138,7 +138,9 @@ def queue(request):
                             "since": ah.since_when,
                             "comment": ah.comment,
                         }
-                        for ah in rfc_to_be.actionholder_set.filter(completed__isnull=True)
+                        for ah in rfc_to_be.actionholder_set.filter(
+                            completed__isnull=True
+                        )
                     ],
                     "assignments": [
                         {
@@ -155,4 +157,45 @@ def queue(request):
             ]
         },
         safe=False,
+    )
+
+
+def clusters(request):
+    """Return cluster index"""
+    return JsonResponse(
+        [
+            {
+                "number": cluster.number,
+                "documents": [
+                    {
+                        "name": rfctobe.draft.name if rfctobe.draft else None,
+                        "rfc_number": rfctobe.rfc_number,
+                    }
+                    for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
+                ],
+            }
+            for cluster in Cluster.objects.all()
+        ],
+        safe=False,
+    )
+
+
+def cluster(request, number):
+    """Return data for a specific cluster"""
+    try:
+        cluster = Cluster.objects.get(number=number)
+    except (Cluster.DoesNotExist, Cluster.MultipleObjectsReturned):
+        return JsonResponse({"error": "Not found"}, status=404)
+
+    return JsonResponse(
+        {
+            "number": cluster.number,
+            "documents": [
+                {
+                    "name": rfctobe.draft.name if rfctobe.draft else None,
+                    "rfc_number": rfctobe.rfc_number,
+                }
+                for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
+            ],
+        }
     )

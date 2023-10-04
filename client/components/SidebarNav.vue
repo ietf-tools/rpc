@@ -76,11 +76,11 @@
           <li>
             <div class="text-xs font-semibold leading-6 text-gray-400 dark:text-violet-400">Misc</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
-              <li v-for="team in teams" :key="team.name">
-                <a :href="team.href" :class="[team.current ? 'bg-gray-50 text-violet-600' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-gray-50 dark:hover:bg-violet-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
-                  <span :class="[team.current ? 'text-violet-600 border-violet-600' : 'text-gray-400 dark:text-violet-400 border-gray-200 dark:border-violet-500 group-hover:border-violet-600 group-hover:text-violet-600', 'flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border text-[0.625rem] font-medium bg-white dark:bg-black/20']">{{ team.initial }}</span>
-                  <span class="truncate">{{ team.name }}</span>
-                </a>
+              <li v-for="link in links" :key="link.name">
+                <NuxtLink :to="link.href" :class="[link.href === currentBaseLink ? 'bg-gray-50 text-violet-600' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-gray-50 dark:hover:bg-violet-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
+                  <component :is="link.icon" :class="[link.href === currentBaseLink ? 'text-violet-600 dark:text-white' : 'text-gray-400 dark:text-violet-400 group-hover:text-violet-600 dark:group-hover:text-violet-100', 'h-6 w-6 shrink-0']" aria-hidden="true" />
+                  <span class="truncate">{{ link.name }}</span>
+                </NuxtLink>
               </li>
             </ul>
           </li>
@@ -104,6 +104,11 @@ import { Icon } from '#components'
 
 const siteStore = useSiteStore()
 
+// ROUTER
+
+const route = useRoute()
+const currentBaseLink = computed(() => route.path.indexOf('/', 1) > 0 ? `/${route.path.split('/')[1]}` : route.path)
+
 // DATA
 
 const navigation = [
@@ -112,15 +117,12 @@ const navigation = [
   { name: 'Documents', href: '/docs', icon: h(Icon, { name: 'solar:documents-minimalistic-line-duotone' }) },
   { name: 'Team', href: '/team', icon: h(Icon, { name: 'solar:users-group-rounded-bold-duotone' }) },
   { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'solar:chart-line-duotone' }) },
-  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }) },
+  { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }) }
 ]
 
-const teams = [
-  { id: 1, name: 'Manage RFC Numbers', href: '#', initial: '#', current: false },
-  { id: 2, name: 'Cluster Management', href: '/clusters', initial: 'C', current: false },
-  { id: 3, name: 'Legal Requests', href: '#', initial: 'L', current: false },
+const links = [
+  { name: 'Manage RFC Numbers', href: '/rfcs', icon: h(Icon, { name: 'fluent-mdl2:number-field' }) },
+  { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
+  { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) }
 ]
-
-const route = useRoute()
-const currentBaseLink = computed(() => route.path.indexOf('/', 1) > 0 ? `/` + route.path.split('/')[1] : route.path)
 </script>

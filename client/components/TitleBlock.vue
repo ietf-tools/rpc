@@ -9,7 +9,7 @@
       </p>
     </div>
     <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex">
-      <slot name="buttons"></slot>
+      <slot name="buttons" />
     </div>
   </div>
 </template>

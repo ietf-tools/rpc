@@ -1,22 +1,17 @@
 <template>
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-neutral-200">
-        Queue
-      </h1>
-      <p class="mt-2 text-sm text-gray-700 dark:text-neutral-400">
-        Where the magic happens.
-      </p>
-    </div>
-    <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
-      <div class="text-sm">Backlog <strong class="text-rose-700">larger
-        <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>
-      </strong> than a week ago
+  <TitleBlock title="Queue"
+              summary="Where the magic happens.">
+    <template v-slot:right>
+      <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
+        <div class="text-sm">Backlog <strong class="text-rose-700">larger
+          <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>
+        </strong> than a week ago
+        </div>
+        <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week
+          ago)</em></div>
       </div>
-      <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week
-        ago)</em></div>
-    </div>
-  </div>
+    </template>
+  </TitleBlock>
 
   <!-- TABS -->
 

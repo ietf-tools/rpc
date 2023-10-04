@@ -1,18 +1,6 @@
 <template>
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-neutral-200">
-        Cluster Management
-      </h1>
-      <div>
-        <label for="cluster-select">Cluster: </label>
-        <select id="cluster-select" v-model="state.selectedClusterNumber">
-          <option disabled value="">Select</option>
-          <option v-for="cluster in clusters">{{ cluster.number }}</option>
-        </select>
-      </div>
-    </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex">
+  <TitleBlock title="Cluster Management">
+    <template v-slot:right>
       <button type="button" class="btn-secondary mr-3">
         <span class="sr-only">Refresh</span>
         <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refresh"
@@ -24,7 +12,15 @@
         <Icon name="uil:plus" class="-ml-1 h-5 w-5 mr-2" aria-hidden="true"/>
         New Cluster
       </button>
-    </div>
+    </template>
+  </TitleBlock>
+
+  <div class="mt-8 flow-root">
+    <label for="cluster-select">Cluster: </label>
+    <select id="cluster-select" v-model="state.selectedClusterNumber">
+      <option disabled value="">Select</option>
+      <option v-for="cluster in clusters">{{ cluster.number }}</option>
+    </select>
   </div>
   <div class="mt-8 flow-root">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

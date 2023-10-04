@@ -16,27 +16,7 @@
   <!-- TABS -->
 
   <div class="flex justify-center items-center">
-    <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4"
-      aria-label="Tabs"
-      >
-      <NuxtLink
-        v-for="(tab, tabIdx) in tabs"
-        :key="tab.id"
-        :href="`/queue/${tab.id}`"
-        :class="[
-          tab.id === currentTab ? 'bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-300' : 'bg-white dark:bg-neutral-700 text-gray-500 dark:text-neutral-300 hover:text-gray-700 hover:dark:text-neutral-200',
-          tabIdx === 0 ? 'rounded-l-lg' : '', tabIdx === tabs.length - 1 ? 'rounded-r-lg' : '',
-          'group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-center text-sm font-medium hover:bg-gray-50 hover:dark:bg-neutral-800 focus:z-10'
-        ]"
-        :aria-current="tab.id === currentTab ? 'page' : undefined"
-        >
-        <Icon :name="tab.icon" :class="['h-5 w-5 mr-2', tab.iconAnimation ? `group-hover:animate-${tab.iconAnimation}` : '']" aria-hidden="true"/>
-        <span>{{ tab.name }}</span>
-        <span aria-hidden="true"
-          :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']"
-          />
-      </NuxtLink>
-    </nav>
+    <TabNav :tabs="tabs" :selected="currentTab" />
     <button type="button" @click="refresh" class="btn-secondary ml-3">
       <span class="sr-only">Refresh</span>
       <Icon name="solar:refresh-line-duotone" size="1.5em"
@@ -95,11 +75,11 @@ const state = reactive({
 })
 
 const tabs = [
-  { id: 'submissions', name: 'Submissions', icon: 'uil:bolt-alt' },
-  { id: 'pending', name: 'Pending Assignment', icon: 'uil:clock', iconAnimation: 'spin' },
-  { id: 'exceptions', name: 'Exceptions', icon: 'uil:exclamation-triangle' },
-  { id: 'inprocess', name: 'In Process', icon: 'uil:atom', iconAnimation: 'spin' },
-  { id: 'published', name: 'Recently Published', icon: 'uil:check-circle' }
+  { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
+  { id: 'pending', name: 'Pending Assignment', to: '/queue/pending', icon: 'uil:clock', iconAnimate: true },
+  { id: 'exceptions', name: 'Exceptions', to: '/queue/exceptions', icon: 'uil:exclamation-triangle' },
+  { id: 'inprocess', name: 'In Process', to: '/queue/inprocess', icon: 'solar:refresh-circle-line-duotone', iconAnimate: true },
+  { id: 'published', name: 'Recently Published', to: '/queue/published', icon: 'uil:check-circle' }
 ]
 
 // COMPUTED
@@ -125,7 +105,7 @@ const columns = computed(() => {
       key: 'labels',
       label: 'Labels',
       field: 'labels',
-      classes: 'text-xs font-small',
+      classes: 'text-xs font-small'
     }
   ]
   if (['submissions', 'exceptions'].includes(currentTab.value)) {

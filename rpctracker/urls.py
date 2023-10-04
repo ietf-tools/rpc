@@ -27,6 +27,7 @@ urlpatterns = [
     path("login/", views.index),
     path("api/rpc/clusters/", rpc_api.clusters),
     path("api/rpc/clusters/<int:number>", rpc_api.cluster),
+    path("api/rpc/profile", rpc_api.profile),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
     path("api/rpc/queue/", rpc_api.queue),

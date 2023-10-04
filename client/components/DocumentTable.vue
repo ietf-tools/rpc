@@ -141,7 +141,7 @@ function buildCell (col, row) {
           ...cssClasses,
           'text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100'
         ],
-        to: col.link(row)
+        to: col.link(row, val)
       }, () => contents))
     } else {
       children.push(h('span', {

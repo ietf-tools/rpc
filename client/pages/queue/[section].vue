@@ -1,7 +1,7 @@
 <template>
   <TitleBlock title="Queue"
               summary="Where the magic happens.">
-    <template v-slot:right>
+    <template #right>
       <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
         <div class="text-sm">Backlog <strong class="text-rose-700">larger
           <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>

@@ -1,6 +1,6 @@
 <template>
   <TitleBlock title="Cluster Management">
-    <template v-slot:right>
+    <template #right>
       <button type="button" class="btn-secondary mr-3">
         <span class="sr-only">Refresh</span>
         <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refresh"

@@ -1,7 +1,7 @@
 <template>
   <TitleBlock title="Manage Team Members"
               summary="A list of all the users having access to this tool.">
-    <template v-slot:right>
+    <template #right>
       <button type="button" class="btn-secondary mr-3">
         <span class="sr-only">Refresh</span>
         <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refresh"

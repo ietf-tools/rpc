@@ -30,3 +30,4 @@ __pycache__
 
 /rpcapi.yaml
 /openapi/rpcapi_client
+/docker/docker-compose.extend-custom.yml

@@ -189,7 +189,7 @@ const columns = computed(() => {
       {
         key: 'currentState',
         label: 'Current State',
-        field: 'currentState',
+        field: 'currentState'
       },
       {
         key: 'estimatedCompletion',

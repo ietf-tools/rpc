@@ -12,5 +12,5 @@ class User(AbstractUser):
         max_length=255,  # per OpenID Core 1.0, 255 ASCII chars is the limit
         null=True,
         unique=True,
-        help_text="Datatracker's subject ID for this Person",
+        help_text="Datatracker's subject ID for this User",
     )

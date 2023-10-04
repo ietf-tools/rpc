@@ -26,9 +26,7 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
     def create_user(self, claims):
         """Create a User following a successful auth"""
         subject_id = claims["sub"]
-        # A DatatrackerPerson may exist without a user so use get_or_create()
         try:
-            # Rely on the OneToOne field to avoid creating duplicate Users for a DatatrackerPerson
             new_user = self.UserModel.objects.create(
                 username=f"dt-person-{subject_id}",
                 datatracker_subject_id=subject_id,
@@ -45,7 +43,6 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
 
         If the set does not have exactly one member, auth will be rejected.
         """
-        # Only consider users who have a datatracker_person!
         return self.UserModel.objects.filter(
             datatracker_subject_id=claims["sub"]  # claim guaranteed to exist
         )

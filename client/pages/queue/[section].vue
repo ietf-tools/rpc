@@ -1,14 +1,7 @@
 <template>
-  <div class="px-4 py-10 sm:px-6 lg:px-8 lg:py-6">
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-neutral-200">
-          Queue
-        </h1>
-        <p class="mt-2 text-sm text-gray-700 dark:text-neutral-400">
-          Where the magic happens.
-        </p>
-      </div>
+  <TitleBlock title="Queue"
+              summary="Where the magic happens.">
+    <template #right>
       <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
         <div class="text-sm">Backlog <strong class="text-rose-700">larger
           <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>
@@ -17,68 +10,68 @@
         <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week
           ago)</em></div>
       </div>
-    </div>
+    </template>
+  </TitleBlock>
 
-    <!-- TABS -->
+  <!-- TABS -->
 
-    <div class="flex justify-center items-center">
-      <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4"
-        aria-label="Tabs"
+  <div class="flex justify-center items-center">
+    <nav class="isolate grow flex divide-x divide-gray-200 dark:divide-neutral-950 rounded-lg shadow max-w-7xl my-4"
+      aria-label="Tabs"
+      >
+      <NuxtLink
+        v-for="(tab, tabIdx) in tabs"
+        :key="tab.id"
+        :href="`/queue/${tab.id}`"
+        :class="[
+          tab.id === currentTab ? 'bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-300' : 'bg-white dark:bg-neutral-700 text-gray-500 dark:text-neutral-300 hover:text-gray-700 hover:dark:text-neutral-200',
+          tabIdx === 0 ? 'rounded-l-lg' : '', tabIdx === tabs.length - 1 ? 'rounded-r-lg' : '',
+          'group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-center text-sm font-medium hover:bg-gray-50 hover:dark:bg-neutral-800 focus:z-10'
+        ]"
+        :aria-current="tab.id === currentTab ? 'page' : undefined"
         >
-        <NuxtLink
-          v-for="(tab, tabIdx) in tabs"
-          :key="tab.id"
-          :href="`/queue/${tab.id}`"
-          :class="[
-            tab.id === currentTab ? 'bg-white dark:bg-neutral-800 text-violet-700 dark:text-violet-300' : 'bg-white dark:bg-neutral-700 text-gray-500 dark:text-neutral-300 hover:text-gray-700 hover:dark:text-neutral-200',
-            tabIdx === 0 ? 'rounded-l-lg' : '', tabIdx === tabs.length - 1 ? 'rounded-r-lg' : '',
-            'group relative min-w-0 flex-1 overflow-hidden py-3 px-4 text-center text-sm font-medium hover:bg-gray-50 hover:dark:bg-neutral-800 focus:z-10'
-          ]"
-          :aria-current="tab.id === currentTab ? 'page' : undefined"
-          >
-          <Icon :name="tab.icon" :class="['h-5 w-5 mr-2', tab.iconAnimation ? `group-hover:animate-${tab.iconAnimation}` : '']" aria-hidden="true"/>
-          <span>{{ tab.name }}</span>
-          <span aria-hidden="true"
-            :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']"
-            />
-        </NuxtLink>
-      </nav>
-      <button type="button" @click="refresh" class="btn-secondary ml-3">
-        <span class="sr-only">Refresh</span>
-        <Icon name="solar:refresh-line-duotone" size="1.5em"
-              :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
-              aria-hidden="true"/>
-      </button>
-      <button type="button" @click="" class="btn-secondary ml-3">
-        <span class="sr-only">Filter</span>
-        <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
-              aria-hidden="true"/>
-      </button>
-    </div>
+        <Icon :name="tab.icon" :class="['h-5 w-5 mr-2', tab.iconAnimation ? `group-hover:animate-${tab.iconAnimation}` : '']" aria-hidden="true"/>
+        <span>{{ tab.name }}</span>
+        <span aria-hidden="true"
+          :class="[tab.id === currentTab ? 'bg-violet-500' : 'bg-transparent', 'absolute inset-x-0 bottom-0 h-0.5']"
+          />
+      </NuxtLink>
+    </nav>
+    <button type="button" @click="refresh" class="btn-secondary ml-3">
+      <span class="sr-only">Refresh</span>
+      <Icon name="solar:refresh-line-duotone" size="1.5em"
+            :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
+            aria-hidden="true"/>
+    </button>
+    <button type="button" @click="" class="btn-secondary ml-3">
+      <span class="sr-only">Filter</span>
+      <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
+            aria-hidden="true"/>
+    </button>
+  </div>
 
-    <!-- DATA TABLE -->
+  <!-- DATA TABLE -->
 
-    <div class="mt-2 flow-root">
-      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-            <DocumentTable
-              :columns="columns"
-              :data="filteredDocuments"
-              row-key="id"
-              :loading="pending"
-            />
-          </div>
+  <div class="mt-2 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+          <DocumentTable
+            :columns="columns"
+            :data="filteredDocuments"
+            row-key="id"
+            :loading="pending"
+          />
         </div>
       </div>
     </div>
-    <NotificationDialog
-      v-model:isShown="state.notifDialogShown"
-      type="negative"
-      title="Fetch Error"
-      :caption="state.notifDialogMessage"
-      />
   </div>
+  <NotificationDialog
+    v-model:isShown="state.notifDialogShown"
+    type="negative"
+    title="Fetch Error"
+    :caption="state.notifDialogMessage"
+    />
 </template>
 
 <script setup>
@@ -189,7 +182,7 @@ const columns = computed(() => {
       {
         key: 'currentState',
         label: 'Current State',
-        field: 'currentState',
+        field: 'currentState'
       },
       {
         key: 'estimatedCompletion',

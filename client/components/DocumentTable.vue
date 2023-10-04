@@ -34,26 +34,7 @@
               col.classes && isFunction(col.classes) ? col.classes(row[col.field]) : col.classes
             ]"
           >
-            <NuxtLink
-              v-if="col.link"
-              :to="col.link(row)"
-              :class="[
-                'text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100',
-                col.icon ? 'flex items-center' : '',
-              ]"
-            >
-              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" aria-hidden="true" />
-              <span>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
-            </NuxtLink>
-            <div
-              v-else
-              :class="[
-                col.icon ? 'flex items-center' : '',
-              ]"
-              >
-              <Icon v-if="col.icon" :name="col.icon" size="1.1rem" class="mr-2" aria-hidden="true" />
-              <span>{{ col.format ? col.format(row[col.field]) : row[col.field] }}</span>
-            </div>
+            <component :is="buildCell(col, row)" />
           </td>
         </tr>
       </tbody>
@@ -74,7 +55,8 @@
 </template>
 
 <script setup>
-import { isFunction, orderBy } from 'lodash-es'
+import { Badge, Icon, NuxtLink } from '#components'
+import { isArray, isFunction, orderBy } from 'lodash-es'
 
 // PROPS
 
@@ -123,6 +105,87 @@ function sortBy (fieldName) {
     state.sortDirection = 'asc'
   }
   state.sortField = fieldName
+}
+
+/**
+ * Build cell node
+ *
+ * @param {Object} col Column properties
+ * @param {Object} row Current row object
+ */
+function buildCell (col, row) {
+  const values = isArray(row[col.field]) ? row[col.field] : [row[col.field]]
+  const formattedValues = col.format ? values.map(v => col.format(v)) : values
+  const children = []
+
+  const isLink = isFunction(col.link)
+
+  for (const [idx, val] of formattedValues.entries()) {
+    const contents = [h('span', val)]
+    const cssClasses = []
+    if (col.icon) {
+      contents.unshift(
+        h(Icon, {
+          name: col.icon,
+          size: '1.1rem',
+          class: 'mr-2',
+          'aria-hidden': 'true'
+        })
+      )
+      cssClasses.push('flex items-center')
+    }
+
+    if (isLink) {
+      children.push(h(NuxtLink, {
+        class: [
+          ...cssClasses,
+          'text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100'
+        ],
+        to: col.link(row)
+      }, () => contents))
+    } else {
+      children.push(h('span', {
+        class: cssClasses
+      }, contents))
+    }
+
+    if (idx < formattedValues.length - 1) {
+      children.push(h('span', ', '))
+    }
+  }
+
+  if (isFunction(col.labels)) {
+    for (const lbl of transformLabels(col.labels(row), col.labelDefaultColor ?? 'violet')) {
+      children.push(
+        h(Badge, {
+          label: lbl.label,
+          color: lbl.color,
+          class: 'ml-2'
+        })
+      )
+    }
+  }
+
+  return h('div', children)
+}
+
+/**
+ * Handle labels array in either string or object format
+ *
+ * @param {Array} val Array of labels
+ * @param {String} defaultColor Default color name
+ */
+function transformLabels (val, defaultColor) {
+  return val.map(item => {
+    if (typeof item === 'string') {
+      return {
+        label: item,
+        color: defaultColor
+      }
+    } else {
+      return item
+    }
+  })
 }
 
 </script>

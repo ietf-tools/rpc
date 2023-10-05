@@ -30,6 +30,8 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
             new_user = self.UserModel.objects.create(
                 username=f"dt-person-{subject_id}",
                 datatracker_subject_id=subject_id,
+                name=claims["name"],  # required claim,
+                avatar=claims.get("picture", "")
             )
         except IntegrityError:
             # exception message gets logged - user only sees a failed auth
@@ -37,6 +39,19 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
                 f"User already exists for datatracker user {subject_id}"
             )
         return new_user
+
+    def update_user(self, user, claims):
+        """Update a User following auth"""
+        updated = False
+        if user.name != claims["name"]:  # required claim
+            user.name = claims["name"]
+            updated = True
+        if user.avatar != claims.get("picture", ""):
+            user.avatar = claims.get("picture")
+            updated = True
+        if updated:
+            user.save()
+        return user
 
     def filter_users_by_claims(self, claims):
         """Return list or queryset of users who satisfy claims
@@ -110,7 +125,7 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
                 )
             )
 
-        required_claims = {"sub", "roles"}
+        required_claims = {"sub", "name", "roles"}
         if required_claims.intersection(claims.keys()) != required_claims:
             return False
 

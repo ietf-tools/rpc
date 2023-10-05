@@ -75,6 +75,12 @@
               <HeadlessMenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                 <NuxtLink :to="item.href" :class="[active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900']">{{ item.name }}</NuxtLink>
               </HeadlessMenuItem>
+              <HeadlessMenuItem v-slot="{ active }">
+                <button @click="logout()"
+                        :class="[active ? 'bg-gray-50' : '', 'block w-full px-3 py-1 text-sm leading-6 text-gray-900 text-left']">
+                  Sign out
+                </button>
+              </HeadlessMenuItem>
             </HeadlessMenuItems>
           </transition>
         </HeadlessMenu>
@@ -93,6 +99,13 @@
 import { useSiteStore } from '@/stores/site'
 import { useUserStore } from '@/stores/user'
 
+const csrf = useCookie('csrftoken', { sameSite: 'strict' })
+
+async function logout () {
+  await $fetch('/oidc/logout/', { method: 'POST', headers: { 'X-CSRFToken': csrf.value } })
+  userStore.refreshAuth()
+}
+
 // STORES
 
 const siteStore = useSiteStore()
@@ -102,6 +115,5 @@ const userStore = useUserStore()
 
 const userNavigation = [
   { name: 'Your profile', href: '/' },
-  { name: 'Sign out', href: '/' }
 ]
 </script>

@@ -5,7 +5,8 @@ from django.http import JsonResponse
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import Cluster, RfcToBe, RpcPerson
+from .models import Assignment, Cluster, RfcToBe, RpcPerson
+from .serializers import  AssignmentSerializer
 
 
 @with_rpcapi
@@ -217,3 +218,9 @@ def cluster(request, number):
             ],
         }
     )
+
+def assignments(request):
+    if request.method == "GET":
+        assignments = Assignment.objects.all()
+        serializer = AssignmentSerializer(assignments, many=True)
+        return JsonResponse(serializer.data, safe=False)

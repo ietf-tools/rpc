@@ -13,16 +13,12 @@ def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Get profile of current user"""
     user = request.user
     if not user.is_authenticated:
-        return JsonResponse({}, status=404)
-    try:
-        person_data = rpcapi.get_subject_person_by_id(subject_id=user.datatracker_subject_id)
-    except rpcapi_client.ApiException:
-        person_data = None
-
+        return JsonResponse({"authenticated": False})
     return JsonResponse({
-        "id": user.datatracker_subject_id,
         "authenticated": True,
-        "name": person_data.plain_name if person_data else str(user),
+        "id": user.pk,
+        "name": user.name,
+        "avatar": user.avatar,
     })
 
 

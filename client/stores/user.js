@@ -8,11 +8,17 @@ export const useUserStore = defineStore('user', {
     email: '',
     avatar: ''
   }),
-  getters: { },
+  getters: {},
   actions: {
     async refreshAuth () {
-      console.debug('Refreshing auth...')
-      // TODO: do stuff
+      const profileData = await $fetch('/api/rpc/profile')
+      this.authenticated = profileData.authenticated
+      if (this.authenticated) {
+        this.id = profileData.id
+        this.name = profileData.name
+        this.email = profileData.email
+        this.avatar = profileData.avatar
+      }
     }
   }
 })

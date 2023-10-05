@@ -9,6 +9,20 @@ from .models import Cluster, RfcToBe, RpcPerson
 
 
 @with_rpcapi
+def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
+    """Get profile of current user"""
+    user = request.user
+    if not user.is_authenticated:
+        return JsonResponse({"authenticated": False})
+    return JsonResponse({
+        "authenticated": True,
+        "id": user.pk,
+        "name": user.name,
+        "avatar": user.avatar,
+    })
+
+
+@with_rpcapi
 def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     response = []
     # use bulk endpoint to get names

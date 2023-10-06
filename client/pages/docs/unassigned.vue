@@ -3,7 +3,7 @@
 
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
-    <div v-for="doc of documents" :key="doc.id"
+    <div v-for="(doc, index) of documents" :key="doc.id"
          class="w-full max-w-5xl p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
       <div class="space-y-1">
         <h5 class="text-xl font-medium text-gray-900 dark:text-white">{{ doc.name }}</h5>
@@ -16,21 +16,25 @@
           Assign editor
         </label>
         <select :id="'editor' + doc.id"
-                v-model="doc.assignTo"
+                v-model="state.assignments[index].personId"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option value="">Leave unassigned</option>
+          <option :value="null">Leave unassigned</option>
           <option v-for="editor of editors" :key="editor.id" :value="editor.id">
             {{ editor.name }}
           </option>
         </select>
       </div>
     </div>
-    <Button @click="saveAssignments()">Save Changes</Button>
+    <Button @click="saveAssignments(state.assignments)">Save Changes</Button>
   </div>
 </template>
 
 <script setup>
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
+
+const state = reactive({
+  assignments: []
+})
 
 // COMPUTED
 
@@ -52,19 +56,18 @@ const documents = computed(() => {
     id: doc.id,
     name: doc.name,
     title: doc.title || 'unknown title',
-    pages: doc.pages || 'unknown',
-    assignTo: ''
+    pages: doc.pages || 'unknown'
   }))
 })
 
 // METHODS
 
-async function saveAssignments () {
-  documents.value?.filter((doc) => !!doc.assignTo).forEach((docToAssign) => {
+async function saveAssignments (assignments) {
+  state.assignments.forEach(({ rfcToBeId, personId }) => {
     $fetch('/api/rpc/assignments/', {
       body: {
-        rfc_to_be: Number(docToAssign.id),
-        person: Number(docToAssign.assignTo),
+        rfc_to_be: rfcToBeId,
+        person: personId,
         role: 'first_editor'
       },
       method: 'POST',
@@ -84,6 +87,13 @@ const { data: queue } = await useFetch('/api/rpc/queue/', {
   baseURL: '/',
   server: false,
   transform: (resp) => (resp?.queue || [])
+})
+
+watch(documents, (newDocuments) => {
+  state.assignments = newDocuments.map((doc) => ({
+    rfcToBeId: doc.id,
+    personId: null
+  }))
 })
 
 /**

@@ -16,7 +16,7 @@
           Assign editor
         </label>
         <select :id="'editor' + doc.id"
-                v-model="state.assignments[index].personId"
+                v-model="state.newAssignments[index].personId"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
           <option :value="null">Leave unassigned</option>
           <option v-for="editor of editors" :key="editor.id" :value="editor.id">
@@ -25,7 +25,8 @@
         </select>
       </div>
     </div>
-    <Button @click="saveAssignments(state.assignments)">Save Changes</Button>
+    <Button @click="saveAssignments(state.newAssignments)">Save Changes</Button>
+    <Button @click="queueRefresh">Refresh</Button>
   </div>
 </template>
 
@@ -33,7 +34,8 @@
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 
 const state = reactive({
-  assignments: []
+  // newAssignments is an array of { rfcToBeId, personId } in the same order as the documents list
+  newAssignments: []
 })
 
 // COMPUTED
@@ -76,6 +78,15 @@ async function saveAssignments (assignments) {
   })
 }
 
+// Build assignments for a doc list, preserving old any old assignments
+function buildAssignments (newDocuments, oldAssignments) {
+  const oldAssignmentMap = Object.fromEntries(oldAssignments.map(oa => [oa.rfcToBeId, oa.personId]))
+  return newDocuments.map((doc) => ({
+    rfcToBeId: doc.id,
+    personId: oldAssignmentMap[doc.id] ?? null
+  }))
+}
+
 // DATA RETRIEVAL
 
 const { data: people } = await useFetch('/api/rpc/rpc_person/', {
@@ -83,17 +94,16 @@ const { data: people } = await useFetch('/api/rpc/rpc_person/', {
   server: false
 })
 
-const { data: queue } = await useFetch('/api/rpc/queue/', {
+const { data: queue, refresh: queueRefresh } = await useFetch('/api/rpc/queue/', {
   baseURL: '/',
   server: false,
   transform: (resp) => (resp?.queue || [])
 })
 
-watch(documents, (newDocuments) => {
-  state.assignments = newDocuments.map((doc) => ({
-    rfcToBeId: doc.id,
-    personId: null
-  }))
+onMounted(() => {
+  watch(documents, (newDocuments) => {
+    state.newAssignments = buildAssignments(newDocuments, state.newAssignments)
+  })
 })
 
 /**

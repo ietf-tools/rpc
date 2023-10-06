@@ -1,6 +1,8 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
 from django.http import JsonResponse
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
@@ -219,8 +221,17 @@ def cluster(request, number):
         }
     )
 
+@api_view(["GET", "POST"])
 def assignments(request):
     if request.method == "GET":
         assignments = Assignment.objects.all()
         serializer = AssignmentSerializer(assignments, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
+
+    elif request.method == "POST":
+        serializer = AssignmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+

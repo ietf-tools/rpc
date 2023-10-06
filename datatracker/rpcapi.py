@@ -18,16 +18,16 @@ class ApiClient(rpcapi_client.ApiClient):
         )
 
 
-def with_rpcapi(f, api_kwarg="rpcapi"):
+def with_rpcapi(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
-        if api_kwarg in kwargs:
+        if "rpcapi" in kwargs:
             # Let an api instance be passed through
             return f(*args, **kwargs)
 
         # Create our own api instance and pass it to the wrapped function
         with ApiClient() as client:
-            kwargs[api_kwarg] = rpcapi_client.DefaultApi(client)
+            kwargs["rpcapi"] = rpcapi_client.DefaultApi(client)
             return f(*args, **kwargs)
 
     return wrapper

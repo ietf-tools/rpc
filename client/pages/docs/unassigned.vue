@@ -66,7 +66,7 @@ const documents = computed(() => {
 // METHODS
 
 async function saveAssignments (assignments) {
-  state.assignments.forEach(({ rfcToBeId, personId }) => {
+  state.newAssignments.forEach(({ rfcToBeId, personId }) => {
     $fetch('/api/rpc/assignments/', {
       body: {
         rfc_to_be: rfcToBeId,

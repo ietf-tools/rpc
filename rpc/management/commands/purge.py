@@ -1,6 +1,7 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
 from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.db import transaction
 
 from datatracker.models import DatatrackerPerson, Document
 from ...models import ActionHolder, Assignment, Cluster, Label, RfcToBe, RpcPerson
@@ -18,9 +19,9 @@ class Command(BaseCommand):
 
         Assignment.objects.all().delete()
         ActionHolder.objects.all().delete()
-        Label.objects.all().delete()
         RfcToBe.objects.all().delete()
         RpcPerson.objects.all().delete()
         DatatrackerPerson.objects.all().delete()
         Document.objects.all().delete()
+        Label.objects.all().delete()
         Cluster.objects.all().delete()

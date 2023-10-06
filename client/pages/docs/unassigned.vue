@@ -27,6 +27,7 @@
     </div>
     <Button @click="saveAssignments(state.newAssignments)">Save Changes</Button>
     <Button @click="queueRefresh">Refresh</Button>
+    <Button @click="state.newAssignments = buildAssignments(documents, [])">Reset</Button>
   </div>
 </template>
 

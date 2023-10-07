@@ -200,7 +200,8 @@ class Command(BaseCommand):
         # submission, not yet an RfcToBe (not shown on "The Queue" wireframe)
         rpcapi.create_demo_draft(
             rpcapi_client.CreateDemoDraftRequest(
-                name="draft-ietf-ietf-lizard-qol-00",
+                name="draft-ietf-lizard-qol",
+                rev="00",
                 states=[("draft-iesg", "pub-req")],
             )
         )
@@ -209,14 +210,16 @@ class Command(BaseCommand):
         cluster783 = ClusterFactory(number=783)
         self._demo_rfctobe_factory(
             rpcapi=rpcapi,
-            name="draft-ietf-foo-bar-03",
+            name="draft-ietf-foo-bar",
+            rev="03",
             states=[("draft-iesg", "rfcqueue")],
             cluster=cluster783,
             order_in_cluster=1,
         )
         self._demo_rfctobe_factory(
             rpcapi=rpcapi,
-            name="draft-ietf-foo-basbis-19",
+            name="draft-ietf-foo-basbis",
+            rev="19",
             states=[("draft-iesg", "rfcqueue")],
             cluster=cluster783,
             order_in_cluster=2,
@@ -225,18 +228,19 @@ class Command(BaseCommand):
         # Draft sent to RPC and in progress as an RfcToBe
         rfctobe = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
-            name="draft-ietf-tasty-cheese-00",
+            name="draft-ietf-tasty-cheese",
+            rev="00",
             states=[("draft-iesg", "rfcqueue")],
         )
         rfctobe.labels.add(LabelFactory(slug="delicious"))
         AssignmentFactory(
-            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese-00"),
+            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese"),
             role__slug="first_editor",
             person=self.people["atravis"],
             state="assigned",
         )
         AssignmentFactory(
-            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese-00"),
+            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese"),
             role__slug="formatting",
             person=self.people["kstrawberry"],
             state="in progress",
@@ -244,12 +248,13 @@ class Command(BaseCommand):
 
         rfctobe = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
-            name="draft-ietf-where-is-my-hat-04",
+            name="draft-ietf-where-is-my-hat",
+            rev="04",
             states=[("draft-iesg", "rfcqueue")],
         )
         rfctobe.labels.add(LabelFactory(slug="is_a_trap", is_exception=True))
         AssignmentFactory(
-            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-where-is-my-hat-04"),
+            rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-where-is-my-hat"),
             role__slug="second_editor",
             person=self.people["sbexar"],
             state="in progress",
@@ -257,13 +262,14 @@ class Command(BaseCommand):
 
         self._demo_rfctobe_factory(
             rpcapi=rpcapi,
-            name="draft-irtf-improving-lizard-qol-00",
+            name="draft-irtf-improving-lizard-qol",
+            rev="07",
             stream="irtf",
             states=[("draft-iesg", "idexists")],
         )
         AssignmentFactory(
             rfc_to_be=RfcToBe.objects.get(
-                draft__name="draft-irtf-improving-lizard-qol-00"
+                draft__name="draft-irtf-improving-lizard-qol"
             ),
             role__slug="final_review_editor",
             person=self.people["sbexar"],
@@ -271,7 +277,7 @@ class Command(BaseCommand):
         )
         RfcToBeActionHolderFactory(
            target_rfctobe=RfcToBe.objects.get(
-                draft__name="draft-irtf-improving-lizard-qol-00"
+                draft__name="draft-irtf-improving-lizard-qol"
             ),
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="Artimus Ad"),
@@ -294,6 +300,7 @@ class Command(BaseCommand):
         *,
         rpcapi: rpcapi_client.DefaultApi,
         name,
+        rev,
         states=None,
         stream="ietf",
         **kwargs,
@@ -302,16 +309,21 @@ class Command(BaseCommand):
 
         **kwargs are passed through to the RfcToBeFactory
         """
-        dtdoc = rpcapi.create_demo_draft(
+        resp = rpcapi.create_demo_draft(
             rpcapi_client.CreateDemoDraftRequest(
-                name=name, states=states, stream=stream
+                name=name, rev=rev, states=states, stream=stream
             )
         )
+        dtdoc = rpcapi.get_draft_by_id(resp.doc_id)
         try:
             rfctobe = RfcToBeFactory(
                 **kwargs,
-                draft__datatracker_id=dtdoc.doc_id,
+                draft__datatracker_id=dtdoc.id,
                 draft__name=dtdoc.name,
+                draft__rev=dtdoc.rev,
+                draft__title=dtdoc.title,
+                draft__stream=dtdoc.stream,
+                draft__pages=dtdoc.pages,
             )
             return rfctobe
         except IntegrityError:

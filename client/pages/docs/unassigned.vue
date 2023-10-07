@@ -1,5 +1,14 @@
 <template>
-  <TitleBlock title="Manage Unassigned Documents"/>
+  <TitleBlock title="Manage Unassigned Documents">
+    <template #right>
+      <button type="button" class="btn-secondary mr-3">
+        <span class="sr-only">Refresh</span>
+        <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refresh"
+              :class="[(queuePending || peoplePending) ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
+              aria-hidden="true"/>
+      </button>
+    </template>
+  </TitleBlock>
 
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
@@ -26,7 +35,6 @@
       </div>
     </div>
     <Button @click="saveAssignments(state.newAssignments)">Save Changes</Button>
-    <Button @click="queueRefresh">Refresh</Button>
     <Button @click="state.newAssignments = buildAssignments(documents, [])">Reset</Button>
   </div>
 </template>
@@ -88,14 +96,19 @@ function buildAssignments (newDocuments, oldAssignments) {
   }))
 }
 
+async function refresh () {
+  await peopleRefresh()
+  await queueRefresh()
+}
+
 // DATA RETRIEVAL
 
-const { data: people } = await useFetch('/api/rpc/rpc_person/', {
+const { data: people, pending: peoplePending, refresh: peopleRefresh } = await useFetch('/api/rpc/rpc_person/', {
   baseURL: '/',
   server: false
 })
 
-const { data: queue, refresh: queueRefresh } = await useFetch('/api/rpc/queue/', {
+const { data: queue, pending: queuePending, refresh: queueRefresh } = await useFetch('/api/rpc/queue/', {
   baseURL: '/',
   server: false,
   transform: (resp) => (resp?.queue || [])

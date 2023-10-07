@@ -19,9 +19,26 @@ class AssignmentSerializer(serializers.ModelSerializer):
 
 
 class RfcToBeSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    title = serializers.SerializerMethodField()
+    stream = serializers.SerializerMethodField()
+    pages = serializers.SerializerMethodField()
+
     class Meta:
         model = RfcToBe
-        fields = ["id"]
+        fields = ["id", "name", "title", "stream", "pages"]
+
+    def get_name(self, rfc_to_be):
+        return rfc_to_be.draft.name
+
+    def get_title(self, rfc_to_be):
+        return rfc_to_be.draft.title
+
+    def get_stream(self, rfc_to_be):
+        return rfc_to_be.draft.stream
+
+    def get_pages(self, rfc_to_be):
+        return rfc_to_be.draft.pages
 
 
 class RpcPersonSerializer(serializers.ModelSerializer):

@@ -8,7 +8,7 @@ import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
 from .models import Assignment, Cluster, RfcToBe, RpcPerson
-from .serializers import  AssignmentSerializer
+from .serializers import AssignmentSerializer, RfcToBeSerializer
 
 
 @with_rpcapi
@@ -140,10 +140,10 @@ def queue(request):
     }
     """
     queue = {
-            "queue": [
-                {
-                    "id": rfc_to_be.pk,
-                    "name": rfc_to_be.draft.name if rfc_to_be.draft else "",
+        "queue": [
+            (
+                RfcToBeSerializer(rfc_to_be).data
+                | {
                     "labels": [
                         {
                             "slug": label.slug,
@@ -175,9 +175,10 @@ def queue(request):
                     ],
                     "requested_approvals": [],
                 }
-                for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
-            ]
-        }
+            )
+            for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
+        ]
+    }
     return JsonResponse(queue, safe=False)
 
 
@@ -221,6 +222,7 @@ def cluster(request, number):
         }
     )
 
+
 @api_view(["GET", "POST"])
 def assignments(request):
     if request.method == "GET":
@@ -234,4 +236,3 @@ def assignments(request):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
-

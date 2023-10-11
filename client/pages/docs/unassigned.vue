@@ -37,6 +37,7 @@
     <Button @click="saveAssignments(state.newAssignments)">Save Changes</Button>
     <Button @click="state.newAssignments = buildAssignments(documents, [])">Reset</Button>
   </div>
+  <EditorDeck :editors="editors" />
 </template>
 
 <script setup>

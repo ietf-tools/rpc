@@ -1,5 +1,6 @@
 <!-- Editor Deck
-Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-4ec337def61b547035ce908c128bca5c-->
+Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-4ec337def61b547035ce908c128bca5c
+-->
 <template>
   <div>
     <h2 class="text-sm font-medium text-gray-500">Pinned Projects</h2>

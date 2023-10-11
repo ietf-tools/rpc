@@ -1,5 +1,6 @@
 <!-- Document Card
-Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-2beafc928684743ff886c0b164edb126-->
+Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-2beafc928684743ff886c0b164edb126
+-->
 <template>
   <li :key="cookedDocument.name" class="overflow-hidden rounded-xl border border-gray-200">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">

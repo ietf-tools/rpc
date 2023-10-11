@@ -1,5 +1,6 @@
 <!-- Editor Card
-Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-4ec337def61b547035ce908c128bca5c-->
+Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-4ec337def61b547035ce908c128bca5c
+-->
 <template>
   <li :key="cookedEditor.id" class="col-span-1 flex rounded-md shadow-sm">
     <div

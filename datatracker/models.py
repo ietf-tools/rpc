@@ -36,19 +36,18 @@ class Document(models.Model):
     # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
     datatracker_id = models.BigIntegerField(unique=True)
 
-    name = models.CharField(
-        max_length=255, unique=True, help_text="Name of draft"
-    )
+    name = models.CharField(max_length=255, unique=True, help_text="Name of draft")
+    rev = models.CharField(max_length=16, help_text="Revision of draft")
+    title = models.CharField(max_length=255, help_text="Title of draft")
+    stream = models.CharField(max_length=32, help_text="Stream of draft")
+    pages = models.PositiveSmallIntegerField(help_text="Number of pages")
 
-    stream = models.CharField(
-        max_length=32, help_text="Stream of draft"
-    )
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
     labels = models.ManyToManyField("rpc.Label", through="DocumentLabel")
 
     def __str__(self):
-        return self.name
+        return f"{self.name}-{self.rev}"
 
 
 class DocumentLabel(models.Model):

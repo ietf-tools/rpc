@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "datatracker.apps.DatatrackerConfig",
     "rpc.apps.RpcConfig",
     "rpcauth.apps.RpcAuthConfig",
@@ -121,6 +122,14 @@ SESSION_COOKIE_NAME = (
     "rpcsessionid"  # need to set this if oidc provider is on same domain as client
 )
 
+REST_FRAMEWORK = {
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+    ],
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.JSONParser",
+    ]
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

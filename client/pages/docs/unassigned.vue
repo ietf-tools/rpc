@@ -12,32 +12,34 @@
 
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
-    <div v-for="(doc, index) of documents" :key="doc.id"
-         class="w-full max-w-5xl p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">
-      <div class="space-y-1">
-        <h5 class="text-xl font-medium text-gray-900 dark:text-white">{{ doc.name }}</h5>
-        <div>{{ doc.title }}</div>
-        <div>Labels here</div>
-        <div>Pages: {{ doc.pages }}</div>
-        <div>View Notes (with count)</div>
+    <!--    <div v-for="(doc, index) of documents" :key="doc.id"-->
+    <!--         class="w-full max-w-5xl p-4 bg-white border border-gray-200 rounded-lg shadow sm:p-6 md:p-8 dark:bg-gray-800 dark:border-gray-700">-->
+    <!--      <div class="space-y-1">-->
+    <!--        <h5 class="text-xl font-medium text-gray-900 dark:text-white">{{ doc.name }}</h5>-->
+    <!--        <div>{{ doc.title }}</div>-->
+    <!--        <div>Labels here</div>-->
+    <!--        <div>Pages: {{ doc.pages }}</div>-->
+    <!--        <div>View Notes (with count)</div>-->
 
-        <label :for="'editor' + doc.id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-          Assign editor
-        </label>
-        <select :id="'editor' + doc.id"
-                v-model="state.newAssignments[index].personId"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-          <option :value="null">Leave unassigned</option>
-          <option v-for="editor of editors" :key="editor.id" :value="editor.id">
-            {{ editor.name }}
-          </option>
-        </select>
-      </div>
-    </div>
-    <Button @click="saveAssignments(state.newAssignments)">Save Changes</Button>
-    <Button @click="state.newAssignments = buildAssignments(documents, [])">Reset</Button>
+    <!--        <label :for="'editor' + doc.id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">-->
+    <!--          Assign editor-->
+    <!--        </label>-->
+    <!--        <select :id="'editor' + doc.id"-->
+    <!--                v-model="state.newAssignments[index].personId"-->
+    <!--                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">-->
+    <!--          <option :value="null">Leave unassigned</option>-->
+    <!--          <option v-for="editor of editors" :key="editor.id" :value="editor.id">-->
+    <!--            {{ editor.name }}-->
+    <!--          </option>-->
+    <!--        </select>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--    <Button @click="saveAssignments(state.newAssignments)">Save Changes</Button>-->
+    <!--    <Button @click="state.newAssignments = buildAssignments(documents, [])">Reset</Button>-->
+    <!--  </div>-->
+    <DocumentCards :documents="documents"/>
+    <EditorDeck :editors="editors"/>
   </div>
-  <EditorDeck :editors="editors" />
 </template>
 
 <script setup>

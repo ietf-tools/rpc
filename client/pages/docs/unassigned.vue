@@ -13,7 +13,8 @@
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
     <DocumentCards :documents="documents"
-                   @assignEditorToDocument="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"/>
+                   @assign-editor-to-document="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"
+                   @delete-assignment="deleteAssignment"/>
     <EditorPalette :editors="people"/>
   </div>
 </template>
@@ -52,10 +53,20 @@ async function saveAssignment (assignment) {
   }
 }
 
+async function deleteAssignment (assignment) {
+  await $fetch(`/api/rpc/assignments/${assignment.id}`, {
+    method: 'DELETE',
+    headers: { 'X-CSRFToken': csrf.value }
+  })
+  if (refreshAssignments) {
+    refreshAssignments()
+  }
+}
+
 // DATA RETRIEVAL
 
 const { data: people } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
 const { data: rfcsToBe } = await useFetch('/api/rpc/documents/', { baseURL: '/', server: false })
-const { data: assignments, pending, refreshAssignments } = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
+const { data: assignments, pending, refresh: refreshAssignments } = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
 
 </script>

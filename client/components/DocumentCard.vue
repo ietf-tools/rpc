@@ -36,7 +36,9 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
       <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Assignments</dt>
         <dd class="grow flex items-start gap-x-2">
-          <AssignmentTray :assignments="cookedDocument.assignments" @assignEditor="editorId => $emit('assignEditor', cookedDocument.id, editorId)" />
+          <AssignmentTray :assignments="cookedDocument.assignments"
+                          @assignEditor="editorId => $emit('assignEditor', cookedDocument.id, editorId)"
+                          @deleteAssignment="assignment => $emit('deleteAssignment', assignment)"/>
         </dd>
       </div>
     </dl>
@@ -48,7 +50,7 @@ const props = defineProps({
   document: { type: Object, required: true }
 })
 
-defineEmits(['assignEditor'])
+defineEmits(['assignEditor', 'deleteAssignment'])
 
 const cookedDocument = computed(() => ({
   id: props.document.id,

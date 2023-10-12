@@ -26,6 +26,7 @@ urlpatterns = [
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("login/", views.index),
     path("api/rpc/assignments/", rpc_api.assignments),
+    path("api/rpc/assignments/<int:assignment_id>", rpc_api.assignment),
     path("api/rpc/clusters/", rpc_api.clusters),
     path("api/rpc/clusters/<int:number>", rpc_api.cluster),
     path("api/rpc/documents/", rpc_api.rfcs_to_be),

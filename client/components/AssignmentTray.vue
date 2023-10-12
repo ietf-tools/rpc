@@ -8,7 +8,7 @@
   >
     <template #item="{element, index}">
       <div class="draggable">
-        <AssignmentTrayItem :assignment="element"/>
+        <AssignmentTrayItem :assignment="element" @deleteAssignment="$emit('deleteAssignment', element)"/>
       </div>
     </template>
   </Sortable>
@@ -21,7 +21,7 @@ const props = defineProps({
   assignments: Array
 })
 
-const emit = defineEmits(['assignEditor'])
+const emit = defineEmits(['assignEditor', 'deleteAssignment'])
 
 const sortableOptions = {
   group: {

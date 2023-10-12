@@ -3,7 +3,9 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 -->
 <template>
   <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
-    <DocumentCard v-for="doc of props.documents" :document="doc" @assignEditor="(...args) => $emit('assignEditorToDocument', ...args)"/>
+    <DocumentCard v-for="doc of props.documents" :document="doc"
+                  @assignEditor="(...args) => $emit('assignEditorToDocument', ...args)"
+                  @delete-assignment="assignment => $emit('deleteAssignment', assignment)"/>
   </ul>
 </template>
 
@@ -12,5 +14,5 @@ const props = defineProps({
   documents: Array
 })
 
-defineEmits(['assignEditorToDocument'])
+defineEmits(['assignEditorToDocument', 'deleteAssignment'])
 </script>

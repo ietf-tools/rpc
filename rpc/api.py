@@ -237,6 +237,12 @@ def assignments(request):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+@api_view(["DELETE"])
+def assignment(request, assignment_id):
+    if request.method == "DELETE":
+        Assignment.objects.filter(pk=assignment_id).delete()
+        return Response(status=204)  # no content
+
 
 @api_view(["GET"])
 def rfcs_to_be(request):

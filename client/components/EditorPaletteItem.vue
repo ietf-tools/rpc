@@ -1,8 +1,8 @@
-<!-- Editor Card
+<!-- Editor Palette Item
 Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-4ec337def61b547035ce908c128bca5c
 -->
 <template>
-  <li :key="cookedEditor.id" class="col-span-1 flex rounded-md shadow-sm">
+  <div :key="cookedEditor.id" class="col-span-1 flex rounded-md shadow-sm">
     <div
       :class="[cookedEditor.bgColor, 'flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white']">
       {{ cookedEditor.initials }}
@@ -21,7 +21,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
         </button>
       </div>
     </div>
-  </li>
+  </div>
 </template>
 
 <script setup>

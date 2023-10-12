@@ -4,8 +4,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 <template>
   <li :key="cookedDocument.name" class="overflow-hidden rounded-xl border border-gray-200">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-      <img :src="cookedDocument.imgUrl" :alt="cookedDocument.name"
-           class="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"/>
+      <Icon name="solar:document-text-line-duotone"
+           class="h-8 w-8 flex-none"/>
       <div class="text-sm font-medium leading-6 text-gray-900">{{ cookedDocument.name }}</div>
       <HeadlessMenu as="div" class="relative ml-auto">
         <HeadlessMenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
@@ -34,13 +34,9 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
     </div>
     <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
       <div class="flex justify-between gap-x-4 py-3">
-        <dt class="text-gray-500">Kyaa</dt>
-        <dd class="text-gray-700">Some detail</dd>
-      </div>
-      <div class="flex justify-between gap-x-4 py-3">
-        <dt class="text-gray-500">Whaa</dt>
-        <dd class="flex items-start gap-x-2">
-          <div class="font-medium text-gray-900">Some other detail</div>
+        <dt class="text-gray-500">Assignments</dt>
+        <dd class="grow flex items-start gap-x-2">
+          <AssignmentTray :assignments="cookedDocument.assignments" @assignEditor="editorId => $emit('assignEditor', cookedDocument.id, editorId)" />
         </dd>
       </div>
     </dl>
@@ -52,9 +48,11 @@ const props = defineProps({
   document: { type: Object, required: true }
 })
 
+defineEmits(['assignEditor'])
+
 const cookedDocument = computed(() => ({
   id: props.document.id,
   name: props.document.name,
-  imgUrl: 'https://tailwindui.com/img/logos/48x48/tuple.svg'
+  assignments: props.document.assignments
 }))
 </script>

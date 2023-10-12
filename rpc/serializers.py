@@ -5,19 +5,6 @@ from rest_framework import serializers
 from .models import Assignment, RfcToBe, RpcPerson, RpcRole
 
 
-class AssignmentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Assignment
-        fields = [
-            "rfc_to_be",
-            "person",
-            "role",
-            "state",
-            "comment",
-            "time_spent",
-        ]
-
-
 class RfcToBeSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
@@ -42,12 +29,31 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
 
 class RpcPersonSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
     class Meta:
         model = RpcPerson
-        fields = ["can_hold_role", "capable_of"]
+        fields = ["name", "can_hold_role", "capable_of"]
+
+    def get_name(self, rpc_person):
+        return rpc_person.datatracker_person.plain_name()
 
 
 class RpcRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = RpcRole
         fields = ["slug", "name", "desc"]
+
+
+class AssignmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Assignment
+        fields = [
+            "rfc_to_be",
+            "person",
+            "role",
+            "state",
+            "comment",
+            "time_spent",
+        ]
+

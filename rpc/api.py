@@ -236,3 +236,9 @@ def assignments(request):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+
+@api_view(["GET"])
+def rfcs_to_be(request):
+    # only GET permitted by @api_view
+    return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)

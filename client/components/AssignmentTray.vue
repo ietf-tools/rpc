@@ -4,8 +4,8 @@
     item-key="id"
     class="container flex flex-wrap gap-2"
     :options="sortableOptions"
-    @add="event => $emit('assignEditor', event.clone.dataset.editorId)"
-    >
+    @add="addEditor"
+  >
     <template #item="{element, index}">
       <div class="draggable">
         <AssignmentTrayItem :assignment="element"/>
@@ -21,7 +21,7 @@ const props = defineProps({
   assignments: Array
 })
 
-defineEmits(['assignEditor'])
+const emit = defineEmits(['assignEditor'])
 
 const sortableOptions = {
   group: {
@@ -30,5 +30,10 @@ const sortableOptions = {
     put: ['editors']
   },
   sort: false
+}
+
+function addEditor (event) {
+  event.item.remove() // remove the cloned editor from the DOM
+  emit('assignEditor', event.clone.dataset.editorId)
 }
 </script>

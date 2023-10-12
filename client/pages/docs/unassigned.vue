@@ -1,10 +1,10 @@
 <template>
-  <TitleBlock title="Manage Unassigned Documents">
+  <TitleBlock title="Manage Assignments">
     <template #right>
       <button type="button" class="btn-secondary mr-3">
         <span class="sr-only">Refresh</span>
-        <Icon name="solar:refresh-line-duotone" size="1.5em"
-              class="text-gray-500 dark:text-neutral-300"
+        <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refreshAssignments"
+              :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
               aria-hidden="true"/>
       </button>
     </template>
@@ -13,7 +13,7 @@
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
     <DocumentCards :documents="documents"
-                   @assignEditorToDocument="(dId, edId) => saveAssignments([{rfcToBeId: dId, personId: edId}])"/>
+                   @assignEditorToDocument="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"/>
     <EditorPalette :editors="people"/>
   </div>
 </template>
@@ -37,31 +37,25 @@ const documents = computed(() => rfcsToBe.value?.map((rtb) => ({
 
 // METHODS
 
-async function saveAssignments (assignments) {
-  assignments.forEach(({ rfcToBeId, personId }) => {
-    $fetch('/api/rpc/assignments/', {
-      body: {
-        rfc_to_be: rfcToBeId,
-        person: personId,
-        role: 'first_editor'
-      },
-      method: 'POST',
-      headers: { 'X-CSRFToken': csrf.value }
-    })
+async function saveAssignment (assignment) {
+  await $fetch('/api/rpc/assignments/', {
+    body: {
+      rfc_to_be: assignment.rfcToBeId,
+      person: assignment.personId,
+      role: 'first_editor'
+    },
+    method: 'POST',
+    headers: { 'X-CSRFToken': csrf.value }
   })
+  if (refreshAssignments) {
+    refreshAssignments()
+  }
 }
 
 // DATA RETRIEVAL
 
 const { data: people } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
 const { data: rfcsToBe } = await useFetch('/api/rpc/documents/', { baseURL: '/', server: false })
-const { data: assignments } = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
+const { data: assignments, pending, refreshAssignments } = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
 
-/**
- * Todo
- * - indicate changed assignments
- * - buttons to refresh/reset the view
- * - compute stats for editors (see details on wireframe)
- * - order editors based on stats
- */
 </script>

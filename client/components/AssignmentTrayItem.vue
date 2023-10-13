@@ -9,7 +9,7 @@
       </dl>
     </div>
     <div class="flex flex-shrink-0">
-      <button type="button" @click="$emit('deleteAssignment')"
+      <button type="button" @click="deleteAssignment(props.assignment)"
               class="inline-flex rounded-md text-pink-300 hover:text-pink-100 focus:outline-none focus:ring-1 focus:ring-pink-500 focus:ring-offset-1">
         <span class="sr-only">Dismiss</span>
         <Icon name="uil:times-circle" class="h-5 w-5" aria-hidden="true"/>
@@ -19,11 +19,14 @@
 </template>
 
 <script setup>
+import { inject } from 'vue'
+
 const props = defineProps({
   assignment: Object
 })
 
-defineEmits(['deleteAssignment'])
+const deleteAssignment = inject('deleteAssignment')
+
 const assignment = computed(() => ({
   id: props.assignment.id,
   initials: props.assignment.person?.name,

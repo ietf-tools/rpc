@@ -16,7 +16,7 @@
                    @assign-editor-to-document="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"
                    @delete-assignment="deleteAssignment"
                    @selection-changed="doc => state.selectedDoc = doc"/>
-    <EditorPalette :editors="editors"/>
+    <EditorPalette :editors="editors?.toSorted(compareEditors)"/>
   </div>
 </template>
 
@@ -43,15 +43,18 @@ const documents = computed(() => rfcsToBe.value?.map((rtb) => ({
   assignments: cookedAssignments.value?.filter(a => a.rfc_to_be === rtb.id)
 })).sort(rtb => rtb.external_deadline))
 
-const editors = computed(() => people.value?.map(person => ({
-  ...person,
-  assignments: assignments.value?.filter(a => a.person === person.id),
-  completeBy: (
-    state.selectedDoc
-      ? DateTime.now().plus({ days: 7 * state.selectedDoc.pages / teamPagesPerHour / person.hours_per_week })
-      : null
-  )
-})))
+const editors = computed(() => {
+  const now = DateTime.now()
+  return people.value?.map(person => ({
+    ...person,
+    assignments: assignments.value?.filter(a => a.person === person.id),
+    completeBy: (
+      state.selectedDoc
+        ? now.plus({ days: 7 * state.selectedDoc.pages / teamPagesPerHour / person.hours_per_week })
+        : null
+    )
+  }))
+})
 
 // METHODS
 
@@ -68,6 +71,16 @@ async function saveAssignment (assignment) {
   if (refreshAssignments) {
     refreshAssignments()
   }
+}
+
+// Order editors for display
+function compareEditors (a, b) {
+  const comparisons = ['completeBy', 'name'].map(attr => {
+    const aval = a[attr]
+    const bval = b[attr]
+    return (aval < bval) ? -1 : ((aval > bval) ? 1 : 0)
+  })
+  return comparisons.find(c => c !== 0) ?? 0
 }
 
 async function deleteAssignment (assignment) {

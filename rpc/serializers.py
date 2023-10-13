@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Assignment, RfcToBe, RpcPerson, RpcRole
+from .models import Assignment, Capability, RfcToBe, RpcPerson, RpcRole
 
 
 class RfcToBeSerializer(serializers.ModelSerializer):
@@ -13,7 +13,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RfcToBe
-        fields = ["id", "name", "title", "stream", "pages"]
+        fields = ["id", "name", "title", "stream", "pages", "external_deadline"]
 
     def get_name(self, rfc_to_be):
         return rfc_to_be.draft.name
@@ -28,21 +28,40 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         return rfc_to_be.draft.pages
 
 
-class RpcPersonSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField()
-
+class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:
-        model = RpcPerson
-        fields = ["name", "can_hold_role", "capable_of"]
-
-    def get_name(self, rpc_person):
-        return rpc_person.datatracker_person.plain_name()
+        model = Capability
+        fields = ["slug", "name"]
 
 
 class RpcRoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = RpcRole
         fields = ["slug", "name", "desc"]
+
+
+class RpcPersonSerializer(serializers.ModelSerializer):
+    """Serialize an RpcPerson
+
+    To avoid datatracker API calls, use the `name_map` parameter to
+    pass a dict mapping datatracker Person ID to name (designed for use
+    with the `get_persons()` API endpoint).
+    """
+    name = serializers.SerializerMethodField()
+    capabilities = CapabilitySerializer(source="capable_of", many=True)
+    roles = RpcRoleSerializer(source="can_hold_role", many=True)
+
+    class Meta:
+        model = RpcPerson
+        fields = ["name", "hours_per_week", "capabilities", "roles"]
+
+    def __init__(self, *args, **kwargs):
+        self.name_map: dict[str, str] = kwargs.pop("name_map", {})  # datatracker_id -> name
+        super().__init__(*args, **kwargs)
+
+    def get_name(self, rpc_person):
+        cached_name = self.name_map.get(str(rpc_person.datatracker_person.datatracker_id), None)
+        return cached_name or rpc_person.datatracker_person.plain_name()
 
 
 class AssignmentSerializer(serializers.ModelSerializer):

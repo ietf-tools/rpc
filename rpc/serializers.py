@@ -53,7 +53,7 @@ class RpcPersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = RpcPerson
-        fields = ["name", "hours_per_week", "capabilities", "roles"]
+        fields = ["id", "name", "hours_per_week", "capabilities", "roles"]
 
     def __init__(self, *args, **kwargs):
         self.name_map: dict[str, str] = kwargs.pop("name_map", {})  # datatracker_id -> name

@@ -8,7 +8,7 @@ import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
 from .models import Assignment, Cluster, RfcToBe, RpcPerson
-from .serializers import AssignmentSerializer, RfcToBeSerializer
+from .serializers import AssignmentSerializer, RfcToBeSerializer, RpcPersonSerializer
 
 
 @with_rpcapi
@@ -25,9 +25,9 @@ def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
     })
 
 
+@api_view(["GET"])
 @with_rpcapi
 def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
-    response = []
     # use bulk endpoint to get names
     name_map = rpcapi.get_persons(
         list(
@@ -36,27 +36,9 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
             )
         )
     )
-
-    for rpc_pers in RpcPerson.objects.all():
-        capabilities = []
-        for capability in rpc_pers.capable_of.all():
-            capabilities.append(dict(id=capability.pk, name=capability.name))
-        roles = []
-        for role in rpc_pers.can_hold_role.all():
-            roles.append(dict(id=role.pk, name=role.name))
-        # Look up the name, but allow for the slim possibility an RpcPerson was created between
-        # when we looked up the name_map and when we started this loop.
-        name = name_map.get(str(rpc_pers.datatracker_person.datatracker_id), None)
-        response.append(
-            dict(
-                id=rpc_pers.pk,
-                name=name or rpc_pers.datatracker_person.plain_name(),
-                capabilities=capabilities,
-                roles=roles,
-            )
-        )
-
-    return JsonResponse(response, safe=False)
+    return Response(
+        RpcPersonSerializer(RpcPerson.objects.all(), many=True, name_map=name_map).data
+    )
 
 
 @with_rpcapi
@@ -236,3 +218,15 @@ def assignments(request):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+@api_view(["DELETE"])
+def assignment(request, assignment_id):
+    if request.method == "DELETE":
+        Assignment.objects.filter(pk=assignment_id).delete()
+        return Response(status=204)  # no content
+
+
+@api_view(["GET"])
+def rfcs_to_be(request):
+    # only GET permitted by @api_view
+    return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)

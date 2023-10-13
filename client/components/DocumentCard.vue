@@ -36,7 +36,12 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
     <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
       <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Deadline</dt>
-        <dd class="grow flex items-start gap-x-2">{{ cookedDocument.external_deadline || '-' }}</dd>
+        <dd class="grow flex items-start gap-x-2">
+          {{ cookedDocument.external_deadline?.toLocaleString(DateTime.DATE_FULL) || '-' }}</dd>
+      </div>
+      <div class="flex justify-between gap-x-4 py-3">
+        <dt class="text-gray-500">Pages</dt>
+        <dd class="grow flex items-start gap-x-2">{{ cookedDocument.pages || '-' }}</dd>
       </div>
       <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Assignments</dt>
@@ -51,6 +56,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 
 <script setup>
 import { inject } from 'vue'
+import { DateTime } from 'luxon'
 
 const props = defineProps({
   document: { type: Object, required: true },
@@ -60,8 +66,8 @@ const props = defineProps({
 const assignEditor = inject('assignEditor')
 
 const cookedDocument = computed(() => ({
-  id: props.document.id,
-  name: props.document.name,
+  ...props.document,
+  external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
   assignments: props.document.assignments
 }))
 </script>

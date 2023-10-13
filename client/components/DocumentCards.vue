@@ -4,7 +4,6 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 <template>
   <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
     <DocumentCard v-for="doc of props.documents" :document="doc"
-                  @assignEditor="(...args) => $emit('assignEditorToDocument', ...args)"
                   :selected="state.selectedDoc?.id === doc.id"
                   @click="e => cardClicked(doc)"/>
   </ul>
@@ -23,6 +22,7 @@ const state = reactive({
 
 const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment', 'selectionChanged'])
 
+provide('assignEditor', (doc, editor) => emit('assignEditorToDocument', doc, editor))
 provide('deleteAssignment', (assignment) => emit('deleteAssignment', assignment))
 
 function cardClicked (doc) {

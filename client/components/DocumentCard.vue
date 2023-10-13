@@ -42,7 +42,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
         <dt class="text-gray-500">Assignments</dt>
         <dd class="grow flex items-start gap-x-2">
           <AssignmentTray :assignments="cookedDocument.assignments"
-                          @assignEditor="editorId => $emit('assignEditor', cookedDocument.id, editorId)"/>
+                          @assignEditor="(editorId) => assignEditor(cookedDocument.id, editorId)"/>
         </dd>
       </div>
     </dl>
@@ -50,12 +50,14 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 </template>
 
 <script setup>
+import { inject } from 'vue'
+
 const props = defineProps({
   document: { type: Object, required: true },
   selected: Boolean
 })
 
-defineEmits(['assignEditor'])
+const assignEditor = inject('assignEditor')
 
 const cookedDocument = computed(() => ({
   id: props.document.id,

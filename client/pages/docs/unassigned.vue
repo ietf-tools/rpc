@@ -3,7 +3,7 @@
     <template #right>
       <button type="button" class="btn-secondary mr-3">
         <span class="sr-only">Refresh</span>
-        <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refreshAssignments"
+        <Icon name="solar:refresh-line-duotone" size="1.5em" @click="refresh"
               :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
               aria-hidden="true"/>
       </button>
@@ -31,6 +31,7 @@ const teamPagesPerHour = 1.0
 
 // COMPUTED
 
+const pending = computed(() => pendingPeople?.value || pendingDocs?.value || pendingAssignments?.value)
 const cookedAssignments = computed(() => assignments.value?.map(a => ({
   ...a,
   // person is a Person id - replace it with person details
@@ -68,9 +69,7 @@ async function saveAssignment (assignment) {
     method: 'POST',
     headers: { 'X-CSRFToken': csrf.value }
   })
-  if (refreshAssignments) {
-    refreshAssignments()
-  }
+  await refresh()
 }
 
 // Order editors for display
@@ -88,18 +87,24 @@ async function deleteAssignment (assignment) {
     method: 'DELETE',
     headers: { 'X-CSRFToken': csrf.value }
   })
-  if (refreshAssignments) {
-    refreshAssignments()
-  }
+  await refresh()
+}
+
+async function refresh () {
+  const promises = []
+  refreshPeople && promises.push(refreshPeople())
+  refreshDocs && promises.push(refreshDocs())
+  refreshAssignments && promises.push(refreshAssignments())
+  await Promise.allSettled(promises)
 }
 
 // DATA RETRIEVAL
 
-const { data: people } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
-const { data: rfcsToBe } = await useFetch('/api/rpc/documents/', { baseURL: '/', server: false })
+const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
+const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useFetch('/api/rpc/documents/', { baseURL: '/', server: false })
 const {
   data: assignments,
-  pending,
+  pending: pendingAssignments,
   refresh: refreshAssignments
 } = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
 

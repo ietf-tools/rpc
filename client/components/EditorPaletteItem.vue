@@ -25,6 +25,9 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 </template>
 
 <script setup>
+
+import { DateTime } from 'luxon'
+
 const props = defineProps({
   editor: Object
 })
@@ -34,7 +37,7 @@ const cookedEditor = computed(() => ({
   name: props.editor.name,
   initials: props.editor.name[0],
   href: '#',
-  detail: 'Some detail',
+  detail: props.editor.completeBy ? `Can complete by ${props.editor.completeBy.toLocaleString(DateTime.DATE_MED)}` : '',
   bgColor: 'bg-pink-600'
 }))
 

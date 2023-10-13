@@ -14,13 +14,20 @@
     <h2>Documents for assignment</h2>
     <DocumentCards :documents="documents"
                    @assign-editor-to-document="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"
-                   @delete-assignment="deleteAssignment"/>
-    <EditorPalette :editors="people"/>
+                   @delete-assignment="deleteAssignment"
+                   @selection-changed="doc => state.selectedDoc = doc"/>
+    <EditorPalette :editors="editors"/>
   </div>
 </template>
 
 <script setup>
+import { DateTime } from 'luxon'
+
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
+
+const state = reactive({ selectedDoc: null })
+
+const teamPagesPerHour = 1.0
 
 // COMPUTED
 
@@ -34,6 +41,16 @@ const documents = computed(() => rfcsToBe.value?.map((rtb) => ({
   ...rtb,
   // augment with assignments
   assignments: cookedAssignments.value?.filter(a => a.rfc_to_be === rtb.id)
+})).sort(rtb => rtb.external_deadline))
+
+const editors = computed(() => people.value?.map(person => ({
+  ...person,
+  assignments: assignments.value?.filter(a => a.person === person.id),
+  completeBy: (
+    state.selectedDoc
+      ? DateTime.now().plus({ days: 7 * state.selectedDoc.pages / teamPagesPerHour / person.hours_per_week })
+      : null
+  )
 })))
 
 // METHODS
@@ -67,6 +84,10 @@ async function deleteAssignment (assignment) {
 
 const { data: people } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
 const { data: rfcsToBe } = await useFetch('/api/rpc/documents/', { baseURL: '/', server: false })
-const { data: assignments, pending, refresh: refreshAssignments } = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
+const {
+  data: assignments,
+  pending,
+  refresh: refreshAssignments
+} = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
 
 </script>

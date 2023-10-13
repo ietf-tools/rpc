@@ -2,10 +2,11 @@
 Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-2beafc928684743ff886c0b164edb126
 -->
 <template>
-  <li :key="cookedDocument.name" class="overflow-hidden rounded-xl border border-gray-200">
+  <li :key="cookedDocument.name"
+      :class="[props.selected ? 'border-violet-700' : 'border-gray-200', 'overflow-hidden rounded-xl border']">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
       <Icon name="solar:document-text-line-duotone"
-           class="h-8 w-8 flex-none"/>
+            class="h-8 w-8 flex-none"/>
       <div class="text-sm font-medium leading-6 text-gray-900">{{ cookedDocument.name }}</div>
       <HeadlessMenu as="div" class="relative ml-auto">
         <HeadlessMenuButton class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500">
@@ -34,6 +35,10 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
     </div>
     <dl class="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
       <div class="flex justify-between gap-x-4 py-3">
+        <dt class="text-gray-500">Deadline</dt>
+        <dd class="grow flex items-start gap-x-2">{{ cookedDocument.external_deadline || '-' }}</dd>
+      </div>
+      <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Assignments</dt>
         <dd class="grow flex items-start gap-x-2">
           <AssignmentTray :assignments="cookedDocument.assignments"
@@ -47,7 +52,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 
 <script setup>
 const props = defineProps({
-  document: { type: Object, required: true }
+  document: { type: Object, required: true },
+  selected: Boolean
 })
 
 defineEmits(['assignEditor', 'deleteAssignment'])

@@ -43,10 +43,11 @@
   </div>
 
   <UserCreateDialog v-model:isShown="state.createDialogShown" />
-  <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error" :caption="state.notifDialogMessage" />
 </template>
 
 <script setup>
+const snackbar = useSnackbar()
+
 useHead({
   title: 'Manage Team Members'
 })
@@ -54,9 +55,7 @@ useHead({
 // DATA
 
 const state = reactive({
-  createDialogShown: false,
-  notifDialogShown: false,
-  notifDialogMessage: ''
+  createDialogShown: false
 })
 
 // METHODS
@@ -65,12 +64,18 @@ const { data: people, pending, refresh } = await useFetch('/api/rpc/rpc_person/'
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {
-    state.notifDialogMessage = error
-    state.notifDialogShown = true
+    snackbar.add({
+      type: 'error',
+      title: 'Fetch Failed',
+      text: error
+    })
   },
   onResponseError ({ response, error }) {
-    state.notifDialogMessage = response.statusText ?? error
-    state.notifDialogShown = true
+    snackbar.add({
+      type: 'error',
+      title: 'Server Error',
+      text: response.statusText ?? error
+    })
   }
 })
 </script>

@@ -29,9 +29,11 @@
     "sass": "1.69.3"
   },
   "dependencies": {
+    "canvas-confetti": "1.9.0",
     "fuse.js": "6.6.2",
     "lodash-es": "4.17.21",
     "luxon": "3.4.3",
+    "nuxt-snackbar": "1.0.3",
     "pinia": "2.1.7",
     "sortablejs": "1.15.0",
     "sortablejs-vue3": "1.2.9",

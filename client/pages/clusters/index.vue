@@ -47,14 +47,14 @@
   </div>
 
   <!--    <UserCreateDialog v-model:isShown="state.createDialogShown"/>-->
-  <NotificationDialog v-model:isShown="state.notifDialogShown" type="negative" title="Fetch Error"
-                      :caption="state.notifDialogMessage"/>
 </template>
 
 <script setup>
 useHead({
   title: 'Manage Clusters'
 })
+
+const snackbar = useSnackbar()
 
 // COMPUTED
 const selectedCluster = computed(() => {
@@ -78,12 +78,18 @@ const { data: clusters, pending, refresh } = await useFetch('/api/rpc/clusters/'
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {
-    state.notifDialogMessage = error
-    state.notifDialogShown = true
+    snackbar.add({
+      type: 'error',
+      title: 'Fetch Failed',
+      text: error
+    })
   },
   onResponseError ({ response, error }) {
-    state.notifDialogMessage = response.statusText ?? error
-    state.notifDialogShown = true
+    snackbar.add({
+      type: 'error',
+      title: 'Server Error',
+      text: response.statusText ?? error
+    })
   }
 })
 </script>

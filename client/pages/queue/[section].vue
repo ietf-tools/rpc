@@ -46,12 +46,6 @@
       </div>
     </div>
   </div>
-  <NotificationDialog
-    v-model:isShown="state.notifDialogShown"
-    type="negative"
-    title="Fetch Error"
-    :caption="state.notifDialogMessage"
-    />
 </template>
 
 <script setup>
@@ -67,12 +61,13 @@ const route = useRoute()
 
 const siteStore = useSiteStore()
 
+// DIALOGS
+
+const snackbar = useSnackbar()
+
 // DATA
 
-const state = reactive({
-  notifDialogShown: false,
-  notifDialogMessage: ''
-})
+const state = reactive({})
 
 const tabs = [
   { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
@@ -267,12 +262,18 @@ const { data: documents, pending, refresh } = await useFetch(
       return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : (resp?.queue ?? [])
     },
     onRequestError ({ error }) {
-      state.notifDialogMessage = error
-      state.notifDialogShown = true
+      snackbar.add({
+        type: 'error',
+        title: 'Fetch Failed',
+        text: error
+      })
     },
     onResponseError ({ response, error }) {
-      state.notifDialogMessage = response.statusText ?? error
-      state.notifDialogShown = true
+      snackbar.add({
+        type: 'error',
+        title: 'Server Error',
+        text: response.statusText ?? error
+      })
     }
   }
 )

@@ -84,7 +84,10 @@
               </li>
             </ul>
           </li>
-          <li class="-mx-6 mt-auto">
+          <li class="mx-2 mt-auto">
+            <span class="cursor-pointer text-purple-100 hover:text-purple-500 text-sm" @click="pi">π</span>
+          </li>
+          <li class="-mx-6">
             <a href="https://datatracker.ietf.org" class="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-gray-500 dark:text-violet-400 hover:text-violet-500 dark:hover:text-violet-200 hover:bg-violet-500/5">
               <Icon name="solar:database-bold-duotone" class="h-8 w-8 opacity-70" aria-hidden="true" />
               <span>Go to Datatracker</span>
@@ -99,6 +102,7 @@
 <script setup>
 import { useSiteStore } from '@/stores/site'
 import { Icon } from '#components'
+import confetti from 'canvas-confetti'
 
 // STORES
 
@@ -125,4 +129,38 @@ const links = [
   { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
   { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) }
 ]
+
+// METHODS
+
+function pi () {
+  const end = Date.now() + (5 * 1000)
+  const colors = ['#c084fc', '#14b8a6']
+
+  ;(function frame () {
+    confetti({
+      particleCount: 2,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 },
+      colors
+    })
+    confetti({
+      particleCount: 2,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 },
+      colors
+    })
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame)
+    } else {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      })
+    }
+  }())
+}
 </script>

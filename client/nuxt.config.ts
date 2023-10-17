@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     '@pinia/nuxt',
     'nuxt-headlessui',
     'nuxt-icon',
+    'nuxt-snackbar',
     'nuxt-svgo'
   ],
   robots: {
@@ -30,6 +31,15 @@ export default defineNuxtConfig({
       { UserAgent: '*' },
       { Disallow: '/' }
     ]
+  },
+  snackbar: {
+    top: true,
+    right: true,
+    duration: 5000,
+    success: '#059669', // emerald 600
+    error: '#e11d48', // rose 600
+    warning: '#d97706', // amber 600
+    info: '#0284c7' // sky 600
   },
   tailwindcss: {
     viewer: false

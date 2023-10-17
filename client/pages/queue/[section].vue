@@ -99,8 +99,7 @@ const columns = computed(() => {
     {
       key: 'labels',
       label: 'Labels',
-      field: 'labels',
-      classes: 'text-xs font-small'
+      labels: row => row.labels
     }
   ]
   if (['submissions', 'exceptions'].includes(currentTab.value)) {
@@ -234,6 +233,15 @@ const filteredDocuments = computed(() => {
       docs = []
       break
   }
+
+  // fill in labels - needed until we plumb the label data from the backend
+  docs = docs?.map(d => ({
+    ...d,
+    labels: d.labels?.map(lbl => ({
+      label: lbl.slug,
+      color: lbl.is_exception ? 'red' : 'fuchsia'
+    })) || []
+  }))
 
   // -> Fuzzy search
   if (siteStore.search) {

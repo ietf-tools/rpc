@@ -61,19 +61,31 @@ import { isArray, isFunction, orderBy } from 'lodash-es'
 // PROPS
 
 const props = defineProps({
+  /**
+   * Rows to display
+   */
   data: {
     type: Array,
     default: () => ([])
   },
+  /**
+   * Column definitions
+   */
   columns: {
     type: Array,
     default: () => ([]),
     required: true
   },
+  /**
+   * The property to use as the unique key for each row
+   */
   rowKey: {
     type: String,
     default: 'id'
   },
+  /**
+   * Whether to show the loading animation or not
+   */
   loading: {
     type: Boolean,
     default: false
@@ -210,3 +222,22 @@ function transformLabels (val, defaultColor) {
   }
 }
 </style>
+
+<docs>
+## Column Definition
+
+The `columns` property is an arrow of objects with the following possible options:
+
+| Option | Type | Description | Required |
+|---|---|---|:-:|
+| `key` | *String* | Unique ID for the column | ✅ |
+| `label` | *String* | Column title | ✅ |
+| `field` | *String* | Row property to use / sort on | ✅ |
+| `format` | *Function* | Optional lambda function to transform the cell value. e.g. `(val) => val.toLowerCase()` |
+| `link` | *Function* | Lambda function that returns a URL. The value will be displayed as clickable link. `(row, val) => val.personUrl` |
+| `icon` | *String* | If defined, the name of the icon to display to the left of the value. See the [Iconify reference](https://icon-sets.iconify.design/) for all possible options. |
+| `labels` | *Array \| Function* | Either an array or a lambda function (e.g. `row => row.labels`) that return an array of / a mix of:<br>- strings *(the `labelDefaultColor` will be used)*<br>- an object `{ label: 'something', color: 'rose' }` |
+| `labelDefaultColor` | *String* | The fallback color name to use for a label when not explicitly provided. Any of the [TailwindCSS color names](https://tailwindcss.com/docs/customizing-colors), in lowercase. e.g. `purple` |
+| `classes` | *String \| Function* | List of space separated CSS classes to apply to the cell, or a lambda function e.g. `(row) => row.fooBar` |
+| `sortable` | *Boolean* | Whether the column can be sorted or not. Defaults to `true`. | |
+</docs>

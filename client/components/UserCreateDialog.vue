@@ -154,7 +154,7 @@ const roles = [
   { value: 're', label: 'RFC Editor', description: 'A more experienced editor who makes a 2nd pass and also checks things like code components and IANA actions.' },
   { value: 'finrev', label: 'Final Review', description: 'An editor who handles the interactions with authors during their final review (AUTH48).' },
   { value: 'pub', label: 'Publisher', description: 'An editor who does the final-final reviews after the author has signed off and publishes the RFC to the website.' },
-  { value: 'manager', label: 'Manager', description: 'A manager can access restricted sections like Legal, Manage Team Members, Assign Docs, Change RFC Status, Withdraw Document and more.', caution: true },
+  { value: 'manager', label: 'Manager', description: 'A manager can access restricted sections like Legal, Manage Team Members, Assign Docs, Change RFC Status, Withdraw Document and more.', caution: true }
 ]
 
 const nameIpt = ref(null)

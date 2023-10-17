@@ -34,11 +34,17 @@
 // PROPS / EMITS
 
 defineProps({
+  /**
+   * Dialog Options
+   */
   opts: {
     type: Object,
     default: () => ({}),
     required: true
   },
+  /**
+   * Modal Visibility State
+   */
   isShown: {
     type: Boolean,
     default: false,
@@ -68,3 +74,120 @@ function close () {
   emit('closeCancel')
 }
 </script>
+
+<docs>
+## Usage
+
+The `OverlayModal` component lives at the root of the Vue app. It provides an `overlayModal` set of methods to launch and close a modal.
+
+### Create New Component
+
+You must first create a component with the contents of the modal. In this example, we'll name the component `EditUserModal.vue`. Make sure to add at least a close button, which would call either the `ok` or `cancel` methods as shown below.
+
+You must inject methods from `overlayModalMethods` to control the dialog:
+
+```
+<script setup>
+
+const { ok, cancel } = inject('overlayModalMethods')
+
+function save () {
+  // do some logic
+  ok()
+}
+
+function close () {
+  cancel()
+}
+
+</script>
+```
+
+### Trigger Your Modal
+
+From the page you want to trigger the modal, import the component you just created and inject the methods from `overlayModal`
+
+```
+<script setup>
+  import { UserEditModal } from '#components'
+
+  const { openOverlayModal } = inject('overlayModal')
+
+  function editUser (userId) {
+    openOverlayModal({
+      component: UserEditModal,
+      componentProps: {
+        id: userId
+      }
+    })
+  }
+</script>
+```
+
+In the above example, the property `component` refers to the component to display in the modal frame, while the property `componentProps` is an object of properties to bind to the component.
+
+You can also close the modal from the trigger context using the injected method `closeOverlayModal`, e.g.:
+
+```
+<script setup>
+  import { UserEditModal } from '#components'
+
+  const { openOverlayModal, closeOverlayModal } = inject('overlayModal')
+
+  function editUser (userId) {
+    openOverlayModal({
+      component: UserEditModal,
+      componentProps: {
+        id: userId
+      }
+    })
+
+    // automatically close after 5 seconds
+    setTimeout(() => {
+      closeOverlayModal()
+    }, 5000)
+  }
+</script>
+```
+
+## Display Options
+
+You can display a modal on the right side of the screen by setting `mode: 'side'` when calling `openOverlayModal()`:
+
+```
+openOverlayModal({
+  component: UserEditModal,
+  componentProps: {
+    id: userId
+  },
+  mode: 'side'
+})
+```
+
+If omitted, the default is `overlay`.
+
+## Modal Lifecycle
+
+To perform actions after the modal is closed or to pass data back to the context that triggered the modal, you can await the `openOverlayModal` method (which returns a promise).
+
+- Calling `ok()` from the dialog will resolve the promise (with any data passed as an argument).
+- Calling `cancel()` from the dialog will reject the promise.
+
+Example usage:
+
+```
+async function editUser (userId) {
+  try {
+    const result = await openOverlayModal({
+      component: UserEditModal,
+      componentProps: {
+        id: userId
+      }
+    })
+    // result = data passed to ok(), e.g. ok({ success: true })
+  } catch (err) {
+    // the cancel() method was called
+  }
+}
+```
+</docs>

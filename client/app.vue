@@ -60,7 +60,8 @@ provide('overlayModal', {
   openOverlayModal: (opts) => {
     overlayModalState.opts = {
       component: opts.component,
-      componentProps: opts.componentProps ?? {}
+      componentProps: opts.componentProps ?? {},
+      mode: opts.mode ?? 'overlay'
     }
     return new Promise((resolve, reject) => {
       overlayModalState.promiseResolve = resolve

@@ -7,8 +7,8 @@ from rest_framework.response import Response
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import Assignment, Cluster, RfcToBe, RpcPerson
-from .serializers import AssignmentSerializer, RfcToBeSerializer, RpcPersonSerializer
+from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson
+from .serializers import AssignmentSerializer, LabelSerializer, RfcToBeSerializer, RpcPersonSerializer
 
 
 @with_rpcapi
@@ -230,3 +230,7 @@ def assignment(request, assignment_id):
 def rfcs_to_be(request):
     # only GET permitted by @api_view
     return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)
+
+@api_view(["GET"])
+def label(request):
+    return Response(LabelSerializer(Label.objects.all(), many=True).data)

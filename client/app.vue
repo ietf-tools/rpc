@@ -7,6 +7,12 @@
         <NuxtPage />
       </NuxtLayout>
     </main>
+    <OverlayModal
+      v-model:isShown="overlayModalState.isShown"
+      :opts="overlayModalState.opts"
+      @closeOk="overlayModalState.promiseResolve"
+      @closeCancel="overlayModalState.promiseReject"
+    />
     <NuxtSnackbar />
   </div>
 </template>
@@ -27,6 +33,49 @@ useHead({
   },
   titleTemplate: (titleChunk) => {
     return titleChunk ? `${titleChunk} - RPC Production Center` : 'RPC Production Center'
+  }
+})
+
+// OVERLAY MODAL
+
+const overlayModalState = shallowReactive({
+  isShown: false,
+  opts: {
+    component: null,
+    componentProps: {}
+  },
+  promiseResolve: null,
+  promiseReject: null
+})
+
+provide('overlayModal', {
+  /**
+   * Open an overlay modal
+   *
+   * @param {Object} opts - Modal options
+   * @param {Component|string} opts.component - Component to display
+   * @param {Object} opts.componentProps - Properties to bind to the component
+   * @returns {Promise} Promise that resolves when the user closes the modal with a value
+   */
+  openOverlayModal: (opts) => {
+    overlayModalState.opts = {
+      component: opts.component,
+      componentProps: opts.componentProps ?? {}
+    }
+    return new Promise((resolve, reject) => {
+      overlayModalState.promiseResolve = resolve
+      overlayModalState.promiseReject = reject
+      overlayModalState.isShown = true
+    })
+  },
+  /**
+   * Close the active overlay modal
+   */
+  closeOverlayModal: () => {
+    if (overlayModalState.promiseReject) {
+      overlayModalState.isShown = false
+      overlayModalState.promiseReject()
+    }
   }
 })
 </script>

@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from .models import Assignment, Capability, RfcToBe, RpcPerson, RpcRole
+from .models import Assignment, Capability, Label, RfcToBe, RpcPerson, RpcRole
 
 
 class RfcToBeSerializer(serializers.ModelSerializer):
@@ -77,3 +77,12 @@ class AssignmentSerializer(serializers.ModelSerializer):
             "time_spent",
         ]
 
+
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields = [
+            "slug",
+            "is_exception",
+            "color",
+        ]

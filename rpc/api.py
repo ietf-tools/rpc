@@ -230,3 +230,8 @@ def assignment(request, assignment_id):
 def rfcs_to_be(request):
     # only GET permitted by @api_view
     return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)
+
+
+@api_view(["GET"])
+def label(request):
+    return Response(LabelSerializer(Label.objects.all(), many=True).data)

@@ -253,10 +253,7 @@ def rfc_to_be(request, draftname=None, rfcnum=None):
 
 @api_view(["GET", "PUT"])
 def rfc_to_be_labels(request, draftname=None, rfcnum=None):
-    """Labels on an RfcToBe
-
-    Will need to add option to find by RFC number as well
-    """
+    """Labels on an RfcToBe"""
     query = {"draft__name": draftname} if draftname else {"rfc_number": rfcnum}
     try:
         rfctobe = RfcToBe.objects.get(**query)

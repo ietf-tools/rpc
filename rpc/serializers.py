@@ -7,16 +7,31 @@ from .models import Assignment, Capability, Label, RfcToBe, RpcPerson, RpcRole
 
 class RfcToBeSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
+    rev = serializers.SerializerMethodField()
     title = serializers.SerializerMethodField()
     stream = serializers.SerializerMethodField()
     pages = serializers.SerializerMethodField()
+    # Need to explicitly specify labels as a PK because it uses a through model
+    labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
 
     class Meta:
         model = RfcToBe
-        fields = ["id", "name", "title", "stream", "pages", "external_deadline"]
+        fields = [
+            "id",
+            "name",
+            "rev",
+            "title",
+            "stream",
+            "pages",
+            "external_deadline",
+            "labels",
+        ]
 
     def get_name(self, rfc_to_be):
         return rfc_to_be.draft.name
+
+    def get_rev(self, rfc_to_be):
+        return rfc_to_be.draft.rev
 
     def get_title(self, rfc_to_be):
         return rfc_to_be.draft.title

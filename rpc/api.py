@@ -7,8 +7,13 @@ from rest_framework.response import Response
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import Assignment, Cluster, RfcToBe, RpcPerson
-from .serializers import AssignmentSerializer, RfcToBeSerializer, RpcPersonSerializer
+from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson
+from .serializers import (
+    AssignmentSerializer,
+    LabelSerializer,
+    RfcToBeSerializer,
+    RpcPersonSerializer,
+)
 
 
 @with_rpcapi
@@ -219,6 +224,7 @@ def assignments(request):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
+
 @api_view(["DELETE"])
 def assignment(request, assignment_id):
     if request.method == "DELETE":
@@ -228,8 +234,43 @@ def assignment(request, assignment_id):
 
 @api_view(["GET"])
 def rfcs_to_be(request):
+    """All RfcToBe instances"""
     # only GET permitted by @api_view
     return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)
+
+
+@api_view(["GET"])
+def rfc_to_be(request, draftname=None, rfcnum=None):
+    """RfcToBe instance"""
+    query = {"draft__name": draftname} if draftname else {"rfc_number": rfcnum}
+    # only GET permitted by @api_view
+    try:
+        rfctobe = RfcToBe.objects.get(**query)
+    except RfcToBe.DoesNotExist:
+        return Response(status=404)
+    return Response(RfcToBeSerializer(rfctobe).data)
+
+
+@api_view(["GET", "PUT"])
+def rfc_to_be_labels(request, draftname=None, rfcnum=None):
+    """Labels on an RfcToBe
+
+    Will need to add option to find by RFC number as well
+    """
+    query = {"draft__name": draftname} if draftname else {"rfc_number": rfcnum}
+    try:
+        rfctobe = RfcToBe.objects.get(**query)
+    except RfcToBe.DoesNotExist:
+        return Response(status=404)
+    if request.method == "GET":
+        return Response(LabelSerializer(rfctobe.labels.all(), many=True).data)
+    elif request.method == "PUT":
+        serializer = RfcToBeSerializer(rfctobe, data={"labels": request.data}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=400)
 
 
 @api_view(["GET"])

@@ -43,5 +43,16 @@ export default defineNuxtConfig({
   },
   tailwindcss: {
     viewer: false
+  },
+  vite: {
+    plugins: [
+      {
+        name: 'vue-docs',
+        transform (_code, id) {
+          if (!/vue&type=docs/.test(id)) return
+          return 'export default \'\''
+        }
+      }
+    ]
   }
 })

@@ -71,9 +71,9 @@ const state = reactive({})
 
 const tabs = [
   { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
-  { id: 'pending', name: 'Pending Assignment', to: '/queue/pending', icon: 'uil:clock', iconAnimate: true },
+  { id: 'pending', name: 'Pending Assignment', to: '/queue/pending', icon: 'uil:clock' },
   { id: 'exceptions', name: 'Exceptions', to: '/queue/exceptions', icon: 'uil:exclamation-triangle' },
-  { id: 'inprocess', name: 'In Process', to: '/queue/inprocess', icon: 'solar:refresh-circle-line-duotone', iconAnimate: true },
+  { id: 'inprocess', name: 'In Process', to: '/queue/inprocess', icon: 'solar:refresh-circle-line-duotone' },
   { id: 'published', name: 'Recently Published', to: '/queue/published', icon: 'uil:check-circle' }
 ]
 

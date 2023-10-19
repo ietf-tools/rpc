@@ -128,7 +128,7 @@ const links = [
   { name: 'Manage RFC Numbers', href: '/rfcs', icon: h(Icon, { name: 'fluent-mdl2:number-field' }) },
   { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
   { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) },
-  { name: 'Manage Labels', href: '/labels', icon: h(Icon,{ name: 'pajamas:labels' })}
+  { name: 'Manage Labels', href: '/labels', icon: h(Icon, { name: 'pajamas:labels' }) }
 ]
 
 // METHODS

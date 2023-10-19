@@ -82,6 +82,7 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     return JsonResponse({"submitted": submitted}, safe=False)
 
 
+@api_view(["GET"])
 def queue(request):
     """Return documents currently in the queue
 
@@ -164,6 +165,7 @@ def queue(request):
     return JsonResponse(queue, safe=False)
 
 
+@api_view(["GET"])
 def clusters(request):
     """Return cluster index"""
     return JsonResponse(
@@ -184,6 +186,8 @@ def clusters(request):
     )
 
 
+
+@api_view(["GET"])
 def cluster(request, number):
     """Return data for a specific cluster"""
     try:

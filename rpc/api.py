@@ -12,6 +12,7 @@ from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson
 from .serializers import AssignmentSerializer, LabelSerializer, RfcToBeSerializer, RpcPersonSerializer
 
 
+@api_view(["GET"])
 @with_rpcapi
 def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Get profile of current user"""
@@ -42,6 +43,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
+@api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Return documents in datatracker that have been submitted to the RPC but are not yet in the queue

@@ -252,7 +252,7 @@ class Command(BaseCommand):
             rev="04",
             states=[("draft-iesg", "rfcqueue")],
         )
-        rfctobe.labels.add(LabelFactory(slug="is_a_trap", is_exception=True))
+        rfctobe.labels.add(LabelFactory(slug="is_a_trap", is_exception=True, color="red"))
         AssignmentFactory(
             rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-where-is-my-hat"),
             role__slug="second_editor",

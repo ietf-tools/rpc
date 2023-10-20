@@ -219,3 +219,5 @@ class LabelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Label
         django_get_or_create= ("slug", )
+
+    color = "fuchsia"

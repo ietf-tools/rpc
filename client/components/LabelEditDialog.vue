@@ -100,7 +100,7 @@ console.log(label)
 console.log("Create "+props.create)
 
 async function save () {
-  await $fetch(props.create ? '/api/rpc/labels/' : `/api/rpc/labels/${props.label.slug}/`, {
+  await $fetch(props.create ? '/api/rpc/labels/' : `/api/rpc/labels/${props.label.id}/`, {
     body: {
       slug: label.slug,
       is_exception: label.is_exception,

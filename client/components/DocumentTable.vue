@@ -168,7 +168,7 @@ function buildCell (col, row) {
 
   if (isFunction(col.labels)) {
     for (const lbl of transformLabels(col.labels(row), col.labelDefaultColor ?? 'violet')) {
-      children.push(h(Label, { label: lbl }))
+      children.push(h(Label, { label: lbl, class: 'ml-2' }))
     }
   }
 

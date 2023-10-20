@@ -334,6 +334,8 @@ class RpcDocumentComment(models.Model):
         return f"RpcDocumentComment about {target} by {self.by} on {self.time:%Y-%m-%d}"
 
 
+TAILWIND_COLORS= ["slate","gray","zinc","neutral","stone","red","orange","amber","yellow","lime","green","emerald","teal","cyan","sky","blue","indigo","violet","purple","fuchsia","pink","rose",]
+
 class Label(models.Model):
     """Badges that can be put on other objects"""
 
@@ -343,8 +345,8 @@ class Label(models.Model):
     slug = models.CharField(max_length=64, primary_key=True)
     is_exception = models.BooleanField(default=False)
     color = models.CharField(
-        max_length=7, default="#FF0000"
-    )  # todo consider using django-colorfield's ColorField
+        max_length=7, default="purple", choices=zip(TAILWIND_COLORS, TAILWIND_COLORS)
+    )
 
 
 class RpcAuthorComment(models.Model):

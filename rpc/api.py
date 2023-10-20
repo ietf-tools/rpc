@@ -1,14 +1,15 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
 from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import Assignment, Cluster, RfcToBe, RpcPerson
-from .serializers import AssignmentSerializer, RfcToBeSerializer, RpcPersonSerializer
+from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson
+from .serializers import AssignmentSerializer, LabelSerializer, RfcToBeSerializer, RpcPersonSerializer
 
 
 @with_rpcapi
@@ -230,3 +231,22 @@ def assignment(request, assignment_id):
 def rfcs_to_be(request):
     # only GET permitted by @api_view
     return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)
+
+@api_view(["GET", "POST", "PUT"])
+def label(request):
+    if request.method == "GET":
+        return Response(LabelSerializer(Label.objects.all(), many=True).data)
+    elif request.method == "POST":
+        serializer = LabelSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+    elif request.method == "PUT":
+        label = get_object_or_404(Label, slug=request.data["slug"])
+        serializer = LabelSerializer(label, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+

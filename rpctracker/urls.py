@@ -16,6 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path, register_converter
+from rest_framework import routers
 
 from rpc import views
 from rpc import api as rpc_api
@@ -44,6 +45,9 @@ class RfcNumberConverter:
 register_converter(DraftNameConverter, "draft-name")
 register_converter(RfcNumberConverter, "rfc-number")
 
+router = routers.DefaultRouter()
+router.register(r'labels', rpc_api.LabelViewSet)
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
@@ -61,5 +65,6 @@ urlpatterns = [
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
     path("api/rpc/queue/", rpc_api.queue),
-    path("api/rpc/label/", rpc_api.label),
+    # path("api/rpc/label/", rpc_api.label),
+    path('api/rpc/', include(router.urls)),
 ]

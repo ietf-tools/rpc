@@ -40,7 +40,7 @@
 <script setup>
 import { LabelEditDialog } from '#components'
 
-const { data: labels, pending, refresh } = await useFetch('/api/rpc/label/', {
+const { data: labels, pending, refresh } = await useFetch('/api/rpc/labels/', {
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {

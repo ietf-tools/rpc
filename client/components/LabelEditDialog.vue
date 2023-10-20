@@ -100,13 +100,13 @@ console.log(label)
 console.log("Create "+props.create)
 
 async function save () {
-  await $fetch('/api/rpc/label/', {
+  await $fetch(props.create ? '/api/rpc/labels/' : `/api/rpc/labels/${props.label.slug}/`, {
     body: {
       slug: label.slug,
       is_exception: label.is_exception,
       color: label.color
     },
-    method: props.create? 'POST' : 'PUT',
+    method: props.create ? 'POST' : 'PUT',
     headers: { 'X-CSRFToken': csrf.value },
     onResponseError ({ response, error }) {
       snackbar.add({

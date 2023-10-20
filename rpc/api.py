@@ -3,8 +3,7 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.mixins import CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, ListModelMixin
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import ModelViewSet
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
@@ -271,12 +270,6 @@ def rfc_to_be_labels(request, draftname=None, rfcnum=None):
             return Response(serializer.errors, status=400)
 
 
-class LabelViewSet(
-    ListModelMixin,
-    CreateModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-    GenericViewSet,
-):
+class LabelViewSet(ModelViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer

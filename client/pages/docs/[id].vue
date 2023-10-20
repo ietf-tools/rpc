@@ -162,7 +162,7 @@
 const route = useRoute()
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 
-const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.slug)))
+const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.id)))
 
 const { data: labels } = await useFetch('/api/rpc/labels/', {
   baseURL: '/',

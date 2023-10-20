@@ -92,20 +92,12 @@ class AssignmentSerializer(serializers.ModelSerializer):
             "time_spent",
         ]
 
-class LabelSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Label
-        fields = [
-            "slug",
-            "is_exception",
-            "color",
-        ]
-
 
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
         fields = [
+            "id",
             "slug",
             "is_exception",
             "color",

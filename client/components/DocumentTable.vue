@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-import { Badge, Icon, NuxtLink } from '#components'
+import { Label, Icon, NuxtLink } from '#components'
 import { isArray, isFunction, orderBy } from 'lodash-es'
 
 // PROPS
@@ -168,13 +168,7 @@ function buildCell (col, row) {
 
   if (isFunction(col.labels)) {
     for (const lbl of transformLabels(col.labels(row), col.labelDefaultColor ?? 'violet')) {
-      children.push(
-        h(Badge, {
-          label: lbl.label,
-          color: lbl.color,
-          class: 'ml-2'
-        })
-      )
+      children.push(h(Label, { label: lbl, class: 'ml-2' }))
     }
   }
 

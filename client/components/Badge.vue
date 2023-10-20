@@ -2,16 +2,27 @@
   <span :class="[
     'inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset',
     colors[color]
-  ]">{{ label }}</span>
+  ]">
+    {{ label }}
+    <!-- @slot Optional badge content. Appears after the label, if any. -->
+    <slot/>
+  </span>
 </template>
 
 <script setup>
 
 defineProps({
+  /**
+   * Label text
+   */
   label: {
     type: String,
-    required: true
+    required: false,
+    default: ''
   },
+  /**
+   * Tailwind color name
+   */
   color: {
     type: String,
     default: 'violet'

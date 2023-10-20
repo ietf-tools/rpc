@@ -342,7 +342,7 @@ class Label(models.Model):
     ### Will have to have LabelHistory on objects that have collections of labels
     ### That is, we need to compute when something had a label and how long
 
-    slug = models.CharField(max_length=64, primary_key=True)
+    slug = models.CharField(max_length=64)
     is_exception = models.BooleanField(default=False)
     color = models.CharField(
         max_length=7, default="purple", choices=zip(TAILWIND_COLORS, TAILWIND_COLORS)

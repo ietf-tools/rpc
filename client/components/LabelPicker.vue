@@ -13,7 +13,7 @@
 
       <HeadlessComboboxOptions v-if="filteredLabels.length > 0"
                                class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-        <HeadlessComboboxOption v-for="lbl in filteredLabels" :key="lbl.slug" :value="lbl" as="template"
+        <HeadlessComboboxOption v-for="lbl in filteredLabels" :key="lbl.id" :value="lbl" as="template"
                                 v-slot="{ active, selected }">
           <li
             :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
@@ -65,10 +65,10 @@ const emit = defineEmits(['update:modelValue'])
 
 const selectedLabels = computed({
   get () {
-    return props.labels.filter((lbl) => props.modelValue.includes(lbl.slug))
+    return props.labels.filter((lbl) => props.modelValue.includes(lbl.id))
   },
   set (value) {
-    emit('update:modelValue', value.map((lbl) => lbl.slug))
+    emit('update:modelValue', value.map((lbl) => lbl.id))
   }
 })
 
@@ -89,7 +89,7 @@ const filteredLabels = computed(() =>
 ## Usage
 The `LabelPicker` component provides a combobox to manage a set of labels.
 
-The `Labels` prop is a list of objects that should include at least `slug` and `color` fields.
+The `Labels` prop is a list of objects that should include at least `id`, `slug`, and `color` fields.
 
-The `modelValue` prop is a list of `slug` values that are currently selected.
+The `modelValue` prop is a list of `id` values that are currently selected.
 </docs>

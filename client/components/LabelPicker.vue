@@ -41,7 +41,8 @@ const props = defineProps({
    */
   labels: {
     type: Array,
-    required: true
+    required: true,
+    default: () => []
   },
   /**
    * Slugs of applied labels
@@ -49,7 +50,7 @@ const props = defineProps({
   modelValue: {
     type: Array,
     required: true,
-    default: []
+    default: () => []
   },
   /**
    * Component UI label

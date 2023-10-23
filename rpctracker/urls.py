@@ -17,7 +17,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, register_converter
 from rest_framework import routers
-
 from rpc import views
 from rpc import api as rpc_api
 
@@ -46,25 +45,19 @@ register_converter(DraftNameConverter, "draft-name")
 register_converter(RfcNumberConverter, "rfc-number")
 
 router = routers.DefaultRouter()
+router.register(r'assignments', rpc_api.AssignmentViewSet)
+router.register(r'documents', rpc_api.RfcToBeViewSet)
 router.register(r'labels', rpc_api.LabelViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("login/", views.index),
-    path("api/rpc/assignments/", rpc_api.assignments),
-    path("api/rpc/assignments/<int:assignment_id>", rpc_api.assignment),
     path("api/rpc/clusters/", rpc_api.clusters),
     path("api/rpc/clusters/<int:number>", rpc_api.cluster),
-    path("api/rpc/documents/", rpc_api.rfcs_to_be),
-    path("api/rpc/documents/<draft-name:draftname>/", rpc_api.rfc_to_be),
-    path("api/rpc/documents/<rfc-number:rfcnum>/", rpc_api.rfc_to_be),
-    path("api/rpc/documents/<draft-name:draftname>/labels/", rpc_api.rfc_to_be_labels),
-    path("api/rpc/documents/<rfc-number:rfcnum>/labels/", rpc_api.rfc_to_be_labels),
     path("api/rpc/profile", rpc_api.profile),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
     path("api/rpc/queue/", rpc_api.queue),
-    # path("api/rpc/label/", rpc_api.label),
-    path('api/rpc/', include(router.urls)),
+    path("api/rpc/", include(router.urls)),
 ]

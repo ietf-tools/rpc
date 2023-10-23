@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from drf_spectacular.utils import extend_schema
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
@@ -27,6 +28,7 @@ def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
     })
 
 
+@extend_schema(responses=RpcPersonSerializer)
 @api_view(["GET"])
 @with_rpcapi
 def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -212,64 +214,15 @@ def cluster(request, number):
     )
 
 
-@api_view(["GET", "POST"])
-def assignments(request):
-    if request.method == "GET":
-        assignments = Assignment.objects.all()
-        serializer = AssignmentSerializer(assignments, many=True)
-        return Response(serializer.data)
-
-    elif request.method == "POST":
-        serializer = AssignmentSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+class AssignmentViewSet(ModelViewSet):
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentSerializer
 
 
-@api_view(["DELETE"])
-def assignment(request, assignment_id):
-    if request.method == "DELETE":
-        Assignment.objects.filter(pk=assignment_id).delete()
-        return Response(status=204)  # no content
-
-
-@api_view(["GET"])
-def rfcs_to_be(request):
-    """All RfcToBe instances"""
-    # only GET permitted by @api_view
-    return Response(RfcToBeSerializer(RfcToBe.objects.all(), many=True).data)
-
-
-@api_view(["GET"])
-def rfc_to_be(request, draftname=None, rfcnum=None):
-    """RfcToBe instance"""
-    query = {"draft__name": draftname} if draftname else {"rfc_number": rfcnum}
-    # only GET permitted by @api_view
-    try:
-        rfctobe = RfcToBe.objects.get(**query)
-    except RfcToBe.DoesNotExist:
-        return Response(status=404)
-    return Response(RfcToBeSerializer(rfctobe).data)
-
-
-@api_view(["GET", "PUT"])
-def rfc_to_be_labels(request, draftname=None, rfcnum=None):
-    """Labels on an RfcToBe"""
-    query = {"draft__name": draftname} if draftname else {"rfc_number": rfcnum}
-    try:
-        rfctobe = RfcToBe.objects.get(**query)
-    except RfcToBe.DoesNotExist:
-        return Response(status=404)
-    if request.method == "GET":
-        return Response(LabelSerializer(rfctobe.labels.all(), many=True).data)
-    elif request.method == "PUT":
-        serializer = RfcToBeSerializer(rfctobe, data={"labels": request.data}, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors, status=400)
+class RfcToBeViewSet(ModelViewSet):
+    queryset = RfcToBe.objects.all()
+    serializer_class = RfcToBeSerializer
+    lookup_field = "draft__name"
 
 
 class LabelViewSet(ModelViewSet):

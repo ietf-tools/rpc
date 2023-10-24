@@ -40,24 +40,23 @@
 <script setup>
 import { LabelEditDialog } from '#components'
 
-const { data: labels, pending, refresh } = await useFetch('/api/rpc/labels/', {
-  baseURL: '/',
-  server: false,
-  onRequestError ({ error }) {
-    snackbar.add({
-      type: 'error',
-      title: 'Fetch Failed',
-      text: error
-    })
+const api = useApi()
+const snackbar = useSnackbar()
+
+const { data: labels, refresh } = await useAsyncData(
+  async () => {
+    try {
+      return await api.labelsList()
+    } catch (error) {
+      snackbar.add({
+        type: 'error',
+        title: 'Fetch Failed',
+        text: error
+      })
+    }
   },
-  onResponseError ({ response, error }) {
-    snackbar.add({
-      type: 'error',
-      title: 'Server Error',
-      text: response.statusText ?? error
-    })
-  }
-})
+  { server: false }
+)
 
 const { openOverlayModal } = inject('overlayModal')
 

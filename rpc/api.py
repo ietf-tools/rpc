@@ -4,19 +4,20 @@ from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
+from rest_framework import viewsets
 from drf_spectacular.utils import extend_schema
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
-from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson
+from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole
 from .serializers import (
     AssignmentSerializer,
     LabelSerializer,
     QueueItemSerializer,
     RfcToBeSerializer,
     RpcPersonSerializer,
+    RpcRoleSerializer
 )
 
 
@@ -218,17 +219,22 @@ def cluster(request, number):
     )
 
 
-class AssignmentViewSet(ModelViewSet):
+class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
 
 
-class RfcToBeViewSet(ModelViewSet):
+class RfcToBeViewSet(viewsets.ModelViewSet):
     queryset = RfcToBe.objects.all()
     serializer_class = RfcToBeSerializer
     lookup_field = "draft__name"
 
 
-class LabelViewSet(ModelViewSet):
+class LabelViewSet(viewsets.ModelViewSet):
     queryset = Label.objects.all()
     serializer_class = LabelSerializer
+
+
+class RpcRoleViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = RpcRole.objects.all()
+    serializer_class = RpcRoleSerializer

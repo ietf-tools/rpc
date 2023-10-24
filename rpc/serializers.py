@@ -102,3 +102,7 @@ class LabelSerializer(serializers.ModelSerializer):
             "is_exception",
             "color",
         ]
+
+
+class QueueItemSerializer(RfcToBeSerializer):
+    labels = LabelSerializer(many=True, read_only=True)

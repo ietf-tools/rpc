@@ -11,7 +11,13 @@ import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
 from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson
-from .serializers import AssignmentSerializer, LabelSerializer, RfcToBeSerializer, RpcPersonSerializer
+from .serializers import (
+    AssignmentSerializer,
+    LabelSerializer,
+    QueueItemSerializer,
+    RfcToBeSerializer,
+    RpcPersonSerializer,
+)
 
 
 @api_view(["GET"])
@@ -135,15 +141,8 @@ def queue(request):
     queue = {
         "queue": [
             (
-                RfcToBeSerializer(rfc_to_be).data
+                QueueItemSerializer(rfc_to_be).data
                 | {
-                    "labels": [
-                        {
-                            "slug": label.slug,
-                            "is_exception": label.is_exception,
-                        }
-                        for label in rfc_to_be.labels.all()
-                    ],
                     "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
                     "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
                     "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,

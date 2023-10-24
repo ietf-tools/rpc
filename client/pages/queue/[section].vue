@@ -65,9 +65,11 @@ const siteStore = useSiteStore()
 
 const snackbar = useSnackbar()
 
-// DATA
+// API
 
-const state = reactive({})
+const api = useApi()
+
+// DATA
 
 const tabs = [
   { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
@@ -250,32 +252,31 @@ const filteredDocuments = computed(() => {
 
 // INIT
 
-const { data: documents, pending, refresh } = await useFetch(
-  () => currentTab.value === 'submissions' ? '/api/rpc/submissions/' : '/api/rpc/queue/', {
-    key: 'queue',
-    baseURL: '/',
-    server: false,
-    lazy: true,
-    data: () => ([]),
-    transform: (resp) => {
-      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : (resp?.queue ?? [])
-    },
-    onRequestError ({ error }) {
+const { data: documents, pending, refresh } = await useAsyncData(
+  'queue',
+  async () => {
+    try {
+      if (currentTab.value === 'submissions') {
+        return await api.submissionsRetrieve()
+      } else {
+        return await api.queueRetrieve()
+      }
+    } catch (err) {
       snackbar.add({
         type: 'error',
         title: 'Fetch Failed',
-        text: error
-      })
-    },
-    onResponseError ({ response, error }) {
-      snackbar.add({
-        type: 'error',
-        title: 'Server Error',
-        text: response.statusText ?? error
+        text: err
       })
     }
-  }
-)
+  },
+  {
+    server: false,
+    lazy: true,
+    default: () => ([]),
+    transform: (resp) => {
+      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : (resp?.queue ?? [])
+    }
+  })
 
 onMounted(() => {
   siteStore.search = ''

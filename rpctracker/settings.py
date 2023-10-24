@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "drf_spectacular",
     "rest_framework",
     "datatracker.apps.DatatrackerConfig",
     "rpc.apps.RpcConfig",
@@ -135,6 +136,15 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
     ],
+    "DEFAULT_SCHEMA_CLASS": "rpctracker.openapi.RpcAutoSchema",
+}
+
+# DRF OpenApi schema settings
+SPECTACULAR_SETTINGS = {
+    "TITLE": "RpcTracker",
+    "DESCRIPTION": "Backend API for the RpcTracker",
+    "VERSION": "0.1",
+    "SCHEMA_PATH_PREFIX": "/api/rpc/",
 }
 
 # Password validation

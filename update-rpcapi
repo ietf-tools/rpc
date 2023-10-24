@@ -1,9 +1,20 @@
 #!/bin/sh -e
-# Run this in the container after updating rpcapi.yaml
-#
+# Run this in the container after updating rpcapi.yaml!
+
+# Generate OpenAPI for the RpcTracker's api
+./manage.py spectacular --file rpctracker_api.yaml
+
+# Generate clients
 # Configure the generator in openapitools.json
 npx --yes @openapitools/openapi-generator-cli generate
+
+# Install the datatracker rpcapi client
 pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location -r requirements.txt
+
+cd client
+npm run build
+cd ..
+
 
 echo
 echo "API updated"

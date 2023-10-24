@@ -159,28 +159,24 @@
 </template>
 
 <script setup>
+
 const route = useRoute()
-const csrf = useCookie('csrftoken', { sameSite: 'strict' })
+const api = useApi()
 
 const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.id)))
 
-const { data: labels } = await useFetch('/api/rpc/labels/', {
-  baseURL: '/',
-  server: false,
-  default: () => ([])
-})
+const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
-const { data: draft, pending: draftPending } = await useFetch(() => `/api/rpc/documents/${route.params.id}/`, {
-  baseURL: '/',
-  server: false
-})
+const { data: draft, pending: draftPending } = await useAsyncData(
+  () => api.documentsRetrieve({ draftName: route.params.id }),
+  { server: false }
+)
 
 async function saveLabels (labels) {
   if (!draftPending.value) {
-    draft.value = await $fetch(`/api/rpc/documents/${route.params.id}/labels/`, {
-      method: 'PUT',
-      body: labels,
-      headers: { 'X-CSRFToken': csrf.value }
+    draft.value = await api.documentsPartialUpdate({
+      draftName: draft.value.name,
+      patchedRfcToBe: { labels }
     })
   }
 }

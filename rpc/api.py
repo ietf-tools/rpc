@@ -1,6 +1,7 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
 from django.http import JsonResponse
+from drf_spectacular.types import OpenApiTypes
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -45,6 +46,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
+@extend_schema(responses=OpenApiTypes.OBJECT)  # not very specific...
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -86,7 +88,10 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     submitted.extend(response.to_dict()["submitted_to_rpc"])
     return JsonResponse({"submitted": submitted}, safe=False)
 
-
+@extend_schema(
+    operation_id="queue_retrieve",
+    responses=OpenApiTypes.OBJECT,  # not very specific
+)
 @api_view(["GET"])
 def queue(request):
     """Return documents currently in the queue

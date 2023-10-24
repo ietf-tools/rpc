@@ -27,19 +27,19 @@ class RfcToBeSerializer(serializers.ModelSerializer):
             "labels",
         ]
 
-    def get_name(self, rfc_to_be):
+    def get_name(self, rfc_to_be) -> str:
         return rfc_to_be.draft.name
 
-    def get_rev(self, rfc_to_be):
+    def get_rev(self, rfc_to_be) -> str:
         return rfc_to_be.draft.rev
 
-    def get_title(self, rfc_to_be):
+    def get_title(self, rfc_to_be) -> str:
         return rfc_to_be.draft.title
 
-    def get_stream(self, rfc_to_be):
+    def get_stream(self, rfc_to_be) -> str:
         return rfc_to_be.draft.stream
 
-    def get_pages(self, rfc_to_be):
+    def get_pages(self, rfc_to_be) -> int:
         return rfc_to_be.draft.pages
 
 
@@ -74,7 +74,7 @@ class RpcPersonSerializer(serializers.ModelSerializer):
         self.name_map: dict[str, str] = kwargs.pop("name_map", {})  # datatracker_id -> name
         super().__init__(*args, **kwargs)
 
-    def get_name(self, rpc_person):
+    def get_name(self, rpc_person) -> str:
         cached_name = self.name_map.get(str(rpc_person.datatracker_person.datatracker_id), None)
         return cached_name or rpc_person.datatracker_person.plain_name()
 

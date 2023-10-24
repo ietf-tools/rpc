@@ -130,7 +130,7 @@ async function saveAssignment (assignment) {
     body: {
       rfc_to_be: assignment.rfcToBeId,
       person: assignment.personId,
-      role: 'first_editor'
+      role: documents.value.find(d => d.id === assignment.rfcToBeId)?.needsAssignment?.slug ?? 'first_editor'
     },
     method: 'POST',
     headers: { 'X-CSRFToken': csrf.value }

@@ -144,16 +144,16 @@
     <div
       class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
       <!-- Invoice -->
-      <div
-        class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
-        <div class="flex">
-          <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
-            <Label :label="lbl"/>
+        <div
+          class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
+          <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
+          <div class="flex">
+            <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
+              <Label :label="lbl"/>
+            </div>
           </div>
+          <LabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
         </div>
-        <LabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
-      </div>
     </div>
   </div>
 </template>

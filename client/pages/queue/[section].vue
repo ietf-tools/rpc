@@ -96,7 +96,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: row => `/docs/${row.name}`
+      link: row => currentTab.value === 'submissions' ? `/docs/import/?draft=${row.name}` : `/docs/${row.name}`
     },
     {
       key: 'labels',

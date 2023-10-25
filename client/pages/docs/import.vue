@@ -86,18 +86,18 @@ const state = reactive({
 // COMPUTED
 
 const timeToDeadline = computed(() => {
-  // try {
-  if (state.deadline) {
-    const today = DateTime.now().startOf('day')
-    const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
-    return humanizeDuration(
-      dt,
-      { units: (dt.as('days') < 14) ? ['d'] : ['w'], round: true }
-    )
+  try {
+    if (state.deadline) {
+      const today = DateTime.now().startOf('day')
+      const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
+      return humanizeDuration(
+        dt,
+        { units: (dt.as('days') < 14) ? ['d'] : ['w'], round: true }
+      )
+    }
+  } catch {
+    return ''
   }
-  // } catch {
-  //   return ''
-  // }
 })
 
 // DATA

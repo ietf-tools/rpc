@@ -1,6 +1,6 @@
 <template>
   <Badge :color="label.color">
-    <Icon v-if="label.is_exception" class="mr-2" name="pajamas:warning"/>
+    <Icon v-if="label.isException" class="mr-2" name="pajamas:warning"/>
     {{ label.slug }}
   </Badge>
 </template>

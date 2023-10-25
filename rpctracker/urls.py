@@ -48,6 +48,7 @@ router = routers.DefaultRouter()
 router.register(r'assignments', rpc_api.AssignmentViewSet)
 router.register(r'documents', rpc_api.RfcToBeViewSet)
 router.register(r'labels', rpc_api.LabelViewSet)
+router.register(r'queue', rpc_api.QueueViewSet)
 router.register(r'rpc_roles', rpc_api.RpcRoleViewSet)
 
 urlpatterns = [
@@ -59,6 +60,5 @@ urlpatterns = [
     path("api/rpc/profile", rpc_api.profile),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
-    path("api/rpc/queue/", rpc_api.queue),
     path("api/rpc/", include(router.urls)),
 ]

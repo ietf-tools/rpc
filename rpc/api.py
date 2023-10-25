@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from drf_spectacular.utils import extend_schema
 
 import rpcapi_client
@@ -95,84 +95,14 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     submitted.extend(response.to_dict()["submitted_to_rpc"])
     return JsonResponse({"submitted": submitted}, safe=False)
 
-@extend_schema(
-    operation_id="queue_retrieve",
-    responses=OpenApiTypes.OBJECT,  # not very specific
-)
-@api_view(["GET"])
-def queue(request):
-    """Return documents currently in the queue
 
-    {
-        "queue": [
-            {
-                "name" : "draft-foo-bar" #? what about April 1 things that have no draft name?
-                "action_holder" : {
-                    [
-                        {
-                            "name": "some persons name", # if there is an action holder (may evolve to a datatracker person pk)
-                            "since" : "yyyy-mm-ddThh:mm:ss",  # time when was the action holder was added
-                            "deadline" : "yyyy-mm-ddThh:mm:ss", # if the action holder has a deadline
-                            "comment" : "whatever the comment string contained",
-                        }
-                        ...
-                    ]
-                }
-                "assignments" : { # assignments that are not "done"
-                    [
-                        {
-                            "name" : "some rpc person's name",
-                            "state" : "assigned or in progress",
-                        }
-                        ...
-                    ]
-                }
-                "requested_approvals" : {
-
-                }
-                "labels" :
-                    [
-                        { "slug": "e.g. MissRef", "color": "#FE1010"}
-                    ]
-            }
-            ...
-        ]
-    }
-    """
-    queue = {
-        "queue": [
-            (
-                QueueItemSerializer(rfc_to_be).data
-                | {
-                    "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
-                    "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
-                    "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,
-                    "action_holders": [
-                        {
-                            "name": ah.datatracker_person.plain_name(),
-                            "deadline": ah.deadline,
-                            "since": ah.since_when,
-                            "comment": ah.comment,
-                        }
-                        for ah in rfc_to_be.actionholder_set.filter(
-                            completed__isnull=True
-                        )
-                    ],
-                    "assignments": [
-                        {
-                            "name": assignment.person.datatracker_person.plain_name(),
-                            "role": assignment.role.name,
-                            "state": assignment.state,
-                        }
-                        for assignment in rfc_to_be.assignment_set.exclude(state="done")
-                    ],
-                    "requested_approvals": [],
-                }
-            )
-            for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
-        ]
-    }
-    return JsonResponse(queue, safe=False)
+class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    # This is abusing the List action a bit - the "queue" is singular, so this
+    # lists its contents. Normally we'd expect the List action to list queues and
+    # the Retrieve action to retrieve a single queue. That does not apply to our
+    # concept of a singular queue, so I'm using this because it works.
+    queryset = RfcToBe.objects.filter(disposition__slug="in_progress")
+    serializer_class = QueueItemSerializer
 
 
 @api_view(["GET"])

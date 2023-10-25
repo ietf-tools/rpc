@@ -14,40 +14,9 @@
           <Icon name="solar:document-text-line-duotone" class="w-10 h-10"/>
           <h1>
             <div class="mt-1 text-xl font-semibold leading-6 text-gray-900 dark:text-white">
-              <span v-if="draft">&lt;{{ draft.name }}-{{ draft.rev }}&gt;</span>
+              <span v-if="draft">{{ draft.name }}-{{ draft.rev }}</span>
             </div>
           </h1>
-        </div>
-        <div class="flex items-center gap-x-4 sm:gap-x-6">
-          <button type="button" class="hidden text-sm font-semibold leading-6 text-gray-900 sm:block">Link 1</button>
-          <a href="#" class="hidden text-sm font-semibold leading-6 text-gray-900 sm:block">Edit</a>
-          <a href="#" class="btn-primary">Edit</a>
-
-          <HeadlessMenu as="div" class="relative sm:hidden">
-            <HeadlessMenuButton class="-m-3 block p-3">
-              <span class="sr-only">More</span>
-              <Icon name="uil:bars" class="h-5 w-5 text-gray-500" aria-hidden="true"/>
-            </HeadlessMenuButton>
-
-            <transition enter-active-class="transition ease-out duration-100"
-                        enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
-                        leave-active-class="transition ease-in duration-75"
-                        leave-from-class="transform opacity-100 scale-100"
-                        leave-to-class="transform opacity-0 scale-95">
-              <HeadlessMenuItems
-                class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                <HeadlessMenuItem v-slot="{ active }">
-                  <button type="button"
-                          :class="[active ? 'bg-gray-50' : '', 'block w-full px-3 py-1 text-left text-sm leading-6 text-gray-900']">
-                    Copy URL
-                  </button>
-                </HeadlessMenuItem>
-                <HeadlessMenuItem v-slot="{ active }">
-                  <a href="#" :class="[active ? 'bg-gray-50' : '', 'block px-3 py-1 text-sm leading-6 text-gray-900']">Edit</a>
-                </HeadlessMenuItem>
-              </HeadlessMenuItems>
-            </transition>
-          </HeadlessMenu>
         </div>
       </div>
     </div>
@@ -57,13 +26,13 @@
     <div
       class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
-      <!-- Invoice summary -->
+      <!-- Status summary -->
       <div class="lg:col-start-3 lg:row-end-1">
-        <h2 class="sr-only">Status Summary</h2>
+        <h2 class="sr-only">Status Summary (mockup)</h2>
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
           <dl class="grid grid-cols-3">
             <div class="col-span-2 pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Assignments</dt>
+              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Assignments<br>(panel mocked)</dt>
               <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">Someone</dd>
             </div>
             <div class="col-span-1 self-end px-6 pt-4">
@@ -93,10 +62,10 @@
         </div>
       </div>
 
-      <!-- Invoice -->
+      <!-- Document Info -->
       <div
         class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">Document Info</h2>
+        <h2 class="text-base font-semibold leading-6 text-gray-900">Document Info (mocked)</h2>
         <dl class="mt-6 grid grid-cols-1 text-sm leading-6 sm:grid-cols-2">
           <div class="sm:pr-4">
             <dt class="inline text-gray-500">Issued on</dt>
@@ -112,38 +81,14 @@
               <time datetime="2023-31-01">January 31, 2023</time>
             </dd>
           </div>
-          <div class="mt-6 border-t border-gray-900/5 pt-6 sm:pr-4">
-            <dt class="font-semibold text-gray-900">From</dt>
-            <dd class="mt-2 text-gray-500">111</dd>
-          </div>
-          <div class="mt-8 sm:mt-6 sm:border-t sm:border-gray-900/5 sm:pl-4 sm:pt-6">
-            <dt class="font-semibold text-gray-900">To</dt>
-            <dd class="mt-2 text-gray-500">111</dd>
-          </div>
         </dl>
-        <table class="mt-16 w-full whitespace-nowrap text-left text-sm leading-6">
-          <colgroup>
-            <col class="w-full"/>
-            <col/>
-            <col/>
-            <col/>
-          </colgroup>
-          <thead class="border-b border-gray-200 text-gray-900">
-          <tr>
-            <th scope="col" class="px-0 py-3 font-semibold">Projects</th>
-            <th scope="col" class="hidden py-3 pl-8 pr-0 text-right font-semibold sm:table-cell">A</th>
-            <th scope="col" class="hidden py-3 pl-8 pr-0 text-right font-semibold sm:table-cell">B</th>
-            <th scope="col" class="py-3 pl-8 pr-0 text-right font-semibold">C</th>
-          </tr>
-          </thead>
-        </table>
       </div>
 
     </div>
 
+    <!-- Labels -->
     <div
       class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-      <!-- Invoice -->
       <div
         class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
         <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
@@ -155,7 +100,35 @@
         <LabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
       </div>
     </div>
+
+    <!-- History -->
+    <div
+      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      <div 
+        class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
+        <h2 class="text-base font-semibold leading-6 text-gray-900">History (mocked)</h2>
+        <div class="flex">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">By</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr v-for="entry in history" :key="history.id">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ entry.date }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.by }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
+
 </template>
 
 <script setup>
@@ -180,4 +153,10 @@ async function saveLabels (labels) {
     })
   }
 }
+
+const history = [
+  { id: 1, date: '2022-12-31', by: 'C. Brown', desc: 'Added to queue' },
+  { id: 2, date: '2022-12-31', by: 'C. Brown', desc: 'Added Label: Needs Formatting' },
+]
+
 </script>

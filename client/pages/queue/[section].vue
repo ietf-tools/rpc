@@ -262,7 +262,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
       if (currentTab.value === 'submissions') {
         return await api.submissionsRetrieve()
       } else {
-        return await api.queueRetrieve()
+        return await api.queueList()
       }
     } catch (err) {
       snackbar.add({

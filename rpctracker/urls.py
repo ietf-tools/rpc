@@ -60,5 +60,7 @@ urlpatterns = [
     path("api/rpc/profile", rpc_api.profile),
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
+    path("api/rpc/submissions/<int:document_id>/", rpc_api.submission),
+    path("api/rpc/submissions/<int:document_id>/import/", rpc_api.import_submission),
     path("api/rpc/", include(router.urls)),
 ]

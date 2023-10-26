@@ -28,14 +28,24 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         model = RfcToBe
         fields = [
             "id",
+            "draft",
             "name",
             "rev",
             "title",
             "stream",
             "pages",
+            "disposition",
             "external_deadline",
+            "internal_goal",
             "labels",
             "cluster",
+            "submitted_format",
+            "submitted_boilerplate",
+            "submitted_std_level",
+            "submitted_stream",
+            "intended_boilerplate",
+            "intended_std_level",
+            "intended_stream",
         ]
 
     def get_name(self, rfc_to_be) -> str:
@@ -91,6 +101,7 @@ class RpcPersonSerializer(serializers.ModelSerializer):
     def get_name(self, rpc_person) -> str:
         cached_name = self.name_map.get(str(rpc_person.datatracker_person.datatracker_id), None)
         return cached_name or rpc_person.datatracker_person.plain_name()
+
 
 class ActionHolderSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()

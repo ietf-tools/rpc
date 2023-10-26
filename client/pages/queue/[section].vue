@@ -96,7 +96,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: row => currentTab.value === 'submissions' ? `/docs/import/?draft=${row.name}` : `/docs/${row.name}`
+      link: row => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
     },
     {
       key: 'labels',
@@ -260,7 +260,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
   async () => {
     try {
       if (currentTab.value === 'submissions') {
-        return await api.submissionsRetrieve()
+        return await api.submissionsList()
       } else {
         return await api.queueList()
       }

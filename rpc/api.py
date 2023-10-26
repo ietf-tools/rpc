@@ -10,6 +10,8 @@ from drf_spectacular.utils import extend_schema
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
+from datatracker.models import Document
+from .factories import StdLevelNameFactory, StreamNameFactory
 from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole
 from .serializers import (
     AssignmentSerializer,
@@ -53,7 +55,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
-@extend_schema(responses=OpenApiTypes.OBJECT)  # not very specific...
+@extend_schema(operation_id="submissions_list", responses=OpenApiTypes.OBJECT)  # not very specific...
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -94,6 +96,68 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     response = rpcapi.submitted_to_rpc()
     submitted.extend(response.to_dict()["submitted_to_rpc"])
     return JsonResponse({"submitted": submitted}, safe=False)
+
+
+@extend_schema(operation_id="submissions_retrieve", responses=OpenApiTypes.OBJECT)
+@api_view(["GET"])
+@with_rpcapi
+def submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
+    draft = rpcapi.get_draft_by_id(document_id)
+    return Response(draft.to_dict())
+
+
+@extend_schema(
+    operation_id="submissions_import",
+    request=RfcToBeSerializer,
+    responses=RfcToBeSerializer,
+)
+@api_view(["POST"])
+@with_rpcapi
+def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
+    """View to import a submission and create an RfcToBe"""
+    # fetch and create a draft if needed
+    try:
+        draft = Document.objects.get(datatracker_id=document_id)
+    except Document.DoesNotExist:
+        draft_info = rpcapi.get_draft_by_id(document_id)
+        if draft_info is None:
+            return Response(status=404)
+        draft, _ = Document.objects.get_or_create(
+            datatracker_id=document_id,
+            defaults={
+                "name": draft_info.name,
+                "rev": draft_info.rev,
+                "title": draft_info.title,
+                "stream": draft_info.stream,
+                "pages": draft_info.pages,
+            }
+        )
+
+    # Create the RfcToBe
+    #
+    # todo use a serializer
+    # todo get rid of the factories!
+    initial_data = request.data
+    initial_data.update(
+        dict(
+            draft=draft.pk,
+            disposition="in_progress",
+            submitted_boilerplate="trust200902",
+            intended_boilerplate="trust200902",
+            submitted_format="xml-v3",
+            submitted_std_level=StdLevelNameFactory(slug="ps", name="Proposed Standard").pk,
+            intended_std_level=StdLevelNameFactory(slug="ps", name="Proposed Standard").pk,
+            submitted_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
+            intended_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
+            internal_goal=initial_data["external_deadline"],
+        )
+    )
+    serializer = CreateRfcToBeSerializer(data=initial_data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=400)
 
 
 class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):

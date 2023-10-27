@@ -233,12 +233,12 @@ class Command(BaseCommand):
 # IANA Considerations - the document has an IANA Considerations section
 # ABNF - the document contains ABNF sourcecode
 # Needs Formatting - the document requires an XML expert to format complex tables, nested lists, etc.
-        LabelFactory(slug="Stream hold", is_exception=True)
-        LabelFactory(slug="Missing norm ref", is_exception=True)
-        LabelFactory(slug="IANA action", is_exception = True)
-        LabelFactory(slug="IANA Consideration")
-        LabelFactory(slug="ABNF")
-        LabelFactory(slug="Needs Formatting")
+        LabelFactory(slug="Stream hold", is_exception=True, color="yellow")
+        LabelFactory(slug="Missing norm ref", is_exception=True, color="pink")
+        LabelFactory(slug="IANA action", is_exception=True, color="rose")
+        LabelFactory(slug="IANA Consideration", color="neutral")
+        LabelFactory(slug="ABNF", color="emerald")
+        LabelFactory(slug="Needs Formatting", color="indigo")
 
         # Draft sent to RPC and in progress as an RfcToBe
         rfctobe = self._demo_rfctobe_factory(

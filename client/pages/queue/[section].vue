@@ -224,7 +224,7 @@ const filteredDocuments = computed(() => {
       docs = documents.value?.filter(d => d.assignmentSet?.length === 0)
       break
     case 'exceptions':
-      docs = documents.value?.filter(d => d.labels.filter(lbl => lbl.isException).length)
+      docs = documents.value?.filter(d => d.labels?.filter(lbl => lbl.isException).length)
       break
     case 'inprocess':
       docs = documents.value?.filter(d => d.assignmentSet?.length > 0).map(d => ({

@@ -94,10 +94,10 @@
           <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
           <div class="flex">
             <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
-              <Label :label="lbl"/>
+              <RpcLabel :label="lbl"/>
             </div>
           </div>
-          <LabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
+          <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
         </div>
     </div>
 

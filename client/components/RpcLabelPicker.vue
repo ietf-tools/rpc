@@ -20,7 +20,7 @@
             <div class="flex items-center">
               <span :class="['ml-3 truncate', selected && 'font-semibold']">
                 <span class="sr-only" v-if="lbl.isException">Exception</span>
-                <Label :label="lbl"/>
+                <RpcLabel :label="lbl"/>
               </span>
             </div>
             <span v-if="selected"

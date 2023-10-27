@@ -56,12 +56,12 @@
               <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
               <div class="flex">
                 <div v-for="lbl of state.labels" class="flex-shrink-0 p-1">
-                  <Label :label="labels.find(l => l.id === lbl)"/>
+                  <RpcLabel :label="labels.find(l => l.id === lbl)"/>
                 </div>
               </div>
             </div>
             <div class="max-w-xl">
-              <LabelPicker :labels="labels" v-model="state.labels" item-label="slug"/>
+              <RpcLabelPicker :labels="labels" v-model="state.labels" item-label="slug"/>
             </div>
           </div>
         </div>

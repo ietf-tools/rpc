@@ -76,13 +76,21 @@ const state = reactive({
   query: ''
 })
 
-const filteredLabels = computed(() =>
-  state.query === ''
-    ? props.labels
-    : props.labels.filter((lbl) => {
+const filteredLabels = computed(() => {
+  const sortedLabels = props.labels.toSorted((a, b) => {
+    if (a.isException && !b.isException) {
+      return -1
+    } else if (!a.isException && b.isException) {
+      return 1
+    }
+    return a.slug.localeCompare(b.slug)
+  })
+  return state.query === ''
+    ? sortedLabels
+    : sortedLabels.filter((lbl) => {
       return lbl.slug.toLowerCase().includes(state.query.toLowerCase())
     })
-)
+})
 </script>
 
 <docs>

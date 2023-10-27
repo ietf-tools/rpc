@@ -61,7 +61,7 @@
               </div>
             </div>
             <div class="max-w-xl">
-              <LabelPicker :labels="labels" v-model="state.labels" item-label="slug"/>
+              <RpcLabelPicker :labels="labels" v-model="state.labels" item-label="slug"/>
             </div>
           </div>
         </div>

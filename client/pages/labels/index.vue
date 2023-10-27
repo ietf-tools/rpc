@@ -77,6 +77,7 @@ async function addLabel () {
       title: 'Canceled',
       text: 'No new label was created'
     })
+    return
   }
   snackbar.add({
     type: 'success',
@@ -101,6 +102,7 @@ async function editLabel (label) {
       title: 'Canceled',
       text: 'Changes to the label were not saved'
     })
+    return
   }
   snackbar.add({
     type: 'success',

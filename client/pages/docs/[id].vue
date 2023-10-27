@@ -97,7 +97,7 @@
               <RpcLabel :label="lbl"/>
             </div>
           </div>
-          <LabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
+          <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
         </div>
     </div>
 

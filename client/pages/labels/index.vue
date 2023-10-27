@@ -22,7 +22,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
-                <tr v-for="label in labels" :key="label.slug">
+                <tr v-for="label in sortedLabels" :key="label.slug">
                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"><Label :label="label"/></td>
                   <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                     <Icon name="circum:edit" class="text-indigo-600 hover:text-indigo-900 cursor-pointer"  @click="editLabel(label)" /><span class="sr-only">Edit {{ label.slug }}</span>
@@ -43,6 +43,8 @@ import { LabelEditDialog } from '#components'
 const api = useApi()
 const snackbar = useSnackbar()
 
+const sortedLabels = computed(() => labels.value?.toSorted((a, b) => a.slug.localeCompare(b.slug, 'en')) ?? [])
+
 const { data: labels, refresh } = await useAsyncData(
   async () => {
     try {
@@ -61,25 +63,51 @@ const { data: labels, refresh } = await useAsyncData(
 const { openOverlayModal } = inject('overlayModal')
 
 async function addLabel () {
-  const result = await openOverlayModal({
-    component: LabelEditDialog,
-    componentProps: {
-      label: {slug: '', is_exception: false, color: 'slate'},
-      create: true
-    }
+  try {
+    await openOverlayModal({
+      component: LabelEditDialog,
+      componentProps: {
+        label: { slug: '', isException: false, color: 'slate' },
+        create: true
+      }
+    })
+  } catch {
+    snackbar.add({
+      type: 'info',
+      title: 'Canceled',
+      text: 'No new label was created'
+    })
+  }
+  snackbar.add({
+    type: 'success',
+    title: 'Success',
+    text: 'Created new label'
   })
-  refresh()
+  refresh.value && await refresh.value()
 }
 
 async function editLabel (label) {
-  const result = await openOverlayModal({
-    component: LabelEditDialog,
-    componentProps: {
-      label,
-      create: false
-    }
+  try {
+    await openOverlayModal({
+      component: LabelEditDialog,
+      componentProps: {
+        label,
+        create: false
+      }
+    })
+  } catch {
+    snackbar.add({
+      type: 'info',
+      title: 'Canceled',
+      text: 'Changes to the label were not saved'
+    })
+  }
+  snackbar.add({
+    type: 'success',
+    title: 'Success',
+    text: 'Label updated'
   })
-  refresh()
+  refresh.value && await refresh.value()
 }
 
 </script>

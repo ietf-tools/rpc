@@ -157,13 +157,25 @@ async function importSubmission () {
 
 // DATA
 
-const { data: labels } = await useFetch('/api/rpc/labels/', {
-  baseURL: '/',
-  server: false,
-  default: () => ([])
-})
+const { data: labels } = await useAsyncData(
+  'labels',
+  async () => {
+    try {
+      return await api.labelsList()
+    } catch (e) {
+      snackbar.add({
+        type: 'error',
+        title: 'Data fetch not successful',
+        text: e
+      })
+    }
+  }, {
+    server: false,
+    default: () => ([])
+  }
+)
 
-const { data: dtDraftData } = useAsyncData(
+const { data: dtDraftData } = await useAsyncData(
   'dtDraftData',
   async () => {
     try {

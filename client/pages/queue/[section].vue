@@ -17,12 +17,7 @@
 
   <div class="flex justify-center items-center">
     <TabNav :tabs="tabs" :selected="currentTab" />
-    <button type="button" @click="refresh" class="btn-secondary ml-3">
-      <span class="sr-only">Refresh</span>
-      <Icon name="solar:refresh-line-duotone" size="1.5em"
-            :class="[pending ? 'animate-spin text-orange-600' : 'text-gray-500 dark:text-neutral-300']"
-            aria-hidden="true"/>
-    </button>
+    <RefreshButton :pending="pending" @refresh="refresh" class="ml-3"/>
     <button type="button" @click="" class="btn-secondary ml-3">
       <span class="sr-only">Filter</span>
       <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"

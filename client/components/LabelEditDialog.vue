@@ -74,20 +74,10 @@ import { ColorEnum } from '~/rpctracker_client'
 const api = useApi()
 
 const { ok, cancel } = inject('overlayModalMethods')
-// const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 const snackbar = useSnackbar()
 
 const props = defineProps(['label', 'create'])
 const label = reactive(props.label)
-
-// const label = reactive({
-//   slug: '',
-//   is_exception: false,
-//   color: 'slate'
-// })
-
-console.log(label)
-console.log('Create ' + props.create)
 
 async function save () {
   const labelData = {

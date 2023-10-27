@@ -1,8 +1,17 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
+from typing import Optional
 from rest_framework import serializers
 
-from .models import Assignment, Capability, Label, RfcToBe, RpcPerson, RpcRole
+from .models import (
+    ActionHolder,
+    Assignment,
+    Capability,
+    Label,
+    RfcToBe,
+    RpcPerson,
+    RpcRole,
+)
 
 
 class RfcToBeSerializer(serializers.ModelSerializer):
@@ -11,6 +20,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     title = serializers.SerializerMethodField()
     stream = serializers.SerializerMethodField()
     pages = serializers.SerializerMethodField()
+    cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
 
@@ -18,13 +28,24 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         model = RfcToBe
         fields = [
             "id",
+            "draft",
             "name",
             "rev",
             "title",
             "stream",
             "pages",
+            "disposition",
             "external_deadline",
+            "internal_goal",
             "labels",
+            "cluster",
+            "submitted_format",
+            "submitted_boilerplate",
+            "submitted_std_level",
+            "submitted_stream",
+            "intended_boilerplate",
+            "intended_std_level",
+            "intended_stream",
         ]
 
     def get_name(self, rfc_to_be) -> str:
@@ -41,6 +62,9 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
     def get_pages(self, rfc_to_be) -> int:
         return rfc_to_be.draft.pages
+
+    def get_cluster(self, rfc_to_be) -> Optional[int]:
+        return rfc_to_be.cluster.number if rfc_to_be.cluster else None
 
 
 class CapabilitySerializer(serializers.ModelSerializer):
@@ -79,6 +103,22 @@ class RpcPersonSerializer(serializers.ModelSerializer):
         return cached_name or rpc_person.datatracker_person.plain_name()
 
 
+class ActionHolderSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ActionHolder
+        fields = [
+            "name",
+            "deadline",
+            "since_when",
+            "comment",
+        ]
+
+    def get_name(self, actionholder) -> str:
+        return actionholder.datatracker_person.plain_name()  # allow prefetched name map?
+
+
 class AssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Assignment
@@ -106,3 +146,17 @@ class LabelSerializer(serializers.ModelSerializer):
 
 class QueueItemSerializer(RfcToBeSerializer):
     labels = LabelSerializer(many=True, read_only=True)
+    assignment_set = AssignmentSerializer(many=True, read_only=True)  # todo filter out "done"
+    actionholder_set = ActionHolderSerializer(many=True, read_only=True)  # todo filter out "completed"
+    requested_approvals = serializers.SerializerMethodField()
+
+    class Meta(RfcToBeSerializer.Meta):
+        fields = RfcToBeSerializer.Meta.fields + [
+            "labels",
+            "assignment_set",
+            "actionholder_set",
+            "requested_approvals",
+        ]
+
+    def get_requested_approvals(self, rfc_to_be) -> list:
+        return []  # todo return a value

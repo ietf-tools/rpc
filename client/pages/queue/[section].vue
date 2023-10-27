@@ -96,7 +96,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: row => `/docs/${row.name}`
+      link: row => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
     },
     {
       key: 'labels',
@@ -221,14 +221,17 @@ const filteredDocuments = computed(() => {
       docs = documents.value
       break
     case 'pending':
-      docs = documents.value?.filter(d => d.assignments?.length === 0)
+      docs = documents.value?.filter(d => d.assignmentSet?.length === 0)
+      break
+    case 'exceptions':
+      docs = documents.value?.filter(d => d.labels?.filter(lbl => lbl.isException).length)
       break
     case 'inprocess':
-      docs = documents.value?.filter(d => d.assignments?.length > 0).map(d => ({
+      docs = documents.value?.filter(d => d.assignmentSet?.length > 0).map(d => ({
         ...d,
-        currentState: `${d.assignments[0].role} (${d.assignments[0].state})`,
-        assignee: d.assignments[0],
-        holder: d.action_holders[0]
+        currentState: `${d.assignmentSet[0].role} (${d.assignmentSet[0].state})`,
+        assignee: d.assignmentSet[0],
+        holder: d.actionholderSet[0]
       }))
       break
     default:
@@ -257,9 +260,9 @@ const { data: documents, pending, refresh } = await useAsyncData(
   async () => {
     try {
       if (currentTab.value === 'submissions') {
-        return await api.submissionsRetrieve()
+        return await api.submissionsList()
       } else {
-        return await api.queueRetrieve()
+        return await api.queueList()
       }
     } catch (err) {
       snackbar.add({
@@ -274,7 +277,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
     lazy: true,
     default: () => ([]),
     transform: (resp) => {
-      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : (resp?.queue ?? [])
+      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : resp
     }
   })
 

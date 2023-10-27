@@ -2,14 +2,17 @@
 
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from drf_spectacular.utils import extend_schema
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
+from datatracker.models import Document
+from .factories import StdLevelNameFactory, StreamNameFactory
 from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole
 from .serializers import (
     AssignmentSerializer,
@@ -22,6 +25,7 @@ from .serializers import (
 
 
 @api_view(["GET"])
+@permission_classes([AllowAny])
 @with_rpcapi
 def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Get profile of current user"""
@@ -53,7 +57,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
-@extend_schema(responses=OpenApiTypes.OBJECT)  # not very specific...
+@extend_schema(operation_id="submissions_list", responses=OpenApiTypes.OBJECT)  # not very specific...
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -91,88 +95,87 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     This api will filter those out.
     """
     submitted = []
+    # Get submissions list from Datatracker
     response = rpcapi.submitted_to_rpc()
     submitted.extend(response.to_dict()["submitted_to_rpc"])
+    # Filter out I-Ds that already have an RfcToBe
+    already_in_queue = RfcToBe.objects.filter(
+        draft__datatracker_id__in=[s["pk"] for s in submitted]
+    ).values_list(
+        "draft__datatracker_id", flat=True
+    )
+    submitted = [s for s in submitted if s["pk"] not in already_in_queue]
     return JsonResponse({"submitted": submitted}, safe=False)
 
-@extend_schema(
-    operation_id="queue_retrieve",
-    responses=OpenApiTypes.OBJECT,  # not very specific
-)
+
+@extend_schema(operation_id="submissions_retrieve", responses=OpenApiTypes.OBJECT)
 @api_view(["GET"])
-def queue(request):
-    """Return documents currently in the queue
+@with_rpcapi
+def submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
+    draft = rpcapi.get_draft_by_id(document_id)
+    return Response(draft.to_dict())
 
-    {
-        "queue": [
-            {
-                "name" : "draft-foo-bar" #? what about April 1 things that have no draft name?
-                "action_holder" : {
-                    [
-                        {
-                            "name": "some persons name", # if there is an action holder (may evolve to a datatracker person pk)
-                            "since" : "yyyy-mm-ddThh:mm:ss",  # time when was the action holder was added
-                            "deadline" : "yyyy-mm-ddThh:mm:ss", # if the action holder has a deadline
-                            "comment" : "whatever the comment string contained",
-                        }
-                        ...
-                    ]
-                }
-                "assignments" : { # assignments that are not "done"
-                    [
-                        {
-                            "name" : "some rpc person's name",
-                            "state" : "assigned or in progress",
-                        }
-                        ...
-                    ]
-                }
-                "requested_approvals" : {
 
-                }
-                "labels" :
-                    [
-                        { "slug": "e.g. MissRef", "color": "#FE1010"}
-                    ]
+@extend_schema(
+    operation_id="submissions_import",
+    request=RfcToBeSerializer,
+    responses=RfcToBeSerializer,
+)
+@api_view(["POST"])
+@with_rpcapi
+def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
+    """View to import a submission and create an RfcToBe"""
+    # fetch and create a draft if needed
+    try:
+        draft = Document.objects.get(datatracker_id=document_id)
+    except Document.DoesNotExist:
+        draft_info = rpcapi.get_draft_by_id(document_id)
+        if draft_info is None:
+            return Response(status=404)
+        draft, _ = Document.objects.get_or_create(
+            datatracker_id=document_id,
+            defaults={
+                "name": draft_info.name,
+                "rev": draft_info.rev,
+                "title": draft_info.title,
+                "stream": draft_info.stream,
+                "pages": draft_info.pages,
             }
-            ...
-        ]
-    }
-    """
-    queue = {
-        "queue": [
-            (
-                QueueItemSerializer(rfc_to_be).data
-                | {
-                    "stream": rfc_to_be.draft.stream if rfc_to_be.draft else "",
-                    "deadline": rfc_to_be.external_deadline,  # todo what about internal_goal?
-                    "cluster": rfc_to_be.cluster.number if rfc_to_be.cluster else None,
-                    "action_holders": [
-                        {
-                            "name": ah.datatracker_person.plain_name(),
-                            "deadline": ah.deadline,
-                            "since": ah.since_when,
-                            "comment": ah.comment,
-                        }
-                        for ah in rfc_to_be.actionholder_set.filter(
-                            completed__isnull=True
-                        )
-                    ],
-                    "assignments": [
-                        {
-                            "name": assignment.person.datatracker_person.plain_name(),
-                            "role": assignment.role.name,
-                            "state": assignment.state,
-                        }
-                        for assignment in rfc_to_be.assignment_set.exclude(state="done")
-                    ],
-                    "requested_approvals": [],
-                }
-            )
-            for rfc_to_be in RfcToBe.objects.filter(disposition__slug="in_progress")
-        ]
-    }
-    return JsonResponse(queue, safe=False)
+        )
+
+    # Create the RfcToBe
+    # todo get rid of the factories!
+    # todo get more data from front end / think carefully about defaults
+    initial_data = request.data
+    initial_data.update(
+        dict(
+            draft=draft.pk,
+            disposition="in_progress",
+            submitted_boilerplate="trust200902",
+            intended_boilerplate="trust200902",
+            submitted_format="xml-v3",
+            submitted_std_level=StdLevelNameFactory(slug="ps", name="Proposed Standard").pk,
+            intended_std_level=StdLevelNameFactory(slug="ps", name="Proposed Standard").pk,
+            submitted_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
+            intended_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
+            internal_goal=initial_data["external_deadline"],
+        )
+    )
+    serializer = RfcToBeSerializer(data=initial_data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    else:
+        return Response(serializer.errors, status=400)
+
+
+class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    # This is abusing the List action a bit - the "queue" is singular, so this
+    # lists its contents. Normally we'd expect the List action to list queues and
+    # the Retrieve action to retrieve a single queue. That does not apply to our
+    # concept of a singular queue, so I'm using this because it works.
+    queryset = RfcToBe.objects.filter(disposition__slug="in_progress")
+    serializer_class = QueueItemSerializer
 
 
 @api_view(["GET"])

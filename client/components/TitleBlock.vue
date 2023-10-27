@@ -1,21 +1,21 @@
 <template>
-  <div class="sm:flex sm:items-center">
-    <div class="sm:flex-auto">
-      <h1 class="text-base font-semibold leading-6 text-gray-900 dark:text-neutral-200">
-        {{ props.title }}
-      </h1>
-      <p v-if="props.summary" class="mt-2 text-sm text-gray-700 dark:text-neutral-400">
-        {{ props.summary }}
-      </p>
+  <div class="lg:flex lg:items-center lg:justify-between">
+    <div class="min-w-0 flex-1">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">{{ title }}</h2>
+      <div v-if="summary" class="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
+        <div class="mt-2 flex items-center text-sm text-gray-500">
+          {{ summary }}
+        </div>
+      </div>
     </div>
-    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex">
-      <slot name="right" />
+    <div class="mt-5 flex lg:ml-4 lg:mt-0">
+      <slot name="right"/>
     </div>
   </div>
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   title: { type: String, required: true },
   summary: { type: String }
 })

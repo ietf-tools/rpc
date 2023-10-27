@@ -22,7 +22,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
-                <tr v-for="label in labels" :key="label.slug">
+                <tr v-for="label in sortedLabels" :key="label.slug">
                   <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"><Label :label="label"/></td>
                   <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                     <Icon name="circum:edit" class="text-indigo-600 hover:text-indigo-900 cursor-pointer"  @click="editLabel(label)" /><span class="sr-only">Edit {{ label.slug }}</span>
@@ -42,6 +42,8 @@ import { LabelEditDialog } from '#components'
 
 const api = useApi()
 const snackbar = useSnackbar()
+
+const sortedLabels = computed(() => labels.value?.toSorted((a, b) => a.slug.localeCompare(b.slug)) ?? [])
 
 const { data: labels, refresh } = await useAsyncData(
   async () => {

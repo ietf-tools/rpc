@@ -118,7 +118,7 @@ const timeToDeadline = computed(() => {
       const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
       return humanizeDuration(
         dt,
-        { units: (dt.as('days') < 14) ? ['d'] : ['w'], round: true }
+        { units: (dt.as('days') < 14) ? ['d'] : ['w', 'd'], round: true }
       )
     }
   } catch {

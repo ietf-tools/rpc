@@ -129,13 +129,30 @@ const timeToDeadline = computed(() => {
 // FUNCTIONS
 
 async function importSubmission () {
-  await api.submissionsImport({
-    documentId: submission.value.datatrackerId,
-    rfcToBe: {
-      externalDeadline: DateTime.fromISO(state.deadline, { zone: 'utc' }).toJSDate(),
-      labels: state.labels
-    }
-  })
+  let imported
+  try {
+    imported = await api.submissionsImport({
+      documentId: submission.value.datatrackerId,
+      rfcToBe: {
+        externalDeadline: DateTime.fromISO(state.deadline, { zone: 'utc' }).toJSDate(),
+        labels: state.labels
+      }
+    })
+  } catch (e) {
+    snackbar.add({
+      type: 'error',
+      title: 'Error saving',
+      text: e
+    })
+  }
+  if (imported) {
+    snackbar.add({
+      type: 'success',
+      title: 'Success',
+      text: 'Document successfully added'
+    })
+    await navigateTo(`/docs/${imported.name}/`)
+  }
 }
 
 // DATA

@@ -19,7 +19,7 @@
             :class="['relative cursor-default select-none py-2 pl-3 pr-9', active ? 'bg-indigo-600 text-white' : 'text-gray-900']">
             <div class="flex items-center">
               <span :class="['ml-3 truncate', selected && 'font-semibold']">
-                <span class="sr-only" v-if="lbl.is_exception">Exception</span>
+                <span class="sr-only" v-if="lbl.isException">Exception</span>
                 <Label :label="lbl"/>
               </span>
             </div>

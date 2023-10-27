@@ -64,7 +64,7 @@ async function addLabel () {
   const result = await openOverlayModal({
     component: LabelEditDialog,
     componentProps: {
-      label: {slug: '', is_exception: false, color: 'slate'},
+      label: { slug: '', isException: false, color: 'slate' },
       create: true
     }
   })

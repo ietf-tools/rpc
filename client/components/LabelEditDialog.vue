@@ -42,10 +42,10 @@
         </div>
 
         <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-          <label for="is_exception" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Is
+          <label for="is-exception" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Is
             Exception</label>
           <div class="mt-2 sm:col-span-2 sm:mt-0">
-            <input v-model="label.is_exception" id="is_exception" name="is_exception" type="checkbox"
+            <input v-model="label.isException" id="is-exception" name="is-exception" type="checkbox"
                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"/>
             <p class="text-gray-500">This label indicates an exception.</p>
           </div>
@@ -82,7 +82,7 @@ const label = reactive(props.label)
 async function save () {
   const labelData = {
     slug: label.slug,
-    is_exception: label.is_exception,
+    isException: label.isException,
     color: label.color
   }
   try {

@@ -144,9 +144,8 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
         )
 
     # Create the RfcToBe
-    #
-    # todo use a serializer
     # todo get rid of the factories!
+    # todo get more data from front end / think carefully about defaults
     initial_data = request.data
     initial_data.update(
         dict(
@@ -162,7 +161,7 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
             internal_goal=initial_data["external_deadline"],
         )
     )
-    serializer = CreateRfcToBeSerializer(data=initial_data)
+    serializer = RfcToBeSerializer(data=initial_data)
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)

@@ -18,6 +18,7 @@ export const useUserStore = defineStore('user', {
         this.name = profileData.name
         this.email = profileData.email
         this.avatar = profileData.avatar
+        this.isManager = profileData.isManager
       }
     }
   }

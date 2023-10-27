@@ -8,8 +8,18 @@ from datatracker.rpcapi import with_rpcapi
 from django.db import models
 
 
+class DatatrackerPersonQuerySet(models.QuerySet):
+    @with_rpcapi
+    def by_subject_id(self, subject_id, *, rpcapi: rpcapi_client.DefaultApi):
+        dtpers = rpcapi.get_subject_person_by_id(subject_id=subject_id)
+        if dtpers is None:
+            return super().none()
+        return super().filter(datatracker_id=dtpers.id)
+
+
 class DatatrackerPerson(models.Model):
     """Person known to the datatracker"""
+    objects = DatatrackerPersonQuerySet.as_manager()
 
     # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
     datatracker_id = models.BigIntegerField(

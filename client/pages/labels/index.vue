@@ -43,7 +43,7 @@ import { LabelEditDialog } from '#components'
 const api = useApi()
 const snackbar = useSnackbar()
 
-const sortedLabels = computed(() => labels.value?.toSorted((a, b) => a.slug.localeCompare(b.slug)) ?? [])
+const sortedLabels = computed(() => labels.value?.toSorted((a, b) => a.slug.localeCompare(b.slug, 'en')) ?? [])
 
 const { data: labels, refresh } = await useAsyncData(
   async () => {
@@ -63,23 +63,49 @@ const { data: labels, refresh } = await useAsyncData(
 const { openOverlayModal } = inject('overlayModal')
 
 async function addLabel () {
-  await openOverlayModal({
-    component: LabelEditDialog,
-    componentProps: {
-      label: { slug: '', isException: false, color: 'slate' },
-      create: true
-    }
+  try {
+    await openOverlayModal({
+      component: LabelEditDialog,
+      componentProps: {
+        label: { slug: '', isException: false, color: 'slate' },
+        create: true
+      }
+    })
+  } catch {
+    snackbar.add({
+      type: 'info',
+      title: 'Canceled',
+      text: 'No new label was created'
+    })
+  }
+  snackbar.add({
+    type: 'success',
+    title: 'Success',
+    text: 'Created new label'
   })
   refresh.value && await refresh.value()
 }
 
 async function editLabel (label) {
-  await openOverlayModal({
-    component: LabelEditDialog,
-    componentProps: {
-      label,
-      create: false
-    }
+  try {
+    await openOverlayModal({
+      component: LabelEditDialog,
+      componentProps: {
+        label,
+        create: false
+      }
+    })
+  } catch {
+    snackbar.add({
+      type: 'info',
+      title: 'Canceled',
+      text: 'Changes to the label were not saved'
+    })
+  }
+  snackbar.add({
+    type: 'success',
+    title: 'Success',
+    text: 'Label updated'
   })
   refresh.value && await refresh.value()
 }

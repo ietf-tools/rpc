@@ -27,6 +27,32 @@ class Command(BaseCommand):
         self.people: dict[str, RpcPerson] = {}
         self.create_rpc_people()
         self.create_documents()
+        self.create_real_people()
+
+
+    @with_rpcapi
+    def create_real_people(self, *, rpcapi: rpcapi_client.DefaultApi):
+        """Create RpcPerson / DatatrackerPerson records for real people"""
+        self.people["jennifer"] = RpcPersonFactory(
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="14733").id,
+            can_hold_role=["manager"],
+        )
+        self.people["robert"] = RpcPersonFactory(
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="420").id,
+            can_hold_role=["manager"],
+        )
+        self.people["jean"] = RpcPersonFactory(
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="2706").id,
+            can_hold_role=["manager"],
+        )
+        self.people["sandy"] = RpcPersonFactory(
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="5709").id,
+            can_hold_role=["manager"],
+        )
+        self.people["alice"] = RpcPersonFactory(
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="2173").id,
+            can_hold_role=["manager"],
+        )
 
     @with_rpcapi
     def create_rpc_people(self, *, rpcapi: rpcapi_client.DefaultApi):

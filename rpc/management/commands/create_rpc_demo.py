@@ -17,7 +17,7 @@ from ...factories import (
     RfcToBeActionHolderFactory,
     RpcPersonFactory,
 )
-from ...models import RfcToBe, RpcPerson
+from ...models import RfcToBe, RpcPerson, Label
 
 
 class Command(BaseCommand):
@@ -225,6 +225,21 @@ class Command(BaseCommand):
             order_in_cluster=2,
         )
 
+# Exceptions:
+# <!> Stream hold - a stream manager has temporarily halted RPC work on the doc and will let us know when we can start on it again
+# <!> Missing norm ref - the document is part of a cluster and one of its normative references is not in the queue yet
+# <!> IANA action - RPC is waiting for IANA to update or create the registry for this doc
+# Informational labels to help with assignments:
+# IANA Considerations - the document has an IANA Considerations section
+# ABNF - the document contains ABNF sourcecode
+# Needs Formatting - the document requires an XML expert to format complex tables, nested lists, etc.
+        LabelFactory(slug="Stream hold", is_exception=True)
+        LabelFactory(slug="Missing norm ref", is_exception=True)
+        LabelFactory(slug="IANA action", is_exception = True)
+        LabelFactory(slug="IANA Consideration")
+        LabelFactory(slug="ABNF")
+        LabelFactory(slug="Needs Formatting")
+
         # Draft sent to RPC and in progress as an RfcToBe
         rfctobe = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
@@ -233,6 +248,7 @@ class Command(BaseCommand):
             states=[("draft-iesg", "rfcqueue")],
         )
         rfctobe.labels.add(LabelFactory(slug="delicious"))
+        rfctobe.labels.add(Label.objects.get(slug="Missing norm ref"))
         AssignmentFactory(
             rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-tasty-cheese"),
             role__slug="first_editor",

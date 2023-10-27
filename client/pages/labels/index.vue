@@ -61,25 +61,25 @@ const { data: labels, refresh } = await useAsyncData(
 const { openOverlayModal } = inject('overlayModal')
 
 async function addLabel () {
-  const result = await openOverlayModal({
+  await openOverlayModal({
     component: LabelEditDialog,
     componentProps: {
       label: { slug: '', isException: false, color: 'slate' },
       create: true
     }
   })
-  refresh()
+  refresh.value && await refresh.value()
 }
 
 async function editLabel (label) {
-  const result = await openOverlayModal({
+  await openOverlayModal({
     component: LabelEditDialog,
     componentProps: {
       label,
       create: false
     }
   })
-  refresh()
+  refresh.value && await refresh.value()
 }
 
 </script>

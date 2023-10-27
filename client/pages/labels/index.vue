@@ -38,7 +38,7 @@
 </template>
 
 <script setup>
-import { LabelEditDialog } from '#components'
+import { RpcLabelEditDialog } from '#components'
 
 const api = useApi()
 const snackbar = useSnackbar()
@@ -65,7 +65,7 @@ const { openOverlayModal } = inject('overlayModal')
 async function addLabel () {
   try {
     await openOverlayModal({
-      component: LabelEditDialog,
+      component: RpcLabelEditDialog,
       componentProps: {
         label: { slug: '', isException: false, color: 'slate' },
         create: true
@@ -84,13 +84,13 @@ async function addLabel () {
     title: 'Success',
     text: 'Created new label'
   })
-  refresh.value && await refresh.value()
+  refresh && await refresh()
 }
 
 async function editLabel (label) {
   try {
     await openOverlayModal({
-      component: LabelEditDialog,
+      component: RpcLabelEditDialog,
       componentProps: {
         label,
         create: false
@@ -109,7 +109,7 @@ async function editLabel (label) {
     title: 'Success',
     text: 'Label updated'
   })
-  refresh.value && await refresh.value()
+  refresh && await refresh()
 }
 
 </script>

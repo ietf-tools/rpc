@@ -95,8 +95,16 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     This api will filter those out.
     """
     submitted = []
+    # Get submissions list from Datatracker
     response = rpcapi.submitted_to_rpc()
     submitted.extend(response.to_dict()["submitted_to_rpc"])
+    # Filter out I-Ds that already have an RfcToBe
+    already_in_queue = RfcToBe.objects.filter(
+        draft__datatracker_id__in=[s["pk"] for s in submitted]
+    ).values_list(
+        "draft__datatracker_id", flat=True
+    )
+    submitted = [s for s in submitted if s["pk"] not in already_in_queue]
     return JsonResponse({"submitted": submitted}, safe=False)
 
 

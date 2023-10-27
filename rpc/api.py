@@ -2,7 +2,8 @@
 
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import mixins, viewsets
 from drf_spectacular.utils import extend_schema
@@ -24,6 +25,7 @@ from .serializers import (
 
 
 @api_view(["GET"])
+@permission_classes([AllowAny])
 @with_rpcapi
 def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Get profile of current user"""

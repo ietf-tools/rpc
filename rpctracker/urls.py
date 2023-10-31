@@ -57,7 +57,8 @@ urlpatterns = [
     path("login/", views.index),
     path("api/rpc/clusters/", rpc_api.clusters),
     path("api/rpc/clusters/<int:number>", rpc_api.cluster),
-    path("api/rpc/profile", rpc_api.profile),
+    path("api/rpc/profile/", rpc_api.profile),
+    path("api/rpc/profile/<int:rpc_person_id>", rpc_api.profile_as_person),  # for demo only
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/submissions/", rpc_api.submissions),
     path("api/rpc/submissions/<int:document_id>/", rpc_api.submission),

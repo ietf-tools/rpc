@@ -49,7 +49,28 @@ def profile(request):
     )
 
 
-@extend_schema(responses=RpcPersonSerializer)
+# This is for debugging / demo purposes only!
+@extend_schema(operation_id="profile_retrieve_demo_only", responses=OpenApiTypes.OBJECT)
+@api_view(["GET"])
+def profile_as_person(request, rpc_person_id):
+    rpcperson = RpcPerson.objects.filter(pk=rpc_person_id).first()
+    if rpcperson is None:
+        return Response(status=404)
+    return JsonResponse(
+        {
+            "authenticated": request.user.is_authenticated,
+            "id": None,
+            "name": rpcperson.datatracker_person.plain_name(),
+            "avatar": f"https://i.pravatar.cc/150?u={rpcperson.datatracker_person.datatracker_id}",
+            "isManager": (
+                False
+                if rpcperson is None
+                else rpcperson.can_hold_role.filter(slug="manager").exists()
+            ),
+        }
+    )
+
+@extend_schema(responses=RpcPersonSerializer(many=True))
 @api_view(["GET"])
 @with_rpcapi
 def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):

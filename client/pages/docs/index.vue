@@ -1,5 +1,5 @@
 <template>
-  <TitleBlock title="Documents" summary="Beep boop">
+  <TitleBlock title="My Documents" summary="Beep boop">
     <template #right>
       <RefreshButton class="mr-3"/>
       <NuxtLink

@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', {
     name: 'Guest',
     email: '',
     avatar: '',
+    rpcPersonId: null,
     isManager: false,
     pretendingToBe: null // demo/debug only!
   }),
@@ -24,6 +25,7 @@ export const useUserStore = defineStore('user', {
         this.name = profileData.name
         this.email = profileData.email
         this.avatar = profileData.avatar
+        this.rpcPersonId = profileData.rpcPersonId
         this.isManager = profileData.isManager
       }
     },

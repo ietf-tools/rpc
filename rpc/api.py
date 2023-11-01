@@ -40,6 +40,7 @@ def profile(request):
             "id": user.pk,
             "name": user.name,
             "avatar": user.avatar,
+            "rpcPersonId": rpcperson.id if rpcperson is not None else None,
             "isManager": (
                 False
                 if rpcperson is None
@@ -62,6 +63,7 @@ def profile_as_person(request, rpc_person_id):
             "id": None,
             "name": rpcperson.datatracker_person.plain_name(),
             "avatar": f"https://i.pravatar.cc/150?u={rpcperson.datatracker_person.datatracker_id}",
+            "rpcPersonId": rpcperson.id,
             "isManager": (
                 False
                 if rpcperson is None

@@ -73,8 +73,8 @@
               </li>
             </ul>
           </li>
-          <li>
-            <div class="text-xs font-semibold leading-6 text-gray-400 dark:text-violet-400">Misc</div>
+          <li v-if="userStore.isManager">
+            <div class="text-xs font-semibold leading-6 text-gray-400 dark:text-violet-400">Management</div>
             <ul role="list" class="-mx-2 mt-2 space-y-1">
               <li v-for="link in links" :key="link.name">
                 <NuxtLink :to="link.href" :class="[link.href === currentBaseLink ? 'bg-gray-50 text-violet-600' : 'text-gray-700 dark:text-violet-300 hover:text-violet-600 hover:bg-gray-50 dark:hover:bg-violet-800', 'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold']">
@@ -107,6 +107,7 @@ import confetti from 'canvas-confetti'
 // STORES
 
 const siteStore = useSiteStore()
+const userStore = useUserStore()
 
 // ROUTER
 
@@ -124,12 +125,15 @@ const navigation = [
   { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }) }
 ]
 
-const links = [
-  { name: 'Manage RFC Numbers', href: '/rfcs', icon: h(Icon, { name: 'fluent-mdl2:number-field' }) },
-  { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
-  { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) },
-  { name: 'Manage Labels', href: '/labels', icon: h(Icon, { name: 'pajamas:labels' }) }
-]
+const links = computed(() => userStore.isManager
+  ? [
+      { name: 'Manage RFC Numbers', href: '/rfcs', icon: h(Icon, { name: 'fluent-mdl2:number-field' }) },
+      { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
+      { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) },
+      { name: 'Manage Labels', href: '/labels', icon: h(Icon, { name: 'pajamas:labels' }) }
+  ]
+  : []
+)
 
 // METHODS
 

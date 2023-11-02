@@ -20,27 +20,59 @@ from .serializers import (
     QueueItemSerializer,
     RfcToBeSerializer,
     RpcPersonSerializer,
-    RpcRoleSerializer
+    RpcRoleSerializer,
 )
 
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
-@with_rpcapi
-def profile(request, *, rpcapi: rpcapi_client.DefaultApi):
+def profile(request):
     """Get profile of current user"""
     user = request.user
     if not user.is_authenticated:
         return JsonResponse({"authenticated": False})
-    return JsonResponse({
-        "authenticated": True,
-        "id": user.pk,
-        "name": user.name,
-        "avatar": user.avatar,
-    })
+    dt_person = user.datatracker_person()
+    # hasattr() test also handles None case
+    rpcperson = dt_person.rpcperson if hasattr(dt_person, "rpcperson") else None
+    return JsonResponse(
+        {
+            "authenticated": True,
+            "id": user.pk,
+            "name": user.name,
+            "avatar": user.avatar,
+            "rpcPersonId": rpcperson.id if rpcperson is not None else None,
+            "isManager": (
+                False
+                if rpcperson is None
+                else rpcperson.can_hold_role.filter(slug="manager").exists()
+            ),
+        }
+    )
 
 
-@extend_schema(responses=RpcPersonSerializer)
+# This is for debugging / demo purposes only!
+@extend_schema(operation_id="profile_retrieve_demo_only", responses=OpenApiTypes.OBJECT)
+@api_view(["GET"])
+def profile_as_person(request, rpc_person_id):
+    rpcperson = RpcPerson.objects.filter(pk=rpc_person_id).first()
+    if rpcperson is None:
+        return Response(status=404)
+    return JsonResponse(
+        {
+            "authenticated": request.user.is_authenticated,
+            "id": None,
+            "name": rpcperson.datatracker_person.plain_name(),
+            "avatar": f"https://i.pravatar.cc/150?u={rpcperson.datatracker_person.datatracker_id}",
+            "rpcPersonId": rpcperson.id,
+            "isManager": (
+                False
+                if rpcperson is None
+                else rpcperson.can_hold_role.filter(slug="manager").exists()
+            ),
+        }
+    )
+
+@extend_schema(responses=RpcPersonSerializer(many=True))
 @api_view(["GET"])
 @with_rpcapi
 def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -57,7 +89,9 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
-@extend_schema(operation_id="submissions_list", responses=OpenApiTypes.OBJECT)  # not very specific...
+@extend_schema(
+    operation_id="submissions_list", responses=OpenApiTypes.OBJECT
+)  # not very specific...
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -101,9 +135,7 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     # Filter out I-Ds that already have an RfcToBe
     already_in_queue = RfcToBe.objects.filter(
         draft__datatracker_id__in=[s["pk"] for s in submitted]
-    ).values_list(
-        "draft__datatracker_id", flat=True
-    )
+    ).values_list("draft__datatracker_id", flat=True)
     submitted = [s for s in submitted if s["pk"] not in already_in_queue]
     return JsonResponse({"submitted": submitted}, safe=False)
 
@@ -140,7 +172,7 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
                 "title": draft_info.title,
                 "stream": draft_info.stream,
                 "pages": draft_info.pages,
-            }
+            },
         )
 
     # Create the RfcToBe
@@ -154,8 +186,12 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
             submitted_boilerplate="trust200902",
             intended_boilerplate="trust200902",
             submitted_format="xml-v3",
-            submitted_std_level=StdLevelNameFactory(slug="ps", name="Proposed Standard").pk,
-            intended_std_level=StdLevelNameFactory(slug="ps", name="Proposed Standard").pk,
+            submitted_std_level=StdLevelNameFactory(
+                slug="ps", name="Proposed Standard"
+            ).pk,
+            intended_std_level=StdLevelNameFactory(
+                slug="ps", name="Proposed Standard"
+            ).pk,
             submitted_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
             intended_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
             internal_goal=initial_data["external_deadline"],
@@ -197,7 +233,6 @@ def clusters(request):
         ],
         safe=False,
     )
-
 
 
 @api_view(["GET"])

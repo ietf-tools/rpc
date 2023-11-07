@@ -107,6 +107,7 @@ import confetti from 'canvas-confetti'
 // STORES
 
 const siteStore = useSiteStore()
+const userStore = useUserStore()
 
 // ROUTER
 
@@ -124,12 +125,21 @@ const navigation = [
   { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }) }
 ]
 
-const links = [
-  { name: 'Manage RFC Numbers', href: '/rfcs', icon: h(Icon, { name: 'fluent-mdl2:number-field' }) },
-  { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
-  { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) },
-  { name: 'Manage Labels', href: '/labels', icon: h(Icon, { name: 'pajamas:labels' }) }
-]
+const links = computed(() => {
+  const val = userStore.isManager
+    ? [
+        { name: 'Manage RFC Numbers', href: '/rfcs', icon: h(Icon, { name: 'fluent-mdl2:number-field' }) },
+        { name: 'Cluster Management', href: '/clusters', icon: h(Icon, { name: 'pajamas:group' }) },
+        { name: 'Legal Requests', href: '/legal', icon: h(Icon, { name: 'octicon:law-24' }) }
+      ]
+    : []
+
+  // links for everyone
+  val.push(
+    { name: 'Manage Labels', href: '/labels', icon: h(Icon, { name: 'pajamas:labels' }) }
+  )
+  return val
+})
 
 // METHODS
 

@@ -6,6 +6,8 @@ import datetime
 from django.db import models
 from django.utils import timezone
 
+from simple_history.models import HistoricalRecords
+
 
 class RpcPerson(models.Model):
     datatracker_person = models.OneToOneField(
@@ -24,6 +26,15 @@ class RpcPerson(models.Model):
 
     def __str__(self):
         return str(self.datatracker_person)
+
+
+class RfcToBeLabel(models.Model):
+    """Through model for linking Label to RfcToBe
+
+    This exists so we can specify on_delete=models.PROTECT for the label FK.
+    """
+    rfctobe = models.ForeignKey("RfcToBe", on_delete=models.CASCADE)
+    label = models.ForeignKey("Label", on_delete=models.PROTECT)
 
 
 class RfcToBe(models.Model):
@@ -65,9 +76,11 @@ class RfcToBe(models.Model):
 
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships
-    labels = models.ManyToManyField("Label", through="RfcToBeLabel")
+    # It seems that django-simple-history does not get along with through models declared using a string
+    # reference, so we must use the model class itself.
+    labels = models.ManyToManyField("Label", through=RfcToBeLabel)
 
-    #     history = HistoricalRecords()
+    history = HistoricalRecords(m2m_fields=[labels])
 
     class Meta:
         constraints = [
@@ -88,15 +101,6 @@ class RfcToBe(models.Model):
         return (
             f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
         )
-
-
-class RfcToBeLabel(models.Model):
-    """Through model for linking Label to RfcToBe
-
-    This exists so we can specify on_delete=models.PROTECT for the label FK.
-    """
-    rfctobe = models.ForeignKey("RfcToBe", on_delete=models.CASCADE)
-    label = models.ForeignKey("Label", on_delete=models.PROTECT)
 
 
 class Name(models.Model):

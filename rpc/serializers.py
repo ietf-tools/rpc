@@ -71,15 +71,17 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     def get_cluster(self, rfc_to_be) -> Optional[int]:
         return rfc_to_be.cluster.number if rfc_to_be.cluster else None
 
-    def get_history(self, rfc_to_be) -> list[tuple[datetime.datetime, str]]:
+    def get_history(self, rfc_to_be) -> list[dict]:
         history = []
         for newer, older in pairwise(rfc_to_be.history.all()):
             delta = newer.diff_against(older)
             if delta.changes:
-                history.append((
-                    newer.history_date,
-                    "; ".join(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in delta.changes)
-                ))
+                history.append({
+                    "id": newer.history_id,
+                    "date": newer.history_date,
+                    "by": newer.history_user.name if newer.history_user else None,
+                    "desc": "; ".join(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in delta.changes)
+                })
         return history
 
 

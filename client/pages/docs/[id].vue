@@ -106,7 +106,7 @@
       class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
       <div
         class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">History (mocked)</h2>
+        <h2 class="text-base font-semibold leading-6 text-gray-900">History</h2>
         <div class="flex">
           <table class="min-w-full divide-y divide-gray-300">
             <thead class="bg-gray-50">
@@ -117,7 +117,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="entry in history" :key="history.id">
+              <tr v-for="entry of draft?.history ?? []" :key="entry.id">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ entry.date }}</td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.by }}</td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
@@ -153,10 +153,4 @@ async function saveLabels (labels) {
     })
   }
 }
-
-const history = [
-  { id: 1, date: '2022-12-31', by: 'C. Brown', desc: 'Added to queue' },
-  { id: 2, date: '2022-12-31', by: 'C. Brown', desc: 'Added Label: Needs Formatting' },
-]
-
 </script>

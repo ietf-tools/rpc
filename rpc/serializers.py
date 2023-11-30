@@ -1,7 +1,10 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
-from typing import Optional
+import datetime
+
+from itertools import pairwise
 from rest_framework import serializers
+from typing import Optional
 
 from .models import (
     ActionHolder,
@@ -23,6 +26,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
+    history = serializers.SerializerMethodField()
 
     class Meta:
         model = RfcToBe
@@ -46,6 +50,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
             "intended_boilerplate",
             "intended_std_level",
             "intended_stream",
+            "history",
         ]
 
     def get_name(self, rfc_to_be) -> str:
@@ -65,6 +70,17 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
     def get_cluster(self, rfc_to_be) -> Optional[int]:
         return rfc_to_be.cluster.number if rfc_to_be.cluster else None
+
+    def get_history(self, rfc_to_be) -> list[tuple[datetime.datetime, str]]:
+        history = []
+        for newer, older in pairwise(rfc_to_be.history.all()):
+            delta = newer.diff_against(older)
+            if delta.changes:
+                history.append((
+                    newer.history_date,
+                    "; ".join(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in delta.changes)
+                ))
+        return history
 
 
 class CapabilitySerializer(serializers.ModelSerializer):

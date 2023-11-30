@@ -45,7 +45,7 @@
 
 <script setup>
 import { DateTime } from 'luxon'
-import Fuse from 'fuse.js/dist/fuse.basic.esm'
+import Fuse from 'fuse.js/basic'
 import { useSiteStore } from '@/stores/site'
 
 // ROUTING

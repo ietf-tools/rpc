@@ -77,12 +77,34 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         for newer, older in pairwise(rfc_to_be.history.all()):
             delta = newer.diff_against(older)
             if delta.changes:
-                history.append({
-                    "id": newer.history_id,
-                    "date": newer.history_date,
-                    "by": newer.history_user.name if newer.history_user else None,
-                    "desc": "; ".join(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in delta.changes)
-                })
+                history.append(
+                    {
+                        "id": newer.history_id,
+                        "date": newer.history_date,
+                        "by": newer.history_user.name if newer.history_user else None,
+                        "desc": "; ".join(
+                            (
+                                [newer.history_change_reason]
+                                if newer.history_change_reason
+                                else []
+                            )
+                            + [
+                                f"{ch.field} changed from {ch.old} to {ch.new}"
+                                for ch in delta.changes
+                            ]
+                        ),
+                    }
+                )
+        last = rfc_to_be.history.last()
+        if last and last.history_change_reason:
+            history.append(
+                {
+                    "id": last.history_id,
+                    "date": last.history_date,
+                    "by": last.history_user.name if last.history_user else None,
+                    "desc": last.history_change_reason,
+                }
+            )
         return history
 
     def create(self, validated_data):

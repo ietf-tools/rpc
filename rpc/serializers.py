@@ -4,6 +4,7 @@ import datetime
 
 from itertools import pairwise
 from rest_framework import serializers
+from simple_history.utils import update_change_reason
 from typing import Optional
 
 from .models import (
@@ -84,6 +85,11 @@ class RfcToBeSerializer(serializers.ModelSerializer):
                 })
         return history
 
+    def create(self, validated_data):
+        inst = super().create(validated_data)
+        update_change_reason(inst, "Added to the queue")
+        return inst
+
 
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -104,6 +110,7 @@ class RpcPersonSerializer(serializers.ModelSerializer):
     pass a dict mapping datatracker Person ID to name (designed for use
     with the `get_persons()` API endpoint).
     """
+
     name = serializers.SerializerMethodField()
     capabilities = CapabilitySerializer(source="capable_of", many=True)
     roles = RpcRoleSerializer(source="can_hold_role", many=True)
@@ -113,11 +120,15 @@ class RpcPersonSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "hours_per_week", "capabilities", "roles"]
 
     def __init__(self, *args, **kwargs):
-        self.name_map: dict[str, str] = kwargs.pop("name_map", {})  # datatracker_id -> name
+        self.name_map: dict[str, str] = kwargs.pop(
+            "name_map", {}
+        )  # datatracker_id -> name
         super().__init__(*args, **kwargs)
 
     def get_name(self, rpc_person) -> str:
-        cached_name = self.name_map.get(str(rpc_person.datatracker_person.datatracker_id), None)
+        cached_name = self.name_map.get(
+            str(rpc_person.datatracker_person.datatracker_id), None
+        )
         return cached_name or rpc_person.datatracker_person.plain_name()
 
 
@@ -134,7 +145,9 @@ class ActionHolderSerializer(serializers.ModelSerializer):
         ]
 
     def get_name(self, actionholder) -> str:
-        return actionholder.datatracker_person.plain_name()  # allow prefetched name map?
+        return (
+            actionholder.datatracker_person.plain_name()
+        )  # allow prefetched name map?
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
@@ -164,8 +177,12 @@ class LabelSerializer(serializers.ModelSerializer):
 
 class QueueItemSerializer(RfcToBeSerializer):
     labels = LabelSerializer(many=True, read_only=True)
-    assignment_set = AssignmentSerializer(many=True, read_only=True)  # todo filter out "done"
-    actionholder_set = ActionHolderSerializer(many=True, read_only=True)  # todo filter out "completed"
+    assignment_set = AssignmentSerializer(
+        many=True, read_only=True
+    )  # todo filter out "done"
+    actionholder_set = ActionHolderSerializer(
+        many=True, read_only=True
+    )  # todo filter out "completed"
     requested_approvals = serializers.SerializerMethodField()
 
     class Meta(RfcToBeSerializer.Meta):

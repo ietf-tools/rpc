@@ -1,5 +1,9 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
+import datetime
+
+from dataclasses import dataclass
+from itertools import pairwise
 from rest_framework import serializers
 from simple_history.utils import update_change_reason
 from typing import Optional
@@ -15,22 +19,54 @@ from .models import (
 )
 
 
-class RfcToBeHistorySerializer(serializers.Serializer):
-    """Serialize the history for an RfcToBe instance"""
-    id = serializers.IntegerField(source="history_id")
-    date = serializers.DateTimeField(source="history_date")
-    by = serializers.StringRelatedField(source="history_user")
-    desc = serializers.SerializerMethodField()
+@dataclass
+class HistoryRecord:
+    id: int
+    date: datetime.datetime
+    by: str
+    desc: str
 
-    def get_desc(self, hist):
-        parts = []
-        if hist.history_change_reason:
-            parts.append(hist.history_change_reason)
-        prev = hist.prev_record
-        if prev:
-            changes = hist.diff_against(prev).changes
-            parts.extend(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in changes)
-        return "; ".join(parts) if len(parts) > 0 else "No change"
+    @classmethod
+    def from_simple_history(cls, sh, desc):
+        return cls(
+            id=sh.id,
+            date=sh.history_date,
+            by=sh.history_user,
+            desc=desc,
+        )
+
+
+class RfcToBeHistoryListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        records = []
+        model_histories = list(data.all())
+        if len(model_histories) > 0:
+            for newer, older in pairwise(model_histories):
+                parts = []
+                if newer.history_change_reason:
+                    parts.append(newer.history_change_reason)
+                delta = newer.diff_against(older)
+                if len(delta.changes) > 0:
+                    parts.extend(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in delta.changes)
+                if len(parts) > 0:
+                    records.append(HistoryRecord.from_simple_history(newer, "; ".join(parts)))
+            # Always include first history
+            first = model_histories[-1]
+            records.append(
+                HistoryRecord.from_simple_history(first, first.history_change_reason or "Record created")
+            )
+        return super().to_representation(records)
+
+
+class RfcToBeHistorySerializer(serializers.Serializer):
+    """Serialize the history for an RfcToBe"""
+    id = serializers.IntegerField()
+    date = serializers.DateTimeField()
+    by = serializers.StringRelatedField()
+    desc = serializers.CharField()
+
+    class Meta:
+        list_serializer_class = RfcToBeHistoryListSerializer
 
 
 class RfcToBeSerializer(serializers.ModelSerializer):

@@ -1,7 +1,9 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
-from typing import Optional
+from itertools import pairwise
 from rest_framework import serializers
+from simple_history.utils import update_change_reason
+from typing import Optional
 
 from .models import (
     ActionHolder,
@@ -23,6 +25,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
+    history = serializers.SerializerMethodField()
 
     class Meta:
         model = RfcToBe
@@ -46,6 +49,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
             "intended_boilerplate",
             "intended_std_level",
             "intended_stream",
+            "history",
         ]
 
     def get_name(self, rfc_to_be) -> str:
@@ -65,6 +69,46 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
     def get_cluster(self, rfc_to_be) -> Optional[int]:
         return rfc_to_be.cluster.number if rfc_to_be.cluster else None
+
+    def get_history(self, rfc_to_be) -> list[dict]:
+        history = []
+        for newer, older in pairwise(rfc_to_be.history.all()):
+            delta = newer.diff_against(older)
+            if delta.changes:
+                history.append(
+                    {
+                        "id": newer.history_id,
+                        "date": newer.history_date,
+                        "by": newer.history_user.name if newer.history_user else None,
+                        "desc": "; ".join(
+                            (
+                                [newer.history_change_reason]
+                                if newer.history_change_reason
+                                else []
+                            )
+                            + [
+                                f"{ch.field} changed from {ch.old} to {ch.new}"
+                                for ch in delta.changes
+                            ]
+                        ),
+                    }
+                )
+        last = rfc_to_be.history.last()
+        if last and last.history_change_reason:
+            history.append(
+                {
+                    "id": last.history_id,
+                    "date": last.history_date,
+                    "by": last.history_user.name if last.history_user else None,
+                    "desc": last.history_change_reason,
+                }
+            )
+        return history
+
+    def create(self, validated_data):
+        inst = super().create(validated_data)
+        update_change_reason(inst, "Added to the queue")
+        return inst
 
 
 class CapabilitySerializer(serializers.ModelSerializer):
@@ -86,6 +130,7 @@ class RpcPersonSerializer(serializers.ModelSerializer):
     pass a dict mapping datatracker Person ID to name (designed for use
     with the `get_persons()` API endpoint).
     """
+
     name = serializers.SerializerMethodField()
     capabilities = CapabilitySerializer(source="capable_of", many=True)
     roles = RpcRoleSerializer(source="can_hold_role", many=True)
@@ -95,11 +140,15 @@ class RpcPersonSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "hours_per_week", "capabilities", "roles"]
 
     def __init__(self, *args, **kwargs):
-        self.name_map: dict[str, str] = kwargs.pop("name_map", {})  # datatracker_id -> name
+        self.name_map: dict[str, str] = kwargs.pop(
+            "name_map", {}
+        )  # datatracker_id -> name
         super().__init__(*args, **kwargs)
 
     def get_name(self, rpc_person) -> str:
-        cached_name = self.name_map.get(str(rpc_person.datatracker_person.datatracker_id), None)
+        cached_name = self.name_map.get(
+            str(rpc_person.datatracker_person.datatracker_id), None
+        )
         return cached_name or rpc_person.datatracker_person.plain_name()
 
 
@@ -116,7 +165,9 @@ class ActionHolderSerializer(serializers.ModelSerializer):
         ]
 
     def get_name(self, actionholder) -> str:
-        return actionholder.datatracker_person.plain_name()  # allow prefetched name map?
+        return (
+            actionholder.datatracker_person.plain_name()
+        )  # allow prefetched name map?
 
 
 class AssignmentSerializer(serializers.ModelSerializer):
@@ -146,8 +197,12 @@ class LabelSerializer(serializers.ModelSerializer):
 
 class QueueItemSerializer(RfcToBeSerializer):
     labels = LabelSerializer(many=True, read_only=True)
-    assignment_set = AssignmentSerializer(many=True, read_only=True)  # todo filter out "done"
-    actionholder_set = ActionHolderSerializer(many=True, read_only=True)  # todo filter out "completed"
+    assignment_set = AssignmentSerializer(
+        many=True, read_only=True
+    )  # todo filter out "done"
+    actionholder_set = ActionHolderSerializer(
+        many=True, read_only=True
+    )  # todo filter out "completed"
     requested_approvals = serializers.SerializerMethodField()
 
     class Meta(RfcToBeSerializer.Meta):

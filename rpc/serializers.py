@@ -1,6 +1,5 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
-from itertools import pairwise
 from rest_framework import serializers
 from simple_history.utils import update_change_reason
 from typing import Optional
@@ -16,6 +15,24 @@ from .models import (
 )
 
 
+class RfcToBeHistorySerializer(serializers.Serializer):
+    """Serialize the history for an RfcToBe instance"""
+    id = serializers.IntegerField(source="history_id")
+    date = serializers.DateTimeField(source="history_date")
+    by = serializers.StringRelatedField(source="history_user")
+    desc = serializers.SerializerMethodField()
+
+    def get_desc(self, hist):
+        parts = []
+        if hist.history_change_reason:
+            parts.append(hist.history_change_reason)
+        prev = hist.prev_record
+        if prev:
+            changes = hist.diff_against(prev).changes
+            parts.extend(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in changes)
+        return "; ".join(parts) if len(parts) > 0 else "No change"
+
+
 class RfcToBeSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     rev = serializers.SerializerMethodField()
@@ -25,7 +42,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
-    history = serializers.SerializerMethodField()
+    history = RfcToBeHistorySerializer(many=True)
 
     class Meta:
         model = RfcToBe
@@ -69,41 +86,6 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
     def get_cluster(self, rfc_to_be) -> Optional[int]:
         return rfc_to_be.cluster.number if rfc_to_be.cluster else None
-
-    def get_history(self, rfc_to_be) -> list[dict]:
-        history = []
-        for newer, older in pairwise(rfc_to_be.history.all()):
-            delta = newer.diff_against(older)
-            if delta.changes:
-                history.append(
-                    {
-                        "id": newer.history_id,
-                        "date": newer.history_date,
-                        "by": newer.history_user.name if newer.history_user else None,
-                        "desc": "; ".join(
-                            (
-                                [newer.history_change_reason]
-                                if newer.history_change_reason
-                                else []
-                            )
-                            + [
-                                f"{ch.field} changed from {ch.old} to {ch.new}"
-                                for ch in delta.changes
-                            ]
-                        ),
-                    }
-                )
-        last = rfc_to_be.history.last()
-        if last and last.history_change_reason:
-            history.append(
-                {
-                    "id": last.history_id,
-                    "date": last.history_date,
-                    "by": last.history_user.name if last.history_user else None,
-                    "desc": last.history_change_reason,
-                }
-            )
-        return history
 
     def create(self, validated_data):
         inst = super().create(validated_data)

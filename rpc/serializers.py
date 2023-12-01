@@ -5,6 +5,7 @@ import datetime
 from dataclasses import dataclass
 from itertools import pairwise
 from rest_framework import serializers
+from simple_history.models import ModelDelta
 from simple_history.utils import update_change_reason
 from typing import Optional
 
@@ -36,7 +37,13 @@ class HistoryRecord:
         )
 
 
-class RfcToBeHistoryListSerializer(serializers.ListSerializer):
+class HistoryListSerializer(serializers.ListSerializer):
+    def describe_model_delta(self, delta: ModelDelta):
+        method = getattr(self.parent, "describe_model_delta", None) if self.parent else None
+        if method is None:
+            return (f"{change.field} changed from {change.old} to {change.new}" for change in delta.changes)
+        return method(delta)
+
     def to_representation(self, data):
         records = []
         model_histories = list(data.all())
@@ -47,7 +54,7 @@ class RfcToBeHistoryListSerializer(serializers.ListSerializer):
                     parts.append(newer.history_change_reason)
                 delta = newer.diff_against(older)
                 if len(delta.changes) > 0:
-                    parts.extend(f"{ch.field} changed from {ch.old} to {ch.new}" for ch in delta.changes)
+                    parts.extend(self.describe_model_delta(delta))
                 if len(parts) > 0:
                     records.append(HistoryRecord.from_simple_history(newer, "; ".join(parts)))
             # Always include first history
@@ -58,7 +65,7 @@ class RfcToBeHistoryListSerializer(serializers.ListSerializer):
         return super().to_representation(records)
 
 
-class RfcToBeHistorySerializer(serializers.Serializer):
+class HistorySerializer(serializers.Serializer):
     """Serialize the history for an RfcToBe"""
     id = serializers.IntegerField()
     date = serializers.DateTimeField()
@@ -66,7 +73,7 @@ class RfcToBeHistorySerializer(serializers.Serializer):
     desc = serializers.CharField()
 
     class Meta:
-        list_serializer_class = RfcToBeHistoryListSerializer
+        list_serializer_class = HistoryListSerializer
 
 
 class RfcToBeSerializer(serializers.ModelSerializer):
@@ -78,7 +85,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
-    history = RfcToBeHistorySerializer(many=True)
+    history = HistorySerializer(many=True)
 
     class Meta:
         model = RfcToBe
@@ -128,6 +135,21 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         update_change_reason(inst, "Added to the queue")
         return inst
 
+    def describe_model_delta(self, delta: ModelDelta):
+        for change in delta.changes:
+            if change.field == "labels":
+                old = set(delta.old_record.labels.values_list("label__slug", flat=True))
+                new = set(delta.new_record.labels.values_list("label__slug", flat=True))
+                added = new - old
+                removed = old - new
+                changes = []
+                if added:
+                    changes.append(f"added {', '.join(added)}")
+                if removed:
+                    changes.append(f"removed {', '.join(removed)}")
+                yield " and ".join(changes)
+            else:
+                yield "oof"
 
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:

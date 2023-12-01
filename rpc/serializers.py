@@ -1,7 +1,5 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
-import datetime
-
 from itertools import pairwise
 from rest_framework import serializers
 from simple_history.utils import update_change_reason

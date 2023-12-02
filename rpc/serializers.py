@@ -138,15 +138,22 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     def describe_model_delta(self, delta: ModelDelta):
         for change in delta.changes:
             if change.field == "labels":
-                old = set(delta.old_record.labels.values_list("label__slug", flat=True))
-                new = set(delta.new_record.labels.values_list("label__slug", flat=True))
+                old = set(delta.old_record.labels.values_list("label__pk", flat=True))
+                new = set(delta.new_record.labels.values_list("label__pk", flat=True))
                 added = new - old
                 removed = old - new
                 changes = []
+                hist_labels = Label.history.as_of(delta.new_record.history_date)
                 if added:
-                    changes.append(f"added {', '.join(added)}")
+                    added_strs = [f'"{label.slug}"' for label in hist_labels.filter(id__in=added)]
+                    changes.append(
+                        f"Added label{'s' if len(added_strs) > 1 else ''} {', '.join(added_strs)}"
+                    )
                 if removed:
-                    changes.append(f"removed {', '.join(removed)}")
+                    removed_strs = [f'"{label.slug}"' for label in hist_labels.filter(id__in=removed)]
+                    changes.append(
+                        f"Removed label{'s' if len(removed_strs) > 1 else ''} {', '.join(removed_strs)}"
+                    )
                 yield " and ".join(changes)
             else:
                 yield "oof"

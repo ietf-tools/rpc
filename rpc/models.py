@@ -351,6 +351,7 @@ class Label(models.Model):
     color = models.CharField(
         max_length=7, default="purple", choices=zip(TAILWIND_COLORS, TAILWIND_COLORS)
     )
+    history = HistoricalRecords()
 
 
 class RpcAuthorComment(models.Model):

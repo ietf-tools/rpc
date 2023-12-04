@@ -20,6 +20,24 @@ from .models import (
 )
 
 
+class UserSerializer(serializers.Serializer):
+    """Serialize a User record"""
+    name = serializers.SerializerMethodField()
+    person_id = serializers.SerializerMethodField()
+
+    def get_name(self, user) -> str:
+        dt_person = user.datatracker_person()
+        if dt_person:
+            return dt_person.plain_name()
+        return str(user)
+
+    def get_person_id(self, user) -> Optional[RpcPerson]:
+        rpc_person = RpcPerson.objects.filter(datatracker_person=user.datatracker_person()).first()
+        if rpc_person:
+            return rpc_person.pk
+        return None
+
+
 @dataclass
 class HistoryRecord:
     id: int
@@ -69,7 +87,7 @@ class HistorySerializer(serializers.Serializer):
     """Serialize the history for an RfcToBe"""
     id = serializers.IntegerField()
     date = serializers.DateTimeField()
-    by = serializers.StringRelatedField()
+    by = UserSerializer()
     desc = serializers.CharField()
 
     class Meta:

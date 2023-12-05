@@ -174,7 +174,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
                     )
                 yield " and ".join(changes)
             else:
-                yield "oof"
+                yield f'Changed {change.field} from "{change.old}" to "{change.new}"'
 
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:

@@ -119,7 +119,16 @@
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="entry of draft?.history ?? []" :key="entry.id">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ entry.date }}</td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.by }}</td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <NuxtLink v-if="entry.by?.personId"
+                            :to="`/team/${entry.by.personId}`"
+                            class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
+                    {{ entry.by.name }}
+                  </NuxtLink>
+                  <span v-else>
+                    {{ entry.by?.name }}
+                  </span>
+                </td>
                 <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
               </tr>
             </tbody>

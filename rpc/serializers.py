@@ -1,7 +1,11 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
+import datetime
+
+from dataclasses import dataclass
 from itertools import pairwise
 from rest_framework import serializers
+from simple_history.models import ModelDelta
 from simple_history.utils import update_change_reason
 from typing import Optional
 
@@ -16,6 +20,80 @@ from .models import (
 )
 
 
+class UserSerializer(serializers.Serializer):
+    """Serialize a User record"""
+    name = serializers.SerializerMethodField()
+    person_id = serializers.SerializerMethodField()
+
+    def get_name(self, user) -> str:
+        dt_person = user.datatracker_person()
+        if dt_person:
+            return dt_person.plain_name()
+        return str(user)
+
+    def get_person_id(self, user) -> Optional[RpcPerson]:
+        rpc_person = RpcPerson.objects.filter(datatracker_person=user.datatracker_person()).first()
+        if rpc_person:
+            return rpc_person.pk
+        return None
+
+
+@dataclass
+class HistoryRecord:
+    id: int
+    date: datetime.datetime
+    by: str
+    desc: str
+
+    @classmethod
+    def from_simple_history(cls, sh, desc):
+        return cls(
+            id=sh.id,
+            date=sh.history_date,
+            by=sh.history_user,
+            desc=desc,
+        )
+
+
+class HistoryListSerializer(serializers.ListSerializer):
+    def describe_model_delta(self, delta: ModelDelta):
+        method = getattr(self.parent, "describe_model_delta", None) if self.parent else None
+        if method is None:
+            return (f"{change.field} changed from {change.old} to {change.new}" for change in delta.changes)
+        return method(delta)
+
+    def to_representation(self, data):
+        records = []
+        model_histories = list(data.all())
+        if len(model_histories) > 0:
+            for newer, older in pairwise(model_histories):
+                parts = []
+                if newer.history_change_reason:
+                    parts.append(newer.history_change_reason)
+                delta = newer.diff_against(older)
+                if len(delta.changes) > 0:
+                    parts.extend(self.describe_model_delta(delta))
+                if len(parts) > 0:
+                    records.append(HistoryRecord.from_simple_history(newer, "; ".join(parts)))
+            # Always include first history
+            first = model_histories[-1]
+            records.append(
+                HistoryRecord.from_simple_history(first, first.history_change_reason or "Record created")
+            )
+        return super().to_representation(records)
+
+
+class HistorySerializer(serializers.Serializer):
+    """Serialize the history for an RfcToBe"""
+    id = serializers.IntegerField()
+    date = serializers.DateTimeField()
+    by = UserSerializer()
+    desc = serializers.CharField()
+
+    class Meta:
+        list_serializer_class = HistoryListSerializer
+
+
 class RfcToBeSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     rev = serializers.SerializerMethodField()
@@ -25,7 +103,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
-    history = serializers.SerializerMethodField()
+    history = HistorySerializer(many=True)
 
     class Meta:
         model = RfcToBe
@@ -70,46 +148,33 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     def get_cluster(self, rfc_to_be) -> Optional[int]:
         return rfc_to_be.cluster.number if rfc_to_be.cluster else None
 
-    def get_history(self, rfc_to_be) -> list[dict]:
-        history = []
-        for newer, older in pairwise(rfc_to_be.history.all()):
-            delta = newer.diff_against(older)
-            if delta.changes:
-                history.append(
-                    {
-                        "id": newer.history_id,
-                        "date": newer.history_date,
-                        "by": newer.history_user.name if newer.history_user else None,
-                        "desc": "; ".join(
-                            (
-                                [newer.history_change_reason]
-                                if newer.history_change_reason
-                                else []
-                            )
-                            + [
-                                f"{ch.field} changed from {ch.old} to {ch.new}"
-                                for ch in delta.changes
-                            ]
-                        ),
-                    }
-                )
-        last = rfc_to_be.history.last()
-        if last and last.history_change_reason:
-            history.append(
-                {
-                    "id": last.history_id,
-                    "date": last.history_date,
-                    "by": last.history_user.name if last.history_user else None,
-                    "desc": last.history_change_reason,
-                }
-            )
-        return history
-
     def create(self, validated_data):
         inst = super().create(validated_data)
         update_change_reason(inst, "Added to the queue")
         return inst
 
+    def describe_model_delta(self, delta: ModelDelta):
+        for change in delta.changes:
+            if change.field == "labels":
+                old = set(delta.old_record.labels.values_list("label__pk", flat=True))
+                new = set(delta.new_record.labels.values_list("label__pk", flat=True))
+                added = new - old
+                removed = old - new
+                changes = []
+                hist_labels = Label.history.as_of(delta.new_record.history_date)
+                if added:
+                    added_strs = [f'"{label.slug}"' for label in hist_labels.filter(id__in=added)]
+                    changes.append(
+                        f"Added label{'s' if len(added_strs) > 1 else ''} {', '.join(added_strs)}"
+                    )
+                if removed:
+                    removed_strs = [f'"{label.slug}"' for label in hist_labels.filter(id__in=removed)]
+                    changes.append(
+                        f"Removed label{'s' if len(removed_strs) > 1 else ''} {', '.join(removed_strs)}"
+                    )
+                yield " and ".join(changes)
+            else:
+                yield f'Changed {change.field} from "{change.old}" to "{change.new}"'
 
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:

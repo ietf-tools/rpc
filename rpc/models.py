@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+from itertools import pairwise
 
 from django.db import models
 from django.utils import timezone
@@ -101,6 +102,33 @@ class RfcToBe(models.Model):
         return (
             f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
         )
+
+    def time_intervals_with_label(self, label) -> list[list[datetime.datetime]]:
+        hist = list(self.history.all())
+        label_changes = filter(
+            lambda delta: len(delta.changes) > 0,
+            (
+                newer.diff_against(older, included_fields=["labels"])
+                for newer, older in pairwise(hist)
+            ),
+        )
+
+        intervals = []
+        this_interval = None
+        for ch in reversed(list(label_changes)):
+            # Every changeset will have 1 change because we specified 1 included_field
+            if label.pk in [related_label["label"] for related_label in ch.changes[0].new]:
+                if this_interval is None:
+                    this_interval = [ch.new_record.history_date, None]
+            else:
+                if this_interval is not None:
+                    this_interval[1] = ch.new_record.history_date
+                    intervals.append(this_interval)
+                    this_interval = None
+        if this_interval is not None:
+            this_interval[1] = datetime.datetime.now()
+            intervals.append(this_interval)
+        return intervals
 
 
 class Name(models.Model):

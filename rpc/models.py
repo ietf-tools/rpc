@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+
+from dataclasses import dataclass
 from itertools import pairwise
+from typing import Optional
 
 from django.db import models
 from django.utils import timezone
@@ -103,7 +106,12 @@ class RfcToBe(models.Model):
             f"RfcToBe for {self.draft if self.rfc_number is None else self.rfc_number}"
         )
 
-    def time_intervals_with_label(self, label) -> list[list[datetime.datetime]]:
+    @dataclass
+    class Interval:
+        start: datetime.datetime
+        end: Optional[datetime.datetime] = None
+
+    def time_intervals_with_label(self, label) -> list[Interval]:
         hist = list(self.history.all())
         label_changes = filter(
             lambda delta: len(delta.changes) > 0,
@@ -113,21 +121,17 @@ class RfcToBe(models.Model):
             ),
         )
 
-        intervals = []
-        this_interval = None
+        intervals: list[RfcToBe.Interval] = []
         for ch in reversed(list(label_changes)):
             # Every changeset will have 1 change because we specified 1 included_field
             if label.pk in [related_label["label"] for related_label in ch.changes[0].new]:
-                if this_interval is None:
-                    this_interval = [ch.new_record.history_date, None]
+                if len(intervals) == 0 or intervals[-1].end is not None:
+                    intervals.append(RfcToBe.Interval(start=ch.new_record.history_date))
             else:
-                if this_interval is not None:
-                    this_interval[1] = ch.new_record.history_date
-                    intervals.append(this_interval)
-                    this_interval = None
-        if this_interval is not None:
-            this_interval[1] = datetime.datetime.now()
-            intervals.append(this_interval)
+                if len(intervals) > 0 and intervals[-1].end is None:
+                    intervals[-1].end = ch.new_record.history_date
+        if len(intervals) > 0 and intervals[-1].end is None:
+            intervals[-1].end = datetime.datetime.now()
         return intervals
 
 

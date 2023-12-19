@@ -60,6 +60,7 @@ urlpatterns = [
     path("api/rpc/profile/", rpc_api.profile),
     path("api/rpc/profile/<int:rpc_person_id>", rpc_api.profile_as_person),  # for demo only
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
+    path("api/rpc/stats/label/", rpc_api.LabelStats.as_view()),
     path("api/rpc/submissions/", rpc_api.submissions),
     path("api/rpc/submissions/<int:document_id>/", rpc_api.submission),
     path("api/rpc/submissions/<int:document_id>/import/", rpc_api.import_submission),

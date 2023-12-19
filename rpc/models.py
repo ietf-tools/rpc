@@ -131,7 +131,7 @@ class RfcToBe(models.Model):
                 if len(intervals) > 0 and intervals[-1].end is None:
                     intervals[-1].end = ch.new_record.history_date
         if len(intervals) > 0 and intervals[-1].end is None:
-            intervals[-1].end = datetime.datetime.now()
+            intervals[-1].end = datetime.datetime.now().astimezone(datetime.timezone.utc)
         return intervals
 
 

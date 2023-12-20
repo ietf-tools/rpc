@@ -30,35 +30,36 @@
       <div class="lg:col-start-3 lg:row-end-1">
         <h2 class="sr-only">Status Summary (mockup)</h2>
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
-          <dl class="grid grid-cols-3">
-            <div class="col-span-2 pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Assignments<br></dt>
-              <dd v-if="draftAssignments.length === 0">None</dd>
-              <dd v-else class="mt-1 text-base font-semibold leading-6 text-gray-900">
-                <div v-for="assignment of draftAssignments">
-                  {{ people.find(p => p.id === assignment.person)?.name }}
-                  <Badge class="float-right"
-                         :label="assignment.role"/>
+          <div class="px-4 pt-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Current Assignments</h3>
+            <div class="mx-4 text-sm font-medium text-gray-900">
+              <div v-if="draftAssignments.length === 0">
+                None
+              </div>
+              <dl v-else>
+                  <div v-for="assignment of draftAssignments"
+                       class="py-1 grid grid-cols-2">
+                    <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
+                    <dd class="relative"><Badge class="absolute right-0" :label="assignment.role"/></dd>
+                  </div>
+              </dl>
+            </div>
+          </div>
+         <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Queue Information (mocked)</h3>
+            <div class="mx-4 text-sm font-medium text-gray-900">
+              <dl>
+                <div class="py-1 grid grid-cols-2">
+                  <dt>Current State</dt>
+                  <dd>EDIT-in-process</dd>
                 </div>
-              </dd>
+                <div class="py-1 grid grid-cols-2">
+                  <dt>Est. Completion</dt>
+                  <dd>30 July 2024 <Badge label="Overdue" color="red"/></dd>
+                </div>
+              </dl>
             </div>
-            <div class="col-span-2 self-start pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Queue State (mocked)</dt>
-              <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">EDIT-in-process</dd>
-            </div>
-            <div class="col-span-2 self-start pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Estimated Completion (mocked)</dt>
-              <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">30 July 2023</dd>
-            </div>
-            <div class="col-span-1 self-end px-6 pt-4">
-              <dt class="sr-only">Reason</dt>
-              <dd
-                class="rounded-md bg-red-50 px-2 py-1 text-xs font-medium text-red-600 ring-1 ring-inset ring-red-600/20">
-                Overdue
-              </dd>
-            </div>
-          </dl>
-          <div class="py-3"/>
+          </div>
         </div>
       </div>
 
@@ -151,7 +152,7 @@ const api = useApi()
 
 const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.id)))
 
-const draftAssignments = computed(() => assignments.value.filter((a) => a.rfcToBe === draft.value?.id ))
+const draftAssignments = computed(() => assignments.value.filter((a) => a.rfcToBe === draft.value?.id))
 
 // DATA
 

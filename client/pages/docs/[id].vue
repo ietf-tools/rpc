@@ -32,22 +32,22 @@
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
           <dl class="grid grid-cols-3">
             <div class="col-span-2 pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Assignments<br>(panel mocked)</dt>
-              <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">Someone</dd>
-            </div>
-            <div class="col-span-1 self-end px-6 pt-4">
-              <dt class="sr-only">Reason</dt>
-              <dd
-                class="rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-600 ring-1 ring-inset ring-green-600/20">
-                PE
+              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Assignments<br></dt>
+              <dd v-if="draftAssignments.length === 0">None</dd>
+              <dd v-else class="mt-1 text-base font-semibold leading-6 text-gray-900">
+                <div v-for="assignment of draftAssignments">
+                  {{ people.find(p => p.id === assignment.person)?.name }}
+                  <Badge class="float-right"
+                         :label="assignment.role"/>
+                </div>
               </dd>
             </div>
             <div class="col-span-2 self-start pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Queue State</dt>
+              <dt class="text-sm font-semibold leading-6 text-gray-900">Current Queue State (mocked)</dt>
               <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">EDIT-in-process</dd>
             </div>
             <div class="col-span-2 self-start pl-6 pt-6">
-              <dt class="text-sm font-semibold leading-6 text-gray-900">Estimated Completion</dt>
+              <dt class="text-sm font-semibold leading-6 text-gray-900">Estimated Completion (mocked)</dt>
               <dd class="mt-1 text-base font-semibold leading-6 text-gray-900">30 July 2023</dd>
             </div>
             <div class="col-span-1 self-end px-6 pt-4">
@@ -142,16 +142,35 @@
 
 <script setup>
 
+import { useAsyncData } from '#app'
+
 const route = useRoute()
 const api = useApi()
 
+// COMPUTED
+
 const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.id)))
+
+const draftAssignments = computed(() => assignments.value.filter((a) => a.rfcToBe === draft.value?.id ))
+
+// DATA
 
 const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
 const { data: draft, pending: draftPending } = await useAsyncData(
   () => api.documentsRetrieve({ draftName: route.params.id }),
   { server: false }
+)
+
+// todo retrieve assignments for a single draft more efficiently
+const { data: assignments } = await useAsyncData(
+  () => api.assignmentsList(),
+  { server: false, default: () => [] }
+)
+
+const { data: people } = await useAsyncData(
+  () => api.rpcPersonList(),
+  { server: false, default: () => [] }
 )
 
 async function saveLabels (labels) {

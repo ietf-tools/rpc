@@ -7,8 +7,9 @@ from drf_spectacular.types import OpenApiTypes
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework import serializers
 from rest_framework import mixins, views, viewsets
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, inline_serializer
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
@@ -280,8 +281,26 @@ class RpcRoleViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = RpcRoleSerializer
 
 
-class LabelStats(views.APIView):
+class StatsLabels(views.APIView):
     permission_classes = [AllowAny]
+
+    @extend_schema(
+        operation_id="stats_labels",
+        responses=inline_serializer(
+            name="LabelStats",
+            fields={
+                "label_stats": inline_serializer(
+                    name="LabelStat",
+                    fields={
+                        "document_id": serializers.IntegerField(),
+                        "label_id": serializers.IntegerField(),
+                        "seconds": serializers.FloatField(),
+                    },
+                    many=True,
+                )
+            },
+        )
+    )
     def get(self, request):
         results = []
         for rtb in RfcToBe.objects.all():
@@ -295,7 +314,7 @@ class LabelStats(views.APIView):
                 ).total_seconds()
                 if seconds_with_label > 0:
                     results.append({
-                        "rfctobe_id": rtb.pk,
+                        "document_id": rtb.pk,
                         "label_id": label.pk,
                         "seconds": seconds_with_label,
                     })

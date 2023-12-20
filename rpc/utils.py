@@ -1,13 +1,11 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 # -*- coding: utf-8 -*-
-from typing import List
-
-from django.db.models import Max, PositiveIntegerField
+from django.db.models import Max
 
 from .models import RfcToBe, UnusableRfcNumber
 
 
-def next_rfc_number(count=1) -> List[int]:
+def next_rfc_number(count=1) -> list[int]:
     """Find the next count contiguous available RFC numbers"""
     # In the worst-case, we can always use (n + 1) to (n + count) where n is the last
     # unavailable number.

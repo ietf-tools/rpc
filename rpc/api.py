@@ -1,12 +1,15 @@
 # Copyright The IETF Trust 2023, All Rights Reserved
 
+import datetime
+
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from rest_framework import mixins, viewsets
-from drf_spectacular.utils import extend_schema
+from rest_framework import serializers
+from rest_framework import mixins, views, viewsets
+from drf_spectacular.utils import extend_schema, inline_serializer
 
 import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
@@ -276,3 +279,43 @@ class LabelViewSet(viewsets.ModelViewSet):
 class RpcRoleViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = RpcRole.objects.all()
     serializer_class = RpcRoleSerializer
+
+
+class StatsLabels(views.APIView):
+    permission_classes = [AllowAny]
+
+    @extend_schema(
+        operation_id="stats_labels",
+        responses=inline_serializer(
+            name="LabelStats",
+            fields={
+                "label_stats": inline_serializer(
+                    name="LabelStat",
+                    fields={
+                        "document_id": serializers.IntegerField(),
+                        "label_id": serializers.IntegerField(),
+                        "seconds": serializers.FloatField(),
+                    },
+                    many=True,
+                )
+            },
+        )
+    )
+    def get(self, request):
+        results = []
+        for rtb in RfcToBe.objects.all():
+            for label in Label.objects.all():
+                seconds_with_label = sum(
+                    [
+                        interval.end - interval.start
+                        for interval in rtb.time_intervals_with_label(label)
+                    ],
+                    start=datetime.timedelta(0)
+                ).total_seconds()
+                if seconds_with_label > 0:
+                    results.append({
+                        "document_id": rtb.pk,
+                        "label_id": label.pk,
+                        "seconds": seconds_with_label,
+                    })
+        return Response({"label_stats": results})

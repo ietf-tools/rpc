@@ -2,17 +2,21 @@
   <table>
     <thead>
     <tr>
-        <th>Label</th>
-        <th>Document</th>
-        <th>Time applied</th>
+      <th>Label</th>
+      <th>Document</th>
+      <th>Time applied</th>
     </tr>
     </thead>
     <tbody>
-        <tr v-for="stat of labelStats.labelStats">
-            <td><RpcLabel :label="labelById[stat.labelId]"/></td>
-            <td>{{ documentById[stat.documentId]?.name }}</td>
-            <td>{{ stat.seconds }} seconds</td>
-        </tr>
+    <tr v-for="stat of labelStats.labelStats">
+      <td>
+        <RpcLabel v-if="labelById.hasOwnProperty(stat.labelId)"
+                  :label="labelById[stat.labelId]"/>
+        <span v-else>?</span>
+      </td>
+      <td>{{ documentById[stat.documentId]?.name }}</td>
+      <td>{{ stat.seconds }} seconds</td>
+    </tr>
     </tbody>
   </table>
 </template>

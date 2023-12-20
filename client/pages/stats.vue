@@ -15,13 +15,17 @@
         <span v-else>?</span>
       </td>
       <td>{{ documentById[stat.documentId]?.name }}</td>
-      <td>{{ stat.seconds }} seconds</td>
+      <td>
+        {{ humanizeDuration(Duration.fromObject({ seconds: stat.seconds }), { largest: 1, round: true}) }}</td>
     </tr>
     </tbody>
   </table>
 </template>
 
 <script setup>
+
+import { Duration } from 'luxon'
+import humanizeDuration from 'humanize-duration'
 
 const api = useApi()
 

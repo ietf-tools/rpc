@@ -32,7 +32,7 @@ useHead({
     class: 'h-full'
   },
   titleTemplate: (titleChunk) => {
-    return titleChunk ? `${titleChunk} - RPC Production Center` : 'RPC Production Center'
+    return titleChunk ? `${titleChunk} - RFC Production Center` : 'RFC Production Center'
   }
 })
 

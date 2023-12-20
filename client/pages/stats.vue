@@ -29,10 +29,10 @@ const documentById = computed(() => Object.fromEntries(documents?.value.map(doc 
 
 // DATA
 
-const { data: labels, pending: labelsPending } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
+const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
-const { data: documents, pending: documentsPending } = await useAsyncData(() => api.documentsList(), { server: false, default: () => [] })
+const { data: documents } = await useAsyncData(() => api.documentsList(), { server: false, default: () => [] })
 
-const { data: labelStats, pending: labelStatsPending } = await useAsyncData(() => api.statsLabels(), { server: false, default: () => [] })
+const { data: labelStats } = await useAsyncData(() => api.statsLabels(), { server: false, default: () => [] })
 
 </script>

@@ -24,11 +24,11 @@
 
   <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <div
-      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 place-items-stretch gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
       <!-- Status summary -->
-      <div class="lg:col-start-3 lg:row-end-1">
-        <h2 class="sr-only">Status Summary (mockup)</h2>
+      <div class="lg:col-start-3 lg:row-start-1 lg:row-span-1 grid place-items-stretch">
+        <h2 class="sr-only">Status Summary</h2>
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
           <div class="px-4 pt-6 sm:px-6">
             <h3 class="text-base font-semibold leading-7 text-gray-900">Current Assignments</h3>
@@ -37,15 +37,17 @@
                 None
               </div>
               <dl v-else>
-                  <div v-for="assignment of draftAssignments"
-                       class="py-1 grid grid-cols-2">
-                    <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
-                    <dd class="relative"><Badge class="absolute right-0" :label="assignment.role"/></dd>
-                  </div>
+                <div v-for="assignment of draftAssignments"
+                     class="py-1 grid grid-cols-2">
+                  <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
+                  <dd class="relative">
+                    <Badge class="absolute right-0" :label="assignment.role"/>
+                  </dd>
+                </div>
               </dl>
             </div>
           </div>
-         <div class="px-4 py-6 sm:px-6">
+          <div class="px-4 py-6 sm:px-6">
             <h3 class="text-base font-semibold leading-7 text-gray-900">Queue Information (mocked)</h3>
             <div class="mx-4 text-sm font-medium text-gray-900">
               <dl>
@@ -54,8 +56,21 @@
                   <dd>EDIT-in-process</dd>
                 </div>
                 <div class="py-1 grid grid-cols-2">
+                  <!-- Showing externalDeadline here - what about internal_goal? -->
+                  <dt>Deadline</dt>
+                  <dd>
+                    <time v-if="draft?.externalDeadline" :datetime="draft.externalDeadline">
+                      {{ draft.externalDeadline.toLocaleString(DateTime.DATE_MED) }}
+                    </time>
+                    <span v-else>-</span>
+                  </dd>
+                </div>
+                <div class="py-1 grid grid-cols-2">
                   <dt>Est. Completion</dt>
-                  <dd>30 July 2024 <Badge label="Overdue" color="red"/></dd>
+                  <dd>
+                    <time datetime="2024-07-30">Jul 30, 2024</time>
+                    <Badge label="Overdue" color="red"/>
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -64,101 +79,180 @@
       </div>
 
       <!-- Document Info -->
-      <div
-        class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">Document Info (mocked)</h2>
-        <dl class="mt-6 grid grid-cols-1 text-sm leading-6 sm:grid-cols-2">
-          <div class="sm:pr-4">
-            <dt class="inline text-gray-500">Issued on</dt>
-            {{ ' ' }}
-            <dd class="inline text-gray-700">
-              <time datetime="2023-23-01">January 23, 2023</time>
-            </dd>
-          </div>
-          <div class="mt-2 sm:mt-0 sm:pl-4">
-            <dt class="inline text-gray-500">Due on</dt>
-            {{ ' ' }}
-            <dd class="inline text-gray-700">
-              <time datetime="2023-31-01">January 31, 2023</time>
-            </dd>
-          </div>
-        </dl>
-      </div>
-
-    </div>
-
-    <!-- Labels -->
-    <div
-      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div
-          class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-          <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
-          <div class="flex">
-            <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
-              <RpcLabel :label="lbl"/>
+      <div class="lg:col-span-2 lg:row-span-2 lg:row-start-1 grid place-items-stretch">
+        <h2 class="sr-only">Main panel</h2>
+        <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
+          <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Document Info</h3>
+            <div class="mx-4 pb-3 text-sm font-medium text-gray-900">
+              <dl>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Title</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.title ?? '-' }}
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Authors</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    J. Doe (mocked)
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Submitted Pages</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.pages ?? '-' }}
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Document Shepherd</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    Dolly Shepherd (mocked)
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Stream</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.stream ?? '-' }}
+                    <span v-if="draft?.submittedStream !== draft?.stream">
+                      (submitted as {{ draft.submittedStream }})
+                    </span>
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Stream Manager</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    Ari Drecker (mocked)
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Submitted Format</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.submittedFormat ?? '-' }}
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Submitted Boilerplate</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.intendedBoilerplate ?? '-' }}
+                    <span v-if="draft?.submittedBoilerplate !== draft?.intendedBoilerplate">
+                      (submitted as {{ draft.submittedBoilerplate }})
+                    </span>
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Standard Level</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.intendedStdLevel ?? '-' }}
+                    <span v-if="draft?.submittedStdLevel !== draft?.intendedStdLevel">
+                      (submitted as {{ draft.submittedStdLevel }})
+                    </span>
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Disposition</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.disposition ?? '-' }}
+                  </dd>
+                </div>
+              </dl>
             </div>
           </div>
-          <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
         </div>
-    </div>
+      </div>
 
-    <!-- History -->
-    <div
-      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-      <div
-        class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">History</h2>
-        <div class="flex">
-          <table class="min-w-full divide-y divide-gray-300">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">By</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="entry of draft?.history ?? []" :key="entry.id">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ entry.date }}</td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                  <NuxtLink v-if="entry.by?.personId"
-                            :to="`/team/${entry.by.personId}`"
-                            class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
-                    {{ entry.by.name }}
-                  </NuxtLink>
-                  <span v-else>
-                    {{ entry.by?.name }}
-                  </span>
-                </td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Labels -->
+      <div class="lg:col-start-3 lg:row-start-2 lg:row-span-1 grid place-items-stretch">
+        <h2 class="sr-only">Label panel</h2>
+        <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
+          <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Labels</h3>
+            <div class="flex">
+              <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
+                <RpcLabel :label="lbl"/>
+              </div>
+            </div>
+            <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels"
+                            item-label="slug"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="lg:col-span-full grid place-items-stretch">
+        <h2 class="sr-only">History panel</h2>
+        <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
+          <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">History</h3>
+            <div class="flex">
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">By</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                <tr v-for="entry of draft?.history ?? []" :key="entry.id">
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <time :datetime="DateTime.fromObject(entry.date).toISO()">
+                      {{ DateTime.fromObject(entry.date).toLocaleString(DateTime.DATE_MED) }}
+                    </time>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <NuxtLink v-if="entry.by?.personId"
+                              :to="`/team/${entry.by.personId}`"
+                              class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
+                      {{ entry.by.name }}
+                    </NuxtLink>
+                    <span v-else>
+                      {{ entry.by?.name }}
+                    </span>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>
 
-import { useAsyncData } from '#app'
+import { DateTime } from 'luxon'
 
 const route = useRoute()
 const api = useApi()
 
 // COMPUTED
 
-const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.id)))
+const appliedLabels = computed(() => labels.value.filter((lbl) => rawDraft.value?.labels.includes(lbl.id)))
 
 const draftAssignments = computed(() => assignments.value.filter((a) => a.rfcToBe === draft.value?.id))
+
+const draft = computed(() => {
+  if (rawDraft?.value) {
+    return {
+      ...rawDraft.value,
+      externalDeadline:
+        rawDraft.value.externalDeadline
+          ? DateTime.fromJSDate(rawDraft.value.externalDeadline)
+          : null
+    }
+  }
+  return null
+})
 
 // DATA
 
 const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
-const { data: draft, pending: draftPending } = await useAsyncData(
+const { data: rawDraft, pending: draftPending, refresh: draftRefresh } = await useAsyncData(
   () => api.documentsRetrieve({ draftName: route.params.id }),
   { server: false }
 )
@@ -176,10 +270,11 @@ const { data: people } = await useAsyncData(
 
 async function saveLabels (labels) {
   if (!draftPending.value) {
-    draft.value = await api.documentsPartialUpdate({
+    await api.documentsPartialUpdate({
       draftName: draft.value.name,
       patchedRfcToBe: { labels }
     })
   }
+  draftRefresh()
 }
 </script>

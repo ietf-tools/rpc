@@ -195,8 +195,8 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
             intended_std_level=StdLevelNameFactory(
                 slug="ps", name="Proposed Standard"
             ).pk,
-            submitted_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
-            intended_stream=StreamNameFactory(slug="ietf", name="IETF").pk,
+            submitted_stream=StreamNameFactory(slug=draft.stream, name=draft.stream.upper()).pk,
+            intended_stream=StreamNameFactory(slug=draft.stream, name=draft.stream.upper()).pk,
             internal_goal=initial_data["external_deadline"],
         )
     )

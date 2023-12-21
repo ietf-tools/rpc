@@ -28,7 +28,7 @@
 
       <!-- Status summary -->
       <div class="lg:col-start-3 lg:row-end-1">
-        <h2 class="sr-only">Status Summary (mockup)</h2>
+        <h2 class="sr-only">Status Summary</h2>
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
           <div class="px-4 pt-6 sm:px-6">
             <h3 class="text-base font-semibold leading-7 text-gray-900">Current Assignments</h3>
@@ -54,6 +54,11 @@
                   <dd>EDIT-in-process</dd>
                 </div>
                 <div class="py-1 grid grid-cols-2">
+                  <!-- Showing externalDeadline here - what about internal_goal? -->
+                  <dt>Deadline</dt>
+                  <dd>{{ draft?.externalDeadline.toLocaleString(DateTime.DATE_MED) }}</dd>
+                </div>
+                <div class="py-1 grid grid-cols-2">
                   <dt>Est. Completion</dt>
                   <dd>30 July 2024 <Badge label="Overdue" color="red"/></dd>
                 </div>
@@ -66,7 +71,7 @@
       <!-- Document Info -->
       <div
         class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">Document Info (mocked)</h2>
+        <h2 class="text-base font-semibold leading-6 text-gray-900">Document Info (incomplete)</h2>
         <dl class="mt-6 grid grid-cols-1 text-sm leading-6 sm:grid-cols-2">
           <div class="sm:pr-4">
             <dt class="inline text-gray-500">Issued on</dt>
@@ -143,22 +148,35 @@
 
 <script setup>
 
-import { useAsyncData } from '#app'
+import { DateTime } from 'luxon'
 
 const route = useRoute()
 const api = useApi()
 
 // COMPUTED
 
-const appliedLabels = computed(() => labels.value.filter((lbl) => draft.value?.labels.includes(lbl.id)))
+const appliedLabels = computed(() => labels.value.filter((lbl) => rawDraft.value?.labels.includes(lbl.id)))
 
 const draftAssignments = computed(() => assignments.value.filter((a) => a.rfcToBe === draft.value?.id))
+
+const draft = computed(() => {
+  if (rawDraft?.value) {
+    return {
+      ...rawDraft.value,
+      externalDeadline:
+        rawDraft.value.externalDeadline
+          ? DateTime.fromJSDate(rawDraft.value.externalDeadline)
+          : null
+    }
+  }
+  return null
+})
 
 // DATA
 
 const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
-const { data: draft, pending: draftPending } = await useAsyncData(
+const { data: rawDraft, pending: draftPending } = await useAsyncData(
   () => api.documentsRetrieve({ draftName: route.params.id }),
   { server: false }
 )

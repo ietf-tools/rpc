@@ -56,11 +56,19 @@
                 <div class="py-1 grid grid-cols-2">
                   <!-- Showing externalDeadline here - what about internal_goal? -->
                   <dt>Deadline</dt>
-                  <dd>{{ draft?.externalDeadline.toLocaleString(DateTime.DATE_MED) }}</dd>
+                  <dd>
+                    <time v-if="draft?.externalDeadline" :datetime="draft.externalDeadline">
+                      {{ draft.externalDeadline.toLocaleString(DateTime.DATE_MED)}}
+                    </time>
+                    <span v-else>-</span>
+                  </dd>
                 </div>
                 <div class="py-1 grid grid-cols-2">
                   <dt>Est. Completion</dt>
-                  <dd>30 July 2024 <Badge label="Overdue" color="red"/></dd>
+                  <dd>
+                    <time datetime="2024-07-30">Jul 30, 2024</time>
+                    <Badge label="Overdue" color="red"/>
+                  </dd>
                 </div>
               </dl>
             </div>
@@ -69,27 +77,87 @@
       </div>
 
       <!-- Document Info -->
-      <div
-        class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">Document Info (incomplete)</h2>
-        <dl class="mt-6 grid grid-cols-1 text-sm leading-6 sm:grid-cols-2">
-          <div class="sm:pr-4">
-            <dt class="inline text-gray-500">Issued on</dt>
-            {{ ' ' }}
-            <dd class="inline text-gray-700">
-              <time datetime="2023-23-01">January 23, 2023</time>
-            </dd>
+      <div class="lg:col-span-2">
+        <h2 class="sr-only">Main panel</h2>
+        <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
+          <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Document Info</h3>
+            <div class="mx-4 pb-3 text-sm font-medium text-gray-900">
+              <dl>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Title</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.title ?? '-' }}
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Authors</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    J. Doe (mocked)
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Submitted Pages</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.pages ?? '-' }}
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Document Shepherd</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    Dolly Shepherd (mocked)
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Stream</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.stream ?? '-' }}
+                    <span v-if="draft?.submittedStream !== draft?.stream">
+                      (submitted as {{ draft.submittedStream }})
+                    </span>
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Stream Manager</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    Ari Drecker (mocked)
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Submitted Format</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.submittedFormat ?? '-' }}
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Submitted Boilerplate</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.intendedBoilerplate ?? '-' }}
+                    <span v-if="draft?.submittedBoilerplate !== draft?.intendedBoilerplate">
+                      (submitted as {{ draft.submittedBoilerplate }})
+                    </span>
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Standard Level</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.intendedStdLevel ?? '-' }}
+                    <span v-if="draft?.submittedStdLevel !== draft?.intendedStdLevel">
+                      (submitted as {{ draft.submittedStdLevel }})
+                    </span>
+                  </dd>
+                </div>
+                <div class="px-4 pt-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                  <dt>Disposition</dt>
+                  <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
+                    {{ draft?.disposition ?? '-' }}
+                  </dd>
+                </div>
+              </dl>
+            </div>
           </div>
-          <div class="mt-2 sm:mt-0 sm:pl-4">
-            <dt class="inline text-gray-500">Due on</dt>
-            {{ ' ' }}
-            <dd class="inline text-gray-700">
-              <time datetime="2023-31-01">January 31, 2023</time>
-            </dd>
-          </div>
-        </dl>
+        </div>
       </div>
-
     </div>
 
     <!-- Labels -->

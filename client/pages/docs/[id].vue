@@ -176,7 +176,7 @@ const draft = computed(() => {
 
 const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
-const { data: rawDraft, pending: draftPending } = await useAsyncData(
+const { data: rawDraft, pending: draftPending, refresh: draftRefresh } = await useAsyncData(
   () => api.documentsRetrieve({ draftName: route.params.id }),
   { server: false }
 )
@@ -194,10 +194,11 @@ const { data: people } = await useAsyncData(
 
 async function saveLabels (labels) {
   if (!draftPending.value) {
-    draft.value = await api.documentsPartialUpdate({
+    await api.documentsPartialUpdate({
       draftName: draft.value.name,
       patchedRfcToBe: { labels }
     })
   }
+  draftRefresh()
 }
 </script>

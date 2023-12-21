@@ -103,7 +103,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     cluster = serializers.SerializerMethodField()
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
-    history = HistorySerializer(many=True)
+    history = HistorySerializer(many=True, read_only=True)
 
     class Meta:
         model = RfcToBe

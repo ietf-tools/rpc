@@ -24,10 +24,10 @@
 
   <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <div
-      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 place-items-stretch gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
       <!-- Status summary -->
-      <div class="lg:col-start-3 lg:row-end-1">
+      <div class="lg:col-start-3 lg:row-start-1 lg:row-span-1 grid place-items-stretch">
         <h2 class="sr-only">Status Summary</h2>
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
           <div class="px-4 pt-6 sm:px-6">
@@ -37,15 +37,17 @@
                 None
               </div>
               <dl v-else>
-                  <div v-for="assignment of draftAssignments"
-                       class="py-1 grid grid-cols-2">
-                    <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
-                    <dd class="relative"><Badge class="absolute right-0" :label="assignment.role"/></dd>
-                  </div>
+                <div v-for="assignment of draftAssignments"
+                     class="py-1 grid grid-cols-2">
+                  <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
+                  <dd class="relative">
+                    <Badge class="absolute right-0" :label="assignment.role"/>
+                  </dd>
+                </div>
               </dl>
             </div>
           </div>
-         <div class="px-4 py-6 sm:px-6">
+          <div class="px-4 py-6 sm:px-6">
             <h3 class="text-base font-semibold leading-7 text-gray-900">Queue Information (mocked)</h3>
             <div class="mx-4 text-sm font-medium text-gray-900">
               <dl>
@@ -58,7 +60,7 @@
                   <dt>Deadline</dt>
                   <dd>
                     <time v-if="draft?.externalDeadline" :datetime="draft.externalDeadline">
-                      {{ draft.externalDeadline.toLocaleString(DateTime.DATE_MED)}}
+                      {{ draft.externalDeadline.toLocaleString(DateTime.DATE_MED) }}
                     </time>
                     <span v-else>-</span>
                   </dd>
@@ -77,7 +79,7 @@
       </div>
 
       <!-- Document Info -->
-      <div class="lg:col-span-2">
+      <div class="lg:col-span-2 lg:row-span-2 lg:row-start-1 grid place-items-stretch">
         <h2 class="sr-only">Main panel</h2>
         <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
           <div class="px-4 py-6 sm:px-6">
@@ -158,60 +160,66 @@
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Labels -->
-    <div
-      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-        <div
-          class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-          <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
-          <div class="flex">
-            <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
-              <RpcLabel :label="lbl"/>
+      <!-- Labels -->
+      <div class="lg:col-start-3 lg:row-start-2 lg:row-span-1 grid place-items-stretch">
+        <h2 class="sr-only">Label panel</h2>
+        <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
+          <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">Labels</h3>
+            <div class="flex">
+              <div v-for="lbl of appliedLabels" class="flex-shrink-0 p-1">
+                <RpcLabel :label="lbl"/>
+              </div>
+            </div>
+            <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels"
+                            item-label="slug"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="lg:col-span-full grid place-items-stretch">
+        <h2 class="sr-only">History panel</h2>
+        <div class="rounded-lg bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5">
+          <div class="px-4 py-6 sm:px-6">
+            <h3 class="text-base font-semibold leading-7 text-gray-900">History</h3>
+            <div class="flex">
+              <table class="min-w-full divide-y divide-gray-300">
+                <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">By</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-200 bg-white">
+                <tr v-for="entry of draft?.history ?? []" :key="entry.id">
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <time :datetime="DateTime.fromObject(entry.date).toISO()">
+                      {{ DateTime.fromObject(entry.date).toLocaleString(DateTime.DATE_MED) }}
+                    </time>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <NuxtLink v-if="entry.by?.personId"
+                              :to="`/team/${entry.by.personId}`"
+                              class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
+                      {{ entry.by.name }}
+                    </NuxtLink>
+                    <span v-else>
+                      {{ entry.by?.name }}
+                    </span>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
+                </tr>
+                </tbody>
+              </table>
             </div>
           </div>
-          <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels" item-label="slug"/>
-        </div>
-    </div>
-
-    <!-- History -->
-    <div
-      class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 items-start gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-      <div
-        class="-mx-4 px-4 py-8 bg-white dark:bg-neutral-900 shadow-sm ring-1 ring-gray-900/5 sm:mx-0 sm:rounded-lg sm:px-8 sm:pb-14 lg:col-span-2 lg:row-span-2 lg:row-end-2 xl:px-16 xl:pb-20 xl:pt-16">
-        <h2 class="text-base font-semibold leading-6 text-gray-900">History</h2>
-        <div class="flex">
-          <table class="min-w-full divide-y divide-gray-300">
-            <thead class="bg-gray-50">
-              <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Date</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">By</th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr v-for="entry of draft?.history ?? []" :key="entry.id">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ entry.date }}</td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                  <NuxtLink v-if="entry.by?.personId"
-                            :to="`/team/${entry.by.personId}`"
-                            class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
-                    {{ entry.by.name }}
-                  </NuxtLink>
-                  <span v-else>
-                    {{ entry.by?.name }}
-                  </span>
-                </td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ entry.desc }}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       </div>
     </div>
   </div>
-
 </template>
 
 <script setup>

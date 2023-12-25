@@ -10,22 +10,22 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxt/devtools": "1.0.3",
+    "@nuxt/devtools": "1.0.6",
     "@nuxt/eslint-config": "0.2.0",
     "@nuxtjs/color-mode": "3.3.2",
     "@nuxtjs/robots": "3.0.0",
     "@nuxtjs/tailwindcss": "6.10.1",
     "@pinia/nuxt": "0.5.1",
     "@tailwindcss/forms": "0.5.7",
-    "@types/node": "20.10.0",
-    "eslint": "8.54.0",
+    "@types/node": "20.10.5",
+    "eslint": "8.56.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-nuxt": "4.0.0",
-    "eslint-plugin-vue": "9.18.1",
-    "nuxt": "3.8.2",
-    "nuxt-headlessui": "1.1.4",
-    "nuxt-icon": "0.6.6",
-    "nuxt-svgo": "3.6.0",
+    "eslint-plugin-vue": "9.19.2",
+    "nuxt": "3.9.0",
+    "nuxt-headlessui": "1.1.5",
+    "nuxt-icon": "0.6.7",
+    "nuxt-svgo": "3.7.0",
     "sass": "1.69.5"
   },
   "dependencies": {
@@ -36,8 +36,8 @@
     "luxon": "3.4.4",
     "nuxt-snackbar": "1.0.4",
     "pinia": "2.1.7",
-    "sortablejs": "1.15.0",
+    "sortablejs": "1.15.1",
     "sortablejs-vue3": "1.2.11",
-    "vue": "3.3.9"
+    "vue": "3.3.13"
   }
 }

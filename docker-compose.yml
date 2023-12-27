@@ -17,6 +17,17 @@ services:
       - POSTGRES_PASSWORD=abcd1234
       - POSTGRES_HOST_AUTH_METHOD=trust
 
+  rfced:
+    build:
+      context: .
+      dockerfile: docker/rfced.Dockerfile
+    volumes:
+      - rfced-data:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      - MARIADB_ROOT_PASSWORD=abcd1234
+      - MARIADB_DATABASE=rfced
+
   app:
     build:
       context: .
@@ -29,12 +40,16 @@ services:
     env_file:
       - secrets.env
     environment:
+      - MARIADB_USER=root
+      - MARIADB_PASSWORD=abcd1234
+      - MARIADB_DATABASE=rfced
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
       - POSTGRES_PASSWORD=abcd1234
       - RPC_API_TOKEN=devtoken
     depends_on:
       - db
+      - rfced
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -53,3 +68,4 @@ services:
 
 volumes:
   postgresdb-data:
+  rfced-data:

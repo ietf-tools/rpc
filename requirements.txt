@@ -4,5 +4,6 @@ djangorestframework>=3.14
 drf-spectacular>=0.26
 factory-boy>=3.3
 mozilla-django-oidc>=3.0.0
+mysqlclient>=2.2.1
 psycopg2>=2.9.7
 ./openapi/rpcapi_client

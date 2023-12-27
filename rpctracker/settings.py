@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "datatracker.apps.DatatrackerConfig",
     "rpc.apps.RpcConfig",
     "rpcauth.apps.RpcAuthConfig",
+    "rfced.apps.RfcedConfig",
 ]
 
 MIDDLEWARE = [
@@ -92,9 +93,17 @@ DATABASES = {
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
         "HOST": "db",
         "PORT": 5432,
-    }
+    },
+    "rfced": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": os.environ.get("MARIADB_DATABASE"),
+        "USER": os.environ.get("MARIADB_USER"),
+        "PASSWORD": os.environ.get("MARIADB_PASSWORD"),
+        "HOST": "rfced",
+    },
 }
 
+DATABASE_ROUTERS=[ "rfced.routers.RfcedRouter" ]
 
 # Authentication
 AUTHENTICATION_BACKENDS = (

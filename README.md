@@ -35,14 +35,8 @@
 ## Getting Started
 
 1. Clone this repository locally.
-2. In the rpc project root folder, create a copy of `secrets.env.example` with the name `secrets.env`. Fill in with the development client ID and secret (`502412` and `4046925638956f0d733cd96a5a89646815f0e989c878e9e09475b2f8`, respectively).
-    ```env
-    # Do not commit this file!
-    OIDC_RP_CLIENT_ID=<dev client ID>
-    OIDC_RP_CLIENT_SECRET=<dev client SECRET>
-    ```
-3. Clone the [ietf-tools/datatracker](https://github.com/ietf-tools/datatracker) repository into another directory. Check out the `feat/rpc-api` branch, start the Docker environment, and start the dev server.
-4. Continue using the steps for your preferred IDE:
+2. Clone the [ietf-tools/datatracker](https://github.com/ietf-tools/datatracker) repository into another directory. Check out the `feat/rpc-api` branch, start the Docker environment, and start the dev server.
+3. Continue using the steps for your preferred IDE:
    - [Visual Studio Code](#using-vs-code)
    - [Generic](#using-generic)
 

@@ -1,10 +1,5 @@
 version: '3.8'
 
-# Relies on secrets.env containing
-#  - POSTGRES_PASSWORD
-#  - OIDC_RP_CLIENT_ID
-#  - OIDC_RP_CLIENT_SECRET
-#
 services:
   db:
     image: postgres:14
@@ -26,13 +21,14 @@ services:
       - .:/workspace
     ports:
       - "8888:8000"
-    env_file:
-      - secrets.env
     environment:
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
       - POSTGRES_PASSWORD=abcd1234
       - RPC_API_TOKEN=devtoken
+      # OIDC RP client credential for dev instance of datatracker (not secret for dev, will be for production)
+      - OIDC_RP_CLIENT_ID=502412
+      - OIDC_RP_CLIENT_SECRET=4046925638956f0d733cd96a5a89646815f0e989c878e9e09475b2f8
     depends_on:
       - db
     extra_hosts:

@@ -52,7 +52,7 @@
 2. When prompted, in the lower right corner, click <kbd>Reopen in container</kbd>
 3. Wait for the devcontainer to initialize. *(This can take a few seconds/minutes the first time)*
 4. The editor will automatically open 2 side-by-side terminals, running both the backend API server and the client dev server.
-5. Open http://localhost:8088 in your browser and login using some datatracker user.
+5. Open http://localhost:8088 in your browser and login using some Datatracker user.
 
 ## Using Generic
 
@@ -62,7 +62,7 @@
     ```
 2. Wait for the containers to initialize. *(This can take a few seconds/minutes the first time)*
 3. A tmux session will automatically be started with the backend API server running on the left and the client dev server running on the right.
-4. Open http://localhost:8088 in your browser and login using some datatracker user.
+4. Open http://localhost:8088 in your browser and login using some Datatracker user.
 
 #### Tips
 
@@ -91,11 +91,11 @@ This API is used by the Nuxt Client front end to communicate with the Django bac
 
 ### Back-end to Datatracker: `rpcapi`
 
-This API is used by the Django back end to communicate with the datatracker. It is implemented in the Datatracker code and described (as of Jan 2024) by a hand-written OpenAPI spec in `rpcapi.json`. The current version of the spec is fetched from the datatracker's `feat/rpc-api` branch when starting this projects Docker environment. If the API is updated on the datatracker side, you must manually copy the new `rpcapi.json` into the root of this project and update the clients as described in the next section.
+This API is used by the Django back end to communicate with the Datatracker. It is implemented in the Datatracker code and described (as of Jan 2024) by a hand-written OpenAPI spec in `rpcapi.json`. The current version of the spec is fetched from the Datatracker's `feat/rpc-api` branch when starting this project's Docker environment. If the API is updated on the Datatracker side, you must manually copy the new `rpcapi.json` into the root of this project and update the clients as described in the next section.
 
 ### Updating the API clients
 
-If changes are made to the APIs, you will need to update the clients. If this includes changes to the datatracker's `rpcapi.json` file you must first copy the new version of that file into this project's root. Then, from inside this project's Docker shell, run
+If changes are made to the APIs, you will need to update the clients. If this includes changes to the Datatracker's `rpcapi.json` file you must first copy the new version of that file into this project's root. Then, from inside this project's Docker shell, run
 ```bash
 ./update=rpcapi
 ```

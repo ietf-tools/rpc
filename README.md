@@ -41,7 +41,8 @@
     OIDC_RP_CLIENT_ID=<dev client ID>
     OIDC_RP_CLIENT_SECRET=<dev client SECRET>
     ```
-3. Continue using the steps for your preferred IDE:
+3. Clone the [ietf-tools/datatracker](https://github.com/ietf-tools/datatracker) repository into another directory. Check out the `feat/rpc-api` branch, start the Docker environment, and start the dev server.
+4. Continue using the steps for your preferred IDE:
    - [Visual Studio Code](#using-vs-code)
    - [Generic](#using-generic)
 

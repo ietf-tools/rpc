@@ -39,6 +39,7 @@
 3. Continue using the steps for your preferred IDE:
    - [Visual Studio Code](#using-vs-code)
    - [Generic](#using-generic)
+4. [Create demo data](#create-demo-data) if you have not already
 
 ## Using VS Code
 
@@ -74,6 +75,20 @@
 - Run Dev Server: `npm run dev`
 - Generate Production Build: `npm run build`
 
+## Create demo data
+
+To create demo data, open an app container shell and run the management command
+```sh
+./manage.py create_demo_data
+```
+This requires that the Datatracker dev server be running.
+
+To remove all data and start afresh, you can run
+```sh
+./manage.py purge --yes-im-sure
+```
+and all data in the RPC tool's database will be reset. The Datatracker _will not_ be reset, but running `create_demo_data` again will work as intended.
+
 ## APIs
 
 This project uses two distinct HTTP APIs. Both are accessed using clients generated from OpenAPI specifications. The clients are generated using [OpenAPI Generator](https://openapi-generator.tech/).
@@ -82,7 +97,6 @@ This project uses two distinct HTTP APIs. Both are accessed using clients genera
 
 This API is used by the Nuxt Client front end to communicate with the Django back end. This API is defined by this project through an OpenAPI specification in `rpctracker_api.json`. The API is implemented using the `django-rest-framework` and the spec is generated using `drf-spectacular`.
 
-
 ### Back-end to Datatracker: `rpcapi`
 
 This API is used by the Django back end to communicate with the Datatracker. It is implemented in the Datatracker code and described (as of Jan 2024) by a hand-written OpenAPI spec in `rpcapi.json`. The current version of the spec is fetched from the Datatracker's `feat/rpc-api` branch when starting this project's Docker environment. If the API is updated on the Datatracker side, you must manually copy the new `rpcapi.json` into the root of this project and update the clients as described in the next section.
@@ -90,7 +104,7 @@ This API is used by the Django back end to communicate with the Datatracker. It 
 ### Updating the API clients
 
 If changes are made to the APIs, you will need to update the clients. If this includes changes to the Datatracker's `rpcapi.json` file you must first copy the new version of that file into this project's root. Then, from inside this project's Docker shell, run
-```bash
+```sh
 ./update=rpcapi
 ```
 This uses [OpenAPI Generator](https://openapi-generator.tech/) to regenerate `rpctracker_api.json` and builds both the API clients. It may take a minute or two. When it is done, restart the Django dev server. The Nuxt server normally picks up the changes automatically.

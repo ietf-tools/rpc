@@ -35,21 +35,13 @@
 ## Getting Started
 
 1. Clone this repository locally.
-2. Create an OIDC client in Datatracker:  
-   - Run a local copy of [datatracker](https://github.com/ietf-tools/datatracker) in Docker. Use its default host port of `8000`. In the admin, add an OpenID Connect Provider client using the following settings:
-      - Client type: `confidential`
-      - Response type: `code` *(authorization code flow)*
-      - Redirect URI: `http://localhost:8088/oidc/callback/`
-      - JWT algorithm: `RS256`
-      - Scopes: `openid profile email`
-    - After saving the OpenID Connect Provider client, a **client ID** and **client SECRET** will be generated. Note these.
-3. Back in the rpc project root folder, create a copy of `secrets.env.example` with the name `secrets.env`. Edit the file and add the values generated in the previous step:
+2. In the rpc project root folder, create a copy of `secrets.env.example` with the name `secrets.env`. Fill in with the development client ID and secret (`502412` and `4046925638956f0d733cd96a5a89646815f0e989c878e9e09475b2f8`, respectively).
     ```env
     # Do not commit this file!
-    OIDC_RP_CLIENT_ID=<client ID from datatracker>
-    OIDC_RP_CLIENT_SECRET=<client SECRET from datatracker>
+    OIDC_RP_CLIENT_ID=<dev client ID>
+    OIDC_RP_CLIENT_SECRET=<dev client SECRET>
     ```
-4. Continue using the steps for your preferred IDE:
+3. Continue using the steps for your preferred IDE:
    - [Visual Studio Code](#using-vs-code)
    - [Generic](#using-generic)
 

@@ -1,8 +1,8 @@
-Django>=4.2.8
+Django>=5.0
 django-simple-history>=3.4
 djangorestframework>=3.14
-drf-spectacular>=0.26
+drf-spectacular>=0.27
 factory-boy>=3.3
-mozilla-django-oidc>=3.0.0
+mozilla-django-oidc>=4.0.0
 psycopg2>=2.9.7
 ./openapi/rpcapi_client

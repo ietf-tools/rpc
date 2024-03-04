@@ -17,7 +17,7 @@
     "@nuxtjs/tailwindcss": "6.11.4",
     "@pinia/nuxt": "0.5.1",
     "@tailwindcss/forms": "0.5.7",
-    "@types/node": "20.11.20",
+    "@types/node": "20.11.24",
     "eslint": "8.57.0",
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-nuxt": "4.0.0",
@@ -38,6 +38,6 @@
     "pinia": "2.1.7",
     "sortablejs": "1.15.2",
     "sortablejs-vue3": "1.2.11",
-    "vue": "3.4.20"
+    "vue": "3.4.21"
   }
 }

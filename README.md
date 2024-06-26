@@ -1,4 +1,4 @@
-<div align="center">
+<div style="text-align: center">
 
 <img src="https://raw.githubusercontent.com/ietf-tools/common/main/assets/logos/rpc.svg" alt="RPC" height="125" />
 
@@ -105,7 +105,7 @@ This API is used by the Django back end to communicate with the Datatracker. It 
 
 If changes are made to the APIs, you will need to update the clients. If this includes changes to the Datatracker's `rpcapi.json` file you must first copy the new version of that file into this project's root. Then, from inside this project's Docker shell, run
 ```sh
-./update=rpcapi
+./update-rpcapi
 ```
 This uses [OpenAPI Generator](https://openapi-generator.tech/) to regenerate `rpctracker_api.json` and builds both the API clients. It may take a minute or two. When it is done, restart the Django dev server. The Nuxt server normally picks up the changes automatically.
 

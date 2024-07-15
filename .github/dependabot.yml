@@ -9,10 +9,6 @@ updates:
     directory: "/client"
     schedule:
       interval: "weekly"
-    assignees:
-      - ngpixel
-    reviewers:
-      - ngpixel
     groups:
       npm-dependencies:
         patterns:
@@ -22,18 +18,10 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    assignees:
-      - ngpixel
-    reviewers:
-      - ngpixel
   - package-ecosystem: "docker"
     directory: "/docker"
     schedule:
       interval: "weekly"
-    assignees:
-      - ngpixel
-    reviewers:
-      - ngpixel
   - package-ecosystem: "pip"
     directory: "/"
     schedule:

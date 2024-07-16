@@ -48,7 +48,7 @@ router = routers.DefaultRouter()
 router.register(r'assignments', rpc_api.AssignmentViewSet)
 router.register(r'documents', rpc_api.RfcToBeViewSet)
 router.register(r'labels', rpc_api.LabelViewSet)
-router.register(r'queue', rpc_api.QueueViewSet)
+router.register(r'queue', rpc_api.QueueViewSet, basename="queue")
 router.register(r'rpc_roles', rpc_api.RpcRoleViewSet)
 
 urlpatterns = [

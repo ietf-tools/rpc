@@ -11,10 +11,16 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: CommandParser):
         parser.add_argument("--yes-im-sure", action="store_true", dest="confirm")
+        parser.add_argument("--yes-im-surely", action="store_true", dest="user_is_a_wise_guy")
 
     def handle(self, *args, **options):
         if not options["confirm"]:
-            raise CommandError("Must confirm with '--yes-im-sure' on the command line")
+            raise CommandError(
+                "Must confirm with '--yes-im-sure' on the command line"
+                + b" - and don't call me Shirley \xe2\x9c\x88\xef\xb8\x8f".decode()
+                if options["user_is_a_wise_guy"]
+                else ""
+            )
 
         Assignment.objects.all().delete()
         ActionHolder.objects.all().delete()

@@ -1,6 +1,6 @@
 <template>
   <HeadlessCombobox as="div" v-model="selectedLabels" multiple>
-    <HeadlessComboboxLabel class="block text-sm font-medium leading-6 text-gray-900">
+    <HeadlessComboboxLabel class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-300">
       {{ props.label }}
     </HeadlessComboboxLabel>
     <div class="relative mt-2">

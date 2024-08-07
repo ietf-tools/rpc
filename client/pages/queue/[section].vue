@@ -47,6 +47,7 @@
 import { DateTime } from 'luxon'
 import Fuse from 'fuse.js/basic'
 import { useSiteStore } from '@/stores/site'
+import Badge from '../components/Badge'
 
 // ROUTING
 
@@ -83,6 +84,11 @@ const deadlineCol = {
   format: val => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
   classes: 'text-xs'
 }
+
+const { data: people } = await useAsyncData(
+  () => api.rpcPersonList(),
+  { server: false, default: () => [] }
+)
 
 const columns = computed(() => {
   const cols = [
@@ -130,11 +136,23 @@ const columns = computed(() => {
   if (['exceptions', 'inprocess'].includes(currentTab.value)) {
     cols.push(...[
       {
-        key: 'assignee',
+        key: 'assignmentSet',
         label: 'Assignee (should allow multiple)',
-        field: 'assignee',
-        format: val => val?.name || 'No assignments',
-        link: row => `/team/${row.assignee?.id}`
+        field: 'assignmentSet',
+        format: (assignment) => {
+          if (!assignment) {
+            return 'No assignments'
+          }
+          const person = people.value.find(p => p.id === assignment.person)
+          if (!person) {
+            return '(unknown person)'
+          }
+          return h('span', [
+            person.name,
+            h(Badge, { label: assignment.role })
+          ])
+        },
+        link: row => row.assignee ? `/team/${row.assignee.id}` : undefined
       }
     ])
     cols.push(...[

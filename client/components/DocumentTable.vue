@@ -14,8 +14,15 @@
               <span>{{ col.label }}</span>
               <template v-if="state.sortField === col.field">
                 <Icon v-if="state.sortDirection === 'asc'" name="uil:arrow-up" class="text-lg -mt-0.5" />
-                <Icon v-else name="uil:arrow-down" class="text-lg -mt-0.5" />
+                <Icon v-else-if="state.sortDirection === 'desc'" name="uil:arrow-down" class="text-lg -mt-0.5" />
               </template>
+              <template v-else>
+                <!-- else render a placeholder icon see https://github.com/ietf-tools/rpc/issues/49 -->
+                <Icon
+                  name="uil:arrow-down"
+                  class="text-lg -mt-0.5 opacity-0"
+                />
+            </template>
             </a>
             <span v-else>{{ col.label }}</span>
           </th>

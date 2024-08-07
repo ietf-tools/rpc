@@ -10,6 +10,7 @@ from typing import Optional
 from django.db import models
 from django.utils import timezone
 
+from rpc.dt_v1_api_utils import DatatrackerFetchFailure, NoSuchSlug, datatracker_stdlevelname
 from simple_history.models import HistoricalRecords
 
 
@@ -154,9 +155,21 @@ class DispositionName(Name):
 class SourceFormatName(Name):
     pass
 
+class StdLevelNameManager(models.Manager):
+    def from_slug(self, slug):
+        if self.filter(slug=slug).exists():
+            return self.get(slug=slug)
+        else:
+            try:
+                _, name, desc = datatracker_stdlevelname(slug)
+                return self.create(slug=slug, name=name, desc=desc)
+            except (DatatrackerFetchFailure, NoSuchSlug):
+                raise self.model.DoesNotExist
+
 
 class StdLevelName(Name):
-    pass
+    objects = StdLevelNameManager()
+
 
 
 class TlpBoilerplateChoiceName(Name):

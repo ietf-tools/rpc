@@ -75,6 +75,7 @@ def profile_as_person(request, rpc_person_id):
         }
     )
 
+
 @extend_schema(responses=RpcPersonSerializer(many=True))
 @api_view(["GET"])
 @with_rpcapi
@@ -195,8 +196,12 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
             intended_std_level=StdLevelNameFactory(
                 slug="ps", name="Proposed Standard"
             ).pk,
-            submitted_stream=StreamNameFactory(slug=draft.stream, name=draft.stream.upper()).pk,
-            intended_stream=StreamNameFactory(slug=draft.stream, name=draft.stream.upper()).pk,
+            submitted_stream=StreamNameFactory(
+                slug=draft.stream, name=draft.stream.upper()
+            ).pk,
+            intended_stream=StreamNameFactory(
+                slug=draft.stream, name=draft.stream.upper()
+            ).pk,
             internal_goal=initial_data["external_deadline"],
         )
     )
@@ -299,7 +304,7 @@ class StatsLabels(views.APIView):
                     many=True,
                 )
             },
-        )
+        ),
     )
     def get(self, request):
         results = []
@@ -310,12 +315,14 @@ class StatsLabels(views.APIView):
                         interval.end - interval.start
                         for interval in rtb.time_intervals_with_label(label)
                     ],
-                    start=datetime.timedelta(0)
+                    start=datetime.timedelta(0),
                 ).total_seconds()
                 if seconds_with_label > 0:
-                    results.append({
-                        "document_id": rtb.pk,
-                        "label_id": label.pk,
-                        "seconds": seconds_with_label,
-                    })
+                    results.append(
+                        {
+                            "document_id": rtb.pk,
+                            "label_id": label.pk,
+                            "seconds": seconds_with_label,
+                        }
+                    )
         return Response({"label_stats": results})

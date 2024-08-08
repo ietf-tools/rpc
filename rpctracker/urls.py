@@ -14,6 +14,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import include, path, register_converter
 from rest_framework import routers
@@ -45,11 +46,11 @@ register_converter(DraftNameConverter, "draft-name")
 register_converter(RfcNumberConverter, "rfc-number")
 
 router = routers.DefaultRouter()
-router.register(r'assignments', rpc_api.AssignmentViewSet)
-router.register(r'documents', rpc_api.RfcToBeViewSet)
-router.register(r'labels', rpc_api.LabelViewSet)
-router.register(r'queue', rpc_api.QueueViewSet, basename="queue")
-router.register(r'rpc_roles', rpc_api.RpcRoleViewSet)
+router.register(r"assignments", rpc_api.AssignmentViewSet)
+router.register(r"documents", rpc_api.RfcToBeViewSet)
+router.register(r"labels", rpc_api.LabelViewSet)
+router.register(r"queue", rpc_api.QueueViewSet, basename="queue")
+router.register(r"rpc_roles", rpc_api.RpcRoleViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -58,7 +59,9 @@ urlpatterns = [
     path("api/rpc/clusters/", rpc_api.clusters),
     path("api/rpc/clusters/<int:number>", rpc_api.cluster),
     path("api/rpc/profile/", rpc_api.profile),
-    path("api/rpc/profile/<int:rpc_person_id>", rpc_api.profile_as_person),  # for demo only
+    path(
+        "api/rpc/profile/<int:rpc_person_id>", rpc_api.profile_as_person
+    ),  # for demo only
     path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/stats/label/", rpc_api.StatsLabels.as_view()),
     path("api/rpc/submissions/", rpc_api.submissions),

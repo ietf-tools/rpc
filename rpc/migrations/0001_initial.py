@@ -12,284 +12,675 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('datatracker', '0001_initial'),
+        ("datatracker", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Capability',
+            name="Capability",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='Cluster',
+            name="Cluster",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('number', models.PositiveIntegerField(unique=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("number", models.PositiveIntegerField(unique=True)),
             ],
         ),
         migrations.CreateModel(
-            name='DispositionName',
+            name="DispositionName",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='DocRelationshipName',
+            name="DocRelationshipName",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='Label',
+            name="Label",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('slug', models.CharField(max_length=64)),
-                ('is_exception',  models.BooleanField(default=False)),
-                ('color', models.CharField(choices=[('slate', 'slate'), ('gray', 'gray'), ('zinc', 'zinc'), ('neutral', 'neutral'), ('stone', 'stone'), ('red', 'red'), ('orange', 'orange'), ('amber', 'amber'), ('yellow', 'yellow'), ('lime', 'lime'), ('green', 'green'), ('emerald', 'emerald'), ('teal', 'teal'), ('cyan', 'cyan'), ('sky', 'sky'), ('blue', 'blue'), ('indigo', 'indigo'), ('violet', 'violet'), ('purple', 'purple'), ('fuchsia', 'fuchsia'), ('pink', 'pink'), ('rose', 'rose')], default='purple', max_length=7)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("slug", models.CharField(max_length=64)),
+                ("is_exception", models.BooleanField(default=False)),
+                (
+                    "color",
+                    models.CharField(
+                        choices=[
+                            ("slate", "slate"),
+                            ("gray", "gray"),
+                            ("zinc", "zinc"),
+                            ("neutral", "neutral"),
+                            ("stone", "stone"),
+                            ("red", "red"),
+                            ("orange", "orange"),
+                            ("amber", "amber"),
+                            ("yellow", "yellow"),
+                            ("lime", "lime"),
+                            ("green", "green"),
+                            ("emerald", "emerald"),
+                            ("teal", "teal"),
+                            ("cyan", "cyan"),
+                            ("sky", "sky"),
+                            ("blue", "blue"),
+                            ("indigo", "indigo"),
+                            ("violet", "violet"),
+                            ("purple", "purple"),
+                            ("fuchsia", "fuchsia"),
+                            ("pink", "pink"),
+                            ("rose", "rose"),
+                        ],
+                        default="purple",
+                        max_length=7,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RfcToBe',
+            name="RfcToBe",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('is_april_first_rfc', models.BooleanField(default=False)),
-                ('rfc_number', models.PositiveIntegerField(null=True)),
-                ('order_in_cluster', models.PositiveSmallIntegerField(default=1)),
-                ('external_deadline', models.DateTimeField(null=True)),
-                ('internal_goal', models.DateTimeField(null=True)),
-                ('cluster', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='rpc.cluster')),
-                ('disposition', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.dispositionname')),
-                ('draft', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='datatracker.document')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("is_april_first_rfc", models.BooleanField(default=False)),
+                ("rfc_number", models.PositiveIntegerField(null=True)),
+                ("order_in_cluster", models.PositiveSmallIntegerField(default=1)),
+                ("external_deadline", models.DateTimeField(null=True)),
+                ("internal_goal", models.DateTimeField(null=True)),
+                (
+                    "cluster",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to="rpc.cluster",
+                    ),
+                ),
+                (
+                    "disposition",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="rpc.dispositionname",
+                    ),
+                ),
+                (
+                    "draft",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.document",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RpcRole',
+            name="RpcRole",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
         ),
         migrations.CreateModel(
-            name='SourceFormatName',
+            name="SourceFormatName",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='StdLevelName',
+            name="StdLevelName",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='StreamName',
+            name="StreamName",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='TlpBoilerplateChoiceName',
+            name="TlpBoilerplateChoiceName",
             fields=[
-                ('slug', models.CharField(max_length=32, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=255)),
-                ('desc', models.TextField(blank=True)),
+                (
+                    "slug",
+                    models.CharField(max_length=32, primary_key=True, serialize=False),
+                ),
+                ("name", models.CharField(max_length=255)),
+                ("desc", models.TextField(blank=True)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='UnusableRfcNumber',
+            name="UnusableRfcNumber",
             fields=[
-                ('number', models.PositiveIntegerField(primary_key=True, serialize=False)),
-                ('comment', models.TextField(blank=True)),
+                (
+                    "number",
+                    models.PositiveIntegerField(primary_key=True, serialize=False),
+                ),
+                ("comment", models.TextField(blank=True)),
             ],
             options={
-                'ordering': ['number'],
+                "ordering": ["number"],
             },
         ),
         migrations.CreateModel(
-            name='RpcRelatedDocument',
+            name="RpcRelatedDocument",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('relationship', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.docrelationshipname')),
-                ('source', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.rfctobe')),
-                ('target_document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='rpcrelateddocument_target_set', to='datatracker.document')),
-                ('target_rfctobe', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='rpcrelateddocument_target_set', to='rpc.rfctobe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "relationship",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="rpc.docrelationshipname",
+                    ),
+                ),
+                (
+                    "source",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                    ),
+                ),
+                (
+                    "target_document",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="rpcrelateddocument_target_set",
+                        to="datatracker.document",
+                    ),
+                ),
+                (
+                    "target_rfctobe",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="rpcrelateddocument_target_set",
+                        to="rpc.rfctobe",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RpcPerson',
+            name="RpcPerson",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hours_per_week', models.PositiveSmallIntegerField(default=40)),
-                ('can_hold_role', models.ManyToManyField(to='rpc.rpcrole')),
-                ('capable_of', models.ManyToManyField(to='rpc.capability')),
-                ('datatracker_person', models.OneToOneField(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
-                ('manager', models.ForeignKey(limit_choices_to={'can_hold_role__slug': 'manager'}, null=True, on_delete=django.db.models.deletion.RESTRICT, related_name='managed_people', to='rpc.rpcperson')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("hours_per_week", models.PositiveSmallIntegerField(default=40)),
+                ("can_hold_role", models.ManyToManyField(to="rpc.rpcrole")),
+                ("capable_of", models.ManyToManyField(to="rpc.capability")),
+                (
+                    "datatracker_person",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "manager",
+                    models.ForeignKey(
+                        limit_choices_to={"can_hold_role__slug": "manager"},
+                        null=True,
+                        on_delete=django.db.models.deletion.RESTRICT,
+                        related_name="managed_people",
+                        to="rpc.rpcperson",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RpcDocumentComment',
+            name="RpcDocumentComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment', models.TextField()),
-                ('time', models.DateTimeField(default=django.utils.timezone.now)),
-                ('by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
-                ('document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='datatracker.document')),
-                ('rfc_to_be', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='rpc.rfctobe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("comment", models.TextField()),
+                ("time", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "document",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.document",
+                    ),
+                ),
+                (
+                    "rfc_to_be",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="rpc.rfctobe",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RpcAuthorComment',
+            name="RpcAuthorComment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('comment', models.TextField()),
-                ('time', models.DateTimeField(default=django.utils.timezone.now)),
-                ('by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='rpcauthorcomments_by', to='datatracker.datatrackerperson')),
-                ('datatracker_person', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("comment", models.TextField()),
+                ("time", models.DateTimeField(default=django.utils.timezone.now)),
+                (
+                    "by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="rpcauthorcomments_by",
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "datatracker_person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RfcToBeLabel',
+            name="RfcToBeLabel",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('label', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.label')),
-                ('rfctobe', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='rpc.rfctobe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "label",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.label"
+                    ),
+                ),
+                (
+                    "rfctobe",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="rpc.rfctobe"
+                    ),
+                ),
             ],
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='intended_boilerplate',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='rpc.tlpboilerplatechoicename'),
+            model_name="rfctobe",
+            name="intended_boilerplate",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="rpc.tlpboilerplatechoicename",
+            ),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='intended_std_level',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='rpc.stdlevelname'),
+            model_name="rfctobe",
+            name="intended_std_level",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="rpc.stdlevelname",
+            ),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='intended_stream',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='rpc.streamname'),
+            model_name="rfctobe",
+            name="intended_stream",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="rpc.streamname",
+            ),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='labels',
-            field=models.ManyToManyField(through='rpc.RfcToBeLabel', to='rpc.label'),
+            model_name="rfctobe",
+            name="labels",
+            field=models.ManyToManyField(through="rpc.RfcToBeLabel", to="rpc.label"),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='submitted_boilerplate',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='rpc.tlpboilerplatechoicename'),
+            model_name="rfctobe",
+            name="submitted_boilerplate",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="rpc.tlpboilerplatechoicename",
+            ),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='submitted_format',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.sourceformatname'),
+            model_name="rfctobe",
+            name="submitted_format",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT, to="rpc.sourceformatname"
+            ),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='submitted_std_level',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='rpc.stdlevelname'),
+            model_name="rfctobe",
+            name="submitted_std_level",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="rpc.stdlevelname",
+            ),
         ),
         migrations.AddField(
-            model_name='rfctobe',
-            name='submitted_stream',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='+', to='rpc.streamname'),
+            model_name="rfctobe",
+            name="submitted_stream",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="+",
+                to="rpc.streamname",
+            ),
         ),
         migrations.CreateModel(
-            name='RfcAuthor',
+            name="RfcAuthor",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('auth48_approved', models.DateTimeField(null=True)),
-                ('datatracker_person', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
-                ('rfc_to_be', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.rfctobe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("auth48_approved", models.DateTimeField(null=True)),
+                (
+                    "datatracker_person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "rfc_to_be",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='FinalApproval',
+            name="FinalApproval",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('requested', models.DateTimeField(default=django.utils.timezone.now)),
-                ('approved', models.DateTimeField(null=True)),
-                ('approver', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
-                ('rfc_to_be', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.rfctobe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("requested", models.DateTimeField(default=django.utils.timezone.now)),
+                ("approved", models.DateTimeField(null=True)),
+                (
+                    "approver",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "rfc_to_be",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Assignment',
+            name="Assignment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('state', models.CharField(choices=[('assigned', 'assigned'), ('in progress', 'in progress'), ('done', 'done')], default='assigned', max_length=32)),
-                ('comment', models.TextField(blank=True)),
-                ('time_spent', models.DurationField(default=datetime.timedelta(0))),
-                ('person', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.rpcperson')),
-                ('rfc_to_be', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.rfctobe')),
-                ('role', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='rpc.rpcrole')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "state",
+                    models.CharField(
+                        choices=[
+                            ("assigned", "assigned"),
+                            ("in progress", "in progress"),
+                            ("done", "done"),
+                        ],
+                        default="assigned",
+                        max_length=32,
+                    ),
+                ),
+                ("comment", models.TextField(blank=True)),
+                ("time_spent", models.DurationField(default=datetime.timedelta(0))),
+                (
+                    "person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rpcperson"
+                    ),
+                ),
+                (
+                    "rfc_to_be",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                    ),
+                ),
+                (
+                    "role",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rpcrole"
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='ActionHolder',
+            name="ActionHolder",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('since_when', models.DateTimeField(default=django.utils.timezone.now)),
-                ('completed', models.DateTimeField(null=True)),
-                ('deadline', models.DateTimeField(null=True)),
-                ('comment', models.TextField(blank=True)),
-                ('datatracker_person', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='datatracker.datatrackerperson')),
-                ('target_document', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='actionholder_set', to='datatracker.document')),
-                ('target_rfctobe', models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, related_name='actionholder_set', to='rpc.rfctobe')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("since_when", models.DateTimeField(default=django.utils.timezone.now)),
+                ("completed", models.DateTimeField(null=True)),
+                ("deadline", models.DateTimeField(null=True)),
+                ("comment", models.TextField(blank=True)),
+                (
+                    "datatracker_person",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "target_document",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="actionholder_set",
+                        to="datatracker.document",
+                    ),
+                ),
+                (
+                    "target_rfctobe",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="actionholder_set",
+                        to="rpc.rfctobe",
+                    ),
+                ),
             ],
         ),
         migrations.AddConstraint(
-            model_name='rpcrelateddocument',
-            constraint=models.CheckConstraint(check=models.Q(('target_document__isnull', True), ('target_rfctobe__isnull', True), _connector='XOR'), name='rpcrelateddocument_exactly_one_target', violation_error_message='exactly one target field must be set'),
+            model_name="rpcrelateddocument",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("target_document__isnull", True),
+                    ("target_rfctobe__isnull", True),
+                    _connector="XOR",
+                ),
+                name="rpcrelateddocument_exactly_one_target",
+                violation_error_message="exactly one target field must be set",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='rpcdocumentcomment',
-            constraint=models.CheckConstraint(check=models.Q(('document__isnull', True), ('rfc_to_be__isnull', True), _connector='XOR'), name='rpcdocumentcomment_exactly_one_target', violation_error_message='exactly one of document or rfc_to_be must be set'),
+            model_name="rpcdocumentcomment",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("document__isnull", True),
+                    ("rfc_to_be__isnull", True),
+                    _connector="XOR",
+                ),
+                name="rpcdocumentcomment_exactly_one_target",
+                violation_error_message="exactly one of document or rfc_to_be must be set",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='rfctobe',
-            constraint=models.CheckConstraint(check=models.Q(('draft__isnull', False), ('is_april_first_rfc', True), _connector='XOR'), name='rfctobe_draft_not_null_xor_is_april_first_rfc', violation_error_message='draft must be null if and only if is_april_first_rfc'),
+            model_name="rfctobe",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("draft__isnull", False),
+                    ("is_april_first_rfc", True),
+                    _connector="XOR",
+                ),
+                name="rfctobe_draft_not_null_xor_is_april_first_rfc",
+                violation_error_message="draft must be null if and only if is_april_first_rfc",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='rfctobe',
-            constraint=models.UniqueConstraint(deferrable=django.db.models.constraints.Deferrable['DEFERRED'], fields=('cluster', 'order_in_cluster'), name='rfctobe_unique_order_in_cluster', violation_error_message='order in cluster must be unique'),
+            model_name="rfctobe",
+            constraint=models.UniqueConstraint(
+                deferrable=django.db.models.constraints.Deferrable["DEFERRED"],
+                fields=("cluster", "order_in_cluster"),
+                name="rfctobe_unique_order_in_cluster",
+                violation_error_message="order in cluster must be unique",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='actionholder',
-            constraint=models.CheckConstraint(check=models.Q(('target_document__isnull', True), ('target_rfctobe__isnull', True), _connector='XOR'), name='actionholder_exactly_one_target', violation_error_message='exactly one target field must be set'),
+            model_name="actionholder",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("target_document__isnull", True),
+                    ("target_rfctobe__isnull", True),
+                    _connector="XOR",
+                ),
+                name="actionholder_exactly_one_target",
+                violation_error_message="exactly one target field must be set",
+            ),
         ),
     ]

@@ -31,7 +31,7 @@ class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
                 username=f"dt-person-{subject_id}",
                 datatracker_subject_id=subject_id,
                 name=claims["name"],  # required claim,
-                avatar=claims.get("picture", "")
+                avatar=claims.get("picture", ""),
             )
         except IntegrityError:
             # exception message gets logged - user only sees a failed auth

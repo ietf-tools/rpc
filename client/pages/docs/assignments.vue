@@ -162,7 +162,11 @@ async function refresh () {
 // DATA RETRIEVAL
 
 const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
-const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useFetch('/api/rpc/documents/', { baseURL: '/', server: false })
+const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useAsyncData(
+  'rfcsToBe',
+  () => api.documentsInProgressList(),
+  { server: false, default: () => ([]) }
+)
 const {
   data: assignments,
   pending: pendingAssignments,

@@ -3,15 +3,20 @@
 import requests
 from django.conf import settings
 
+
 class DatatrackerFetchFailure(Exception):
     pass
+
 
 class NoSuchSlug(Exception):
     pass
 
-def datatracker_stdlevelname(slug:str)->tuple[str,str,str]:
+
+def datatracker_stdlevelname(slug: str) -> tuple[str, str, str]:
     try:
-        response = requests.get(f"{settings.DATATRACKER_API_V1_BASE}/name/stdlevelname?fmt=json&slug={slug}")
+        response = requests.get(
+            f"{settings.DATATRACKER_API_V1_BASE}/name/stdlevelname?fmt=json&slug={slug}"
+        )
     except requests.exceptions.ConnectionError:
         raise DatatrackerFetchFailure
     if not response.ok:
@@ -26,5 +31,4 @@ def datatracker_stdlevelname(slug:str)->tuple[str,str,str]:
         raise NoSuchSlug
     else:
         obj = api_response["objects"][0]
-        return (obj["slug"],obj["name"],obj["desc"])
-
+        return (obj["slug"], obj["name"], obj["desc"])

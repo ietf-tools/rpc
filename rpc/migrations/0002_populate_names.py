@@ -4,16 +4,24 @@ from django.db import migrations
 def forward(apps, schema_editor):
     SourceFormatName = apps.get_model("rpc", "SourceFormatName")
     SourceFormatName.objects.create(
-        slug="xml-v3", name="RFCXML v3", desc="RFCXML v3",
+        slug="xml-v3",
+        name="RFCXML v3",
+        desc="RFCXML v3",
     )
     SourceFormatName.objects.create(
-        slug="xml-v2", name="RFCXML v2", desc="RFCXML v2",
+        slug="xml-v2",
+        name="RFCXML v2",
+        desc="RFCXML v2",
     )
     SourceFormatName.objects.create(
-        slug="md", name="Markdown", desc="Markdown",
+        slug="md",
+        name="Markdown",
+        desc="Markdown",
     )
     SourceFormatName.objects.create(
-        slug="txt", name="plaintext", desc="plaintext",
+        slug="txt",
+        name="plaintext",
+        desc="plaintext",
     )
 
     TlpBoilerplateChoiceName = apps.get_model("rpc", "TlpBoilerplateChoiceName")
@@ -26,23 +34,23 @@ def forward(apps, schema_editor):
         slug="noModificationTrust200902",
         name="noModificationTrust200902",
         desc="Notice from the text of sections 6.b and 6.c.i of the TLP "
-             "(may be appropriate when republishing standards produced by a standards body "
-             "other than the IETF, industry consortia, or companies, typically as an Informational "
-             "RFC)",
+        "(may be appropriate when republishing standards produced by a standards body "
+        "other than the IETF, industry consortia, or companies, typically as an Informational "
+        "RFC)",
     )
     TlpBoilerplateChoiceName.objects.create(
         slug="noDerivativesTrust200902",
         name="noDerivativesTrust200902",
         desc="Notice from the text of sections 6.b and 6.c.ii of the TLP "
-             "(may be used on I-Ds intended to provide background information to educate"
-             "and facilitate discussions within IETF working groups but not"
-             "intended to be published as RFCs)",
+        "(may be used on I-Ds intended to provide background information to educate"
+        "and facilitate discussions within IETF working groups but not"
+        "intended to be published as RFCs)",
     )
     TlpBoilerplateChoiceName.objects.create(
         slug="pre5378Trust200902",
         name="pre5378Trust200902",
         desc="Notice from the text of sections 6.b and 6.c.iii of the TLP "
-             "(see TLP Modification of 15 Feb 2009 section of Trust FAQ)",
+        "(see TLP Modification of 15 Feb 2009 section of Trust FAQ)",
     )
     TlpBoilerplateChoiceName.objects.create(
         slug="trust200811",

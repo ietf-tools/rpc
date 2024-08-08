@@ -11,7 +11,9 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser: CommandParser):
         parser.add_argument("--yes-im-sure", action="store_true", dest="confirm")
-        parser.add_argument("--yes-im-surely", action="store_true", dest="user_is_a_wise_guy")
+        parser.add_argument(
+            "--yes-im-surely", action="store_true", dest="user_is_a_wise_guy"
+        )
 
     def handle(self, *args, **options):
         if not options["confirm"]:

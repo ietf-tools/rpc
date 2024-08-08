@@ -22,6 +22,7 @@ from .models import (
 
 class UserSerializer(serializers.Serializer):
     """Serialize a User record"""
+
     name = serializers.SerializerMethodField()
     person_id = serializers.SerializerMethodField()
 
@@ -32,7 +33,9 @@ class UserSerializer(serializers.Serializer):
         return str(user)
 
     def get_person_id(self, user) -> Optional[RpcPerson]:
-        rpc_person = RpcPerson.objects.filter(datatracker_person=user.datatracker_person()).first()
+        rpc_person = RpcPerson.objects.filter(
+            datatracker_person=user.datatracker_person()
+        ).first()
         if rpc_person:
             return rpc_person.pk
         return None
@@ -57,9 +60,14 @@ class HistoryRecord:
 
 class HistoryListSerializer(serializers.ListSerializer):
     def describe_model_delta(self, delta: ModelDelta):
-        method = getattr(self.parent, "describe_model_delta", None) if self.parent else None
+        method = (
+            getattr(self.parent, "describe_model_delta", None) if self.parent else None
+        )
         if method is None:
-            return (f"{change.field} changed from {change.old} to {change.new}" for change in delta.changes)
+            return (
+                f"{change.field} changed from {change.old} to {change.new}"
+                for change in delta.changes
+            )
         return method(delta)
 
     def to_representation(self, data):
@@ -74,17 +82,22 @@ class HistoryListSerializer(serializers.ListSerializer):
                 if len(delta.changes) > 0:
                     parts.extend(self.describe_model_delta(delta))
                 if len(parts) > 0:
-                    records.append(HistoryRecord.from_simple_history(newer, "; ".join(parts)))
+                    records.append(
+                        HistoryRecord.from_simple_history(newer, "; ".join(parts))
+                    )
             # Always include first history
             first = model_histories[-1]
             records.append(
-                HistoryRecord.from_simple_history(first, first.history_change_reason or "Record created")
+                HistoryRecord.from_simple_history(
+                    first, first.history_change_reason or "Record created"
+                )
             )
         return super().to_representation(records)
 
 
 class HistorySerializer(serializers.Serializer):
     """Serialize the history for an RfcToBe"""
+
     id = serializers.IntegerField()
     date = serializers.DateTimeField()
     by = UserSerializer()
@@ -163,18 +176,24 @@ class RfcToBeSerializer(serializers.ModelSerializer):
                 changes = []
                 hist_labels = Label.history.as_of(delta.new_record.history_date)
                 if added:
-                    added_strs = [f'"{label.slug}"' for label in hist_labels.filter(id__in=added)]
+                    added_strs = [
+                        f'"{label.slug}"' for label in hist_labels.filter(id__in=added)
+                    ]
                     changes.append(
                         f"Added label{'s' if len(added_strs) > 1 else ''} {', '.join(added_strs)}"
                     )
                 if removed:
-                    removed_strs = [f'"{label.slug}"' for label in hist_labels.filter(id__in=removed)]
+                    removed_strs = [
+                        f'"{label.slug}"'
+                        for label in hist_labels.filter(id__in=removed)
+                    ]
                     changes.append(
                         f"Removed label{'s' if len(removed_strs) > 1 else ''} {', '.join(removed_strs)}"
                     )
                 yield " and ".join(changes)
             else:
                 yield f'Changed {change.field} from "{change.old}" to "{change.new}"'
+
 
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:

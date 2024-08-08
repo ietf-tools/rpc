@@ -29,28 +29,37 @@ class Command(BaseCommand):
         self.create_documents()
         self.create_real_people()
 
-
     @with_rpcapi
     def create_real_people(self, *, rpcapi: rpcapi_client.DefaultApi):
         """Create RpcPerson / DatatrackerPerson records for real people"""
         self.people["jennifer"] = RpcPersonFactory(
-            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="14733").id,
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(
+                subject_id="14733"
+            ).id,
             can_hold_role=["manager"],
         )
         self.people["robert"] = RpcPersonFactory(
-            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="420").id,
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(
+                subject_id="420"
+            ).id,
             can_hold_role=["manager"],
         )
         self.people["jean"] = RpcPersonFactory(
-            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="2706").id,
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(
+                subject_id="2706"
+            ).id,
             can_hold_role=["manager"],
         )
         self.people["sandy"] = RpcPersonFactory(
-            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="5709").id,
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(
+                subject_id="5709"
+            ).id,
             can_hold_role=["manager"],
         )
         self.people["alice"] = RpcPersonFactory(
-            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(subject_id="2173").id,
+            datatracker_person__datatracker_id=rpcapi.get_subject_person_by_id(
+                subject_id="2173"
+            ).id,
             can_hold_role=["manager"],
         )
 
@@ -222,7 +231,6 @@ class Command(BaseCommand):
     @with_rpcapi
     def create_documents(self, *, rpcapi: rpcapi_client.DefaultApi):
 
-
         # submission, not yet an RfcToBe (not shown on "The Queue" wireframe)
         rpcapi.create_demo_draft(
             rpcapi_client.CreateDemoDraftRequest(
@@ -251,14 +259,14 @@ class Command(BaseCommand):
             order_in_cluster=2,
         )
 
-# Exceptions:
-# <!> Stream hold - a stream manager has temporarily halted RPC work on the doc and will let us know when we can start on it again
-# <!> Missing norm ref - the document is part of a cluster and one of its normative references is not in the queue yet
-# <!> IANA action - RPC is waiting for IANA to update or create the registry for this doc
-# Informational labels to help with assignments:
-# IANA Considerations - the document has an IANA Considerations section
-# ABNF - the document contains ABNF sourcecode
-# Needs Formatting - the document requires an XML expert to format complex tables, nested lists, etc.
+        # Exceptions:
+        # <!> Stream hold - a stream manager has temporarily halted RPC work on the doc and will let us know when we can start on it again
+        # <!> Missing norm ref - the document is part of a cluster and one of its normative references is not in the queue yet
+        # <!> IANA action - RPC is waiting for IANA to update or create the registry for this doc
+        # Informational labels to help with assignments:
+        # IANA Considerations - the document has an IANA Considerations section
+        # ABNF - the document contains ABNF sourcecode
+        # Needs Formatting - the document requires an XML expert to format complex tables, nested lists, etc.
         LabelFactory(slug="Stream hold", is_exception=True, color="yellow")
         LabelFactory(slug="Missing norm ref", is_exception=True, color="pink")
         LabelFactory(slug="IANA action", is_exception=True, color="rose")
@@ -294,7 +302,9 @@ class Command(BaseCommand):
             rev="04",
             states=[("draft-iesg", "rfcqueue")],
         )
-        rfctobe.labels.add(LabelFactory(slug="is_a_trap", is_exception=True, color="red"))
+        rfctobe.labels.add(
+            LabelFactory(slug="is_a_trap", is_exception=True, color="red")
+        )
         AssignmentFactory(
             rfc_to_be=RfcToBe.objects.get(draft__name="draft-ietf-where-is-my-hat"),
             role__slug="second_editor",
@@ -318,13 +328,14 @@ class Command(BaseCommand):
             state="assigned",
         )
         RfcToBeActionHolderFactory(
-           target_rfctobe=RfcToBe.objects.get(
+            target_rfctobe=RfcToBe.objects.get(
                 draft__name="draft-irtf-improving-lizard-qol"
             ),
             datatracker_person__datatracker_id=rpcapi.create_demo_person(
                 rpcapi_client.CreateDemoPersonRequest(name="Artimus Ad"),
             ).person_pk,
-            deadline=datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(days=14)
+            deadline=datetime.datetime.now(datetime.timezone.utc)
+            + datetime.timedelta(days=14),
         )
 
         #

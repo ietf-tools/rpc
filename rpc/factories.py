@@ -113,7 +113,10 @@ class RfcToBeFactory(factory.django.DjangoModelFactory):
     intended_boilerplate = factory.LazyAttribute(lambda o: o.submitted_boilerplate)
     intended_stream = factory.LazyAttribute(lambda o: o.submitted_stream)
     external_deadline = factory.Faker(
-        "date_time_between", start_date="+1d", end_date="+15d", tzinfo=datetime.timezone.utc
+        "date_time_between",
+        start_date="+1d",
+        end_date="+15d",
+        tzinfo=datetime.timezone.utc,
     )
 
 
@@ -215,9 +218,10 @@ class StreamNameFactory(factory.django.DjangoModelFactory):
         model = StreamName
         django_get_or_create = ("slug",)
 
+
 class LabelFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Label
-        django_get_or_create= ("slug", )
+        django_get_or_create = ("slug",)
 
     color = "fuchsia"

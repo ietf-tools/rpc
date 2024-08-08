@@ -51,9 +51,9 @@ class RpcOIDCAuthBackendTests(TestCase):
         self.assertIn("does not match configured issuer", str(cm.exception))
 
         # invalid audience
-        token_mock.return_value[
-            "iss"
-        ] = "http://issuer.example.com/openid"  # restore valid
+        token_mock.return_value["iss"] = (
+            "http://issuer.example.com/openid"  # restore valid
+        )
         token_mock.return_value["aud"] = "not-the-client"
         with self.assertRaises(SuspiciousOperation) as cm:
             self.backend.verify_token(fake_token)

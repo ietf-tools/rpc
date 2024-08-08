@@ -10,7 +10,11 @@ from typing import Optional
 from django.db import models
 from django.utils import timezone
 
-from rpc.dt_v1_api_utils import DatatrackerFetchFailure, NoSuchSlug, datatracker_stdlevelname
+from rpc.dt_v1_api_utils import (
+    DatatrackerFetchFailure,
+    NoSuchSlug,
+    datatracker_stdlevelname,
+)
 from simple_history.models import HistoricalRecords
 
 
@@ -38,6 +42,7 @@ class RfcToBeLabel(models.Model):
 
     This exists so we can specify on_delete=models.PROTECT for the label FK.
     """
+
     rfctobe = models.ForeignKey("RfcToBe", on_delete=models.CASCADE)
     label = models.ForeignKey("Label", on_delete=models.PROTECT)
 
@@ -125,14 +130,18 @@ class RfcToBe(models.Model):
         intervals: list[RfcToBe.Interval] = []
         for ch in reversed(list(label_changes)):
             # Every changeset will have 1 change because we specified 1 included_field
-            if label.pk in [related_label["label"] for related_label in ch.changes[0].new]:
+            if label.pk in [
+                related_label["label"] for related_label in ch.changes[0].new
+            ]:
                 if len(intervals) == 0 or intervals[-1].end is not None:
                     intervals.append(RfcToBe.Interval(start=ch.new_record.history_date))
             else:
                 if len(intervals) > 0 and intervals[-1].end is None:
                     intervals[-1].end = ch.new_record.history_date
         if len(intervals) > 0 and intervals[-1].end is None:
-            intervals[-1].end = datetime.datetime.now().astimezone(datetime.timezone.utc)
+            intervals[-1].end = datetime.datetime.now().astimezone(
+                datetime.timezone.utc
+            )
         return intervals
 
 
@@ -155,6 +164,7 @@ class DispositionName(Name):
 class SourceFormatName(Name):
     pass
 
+
 class StdLevelNameManager(models.Manager):
     def from_slug(self, slug):
         if self.filter(slug=slug).exists():
@@ -169,7 +179,6 @@ class StdLevelNameManager(models.Manager):
 
 class StdLevelName(Name):
     objects = StdLevelNameManager()
-
 
 
 class TlpBoilerplateChoiceName(Name):
@@ -383,7 +392,31 @@ class RpcDocumentComment(models.Model):
         return f"RpcDocumentComment about {target} by {self.by} on {self.time:%Y-%m-%d}"
 
 
-TAILWIND_COLORS= ["slate","gray","zinc","neutral","stone","red","orange","amber","yellow","lime","green","emerald","teal","cyan","sky","blue","indigo","violet","purple","fuchsia","pink","rose",]
+TAILWIND_COLORS = [
+    "slate",
+    "gray",
+    "zinc",
+    "neutral",
+    "stone",
+    "red",
+    "orange",
+    "amber",
+    "yellow",
+    "lime",
+    "green",
+    "emerald",
+    "teal",
+    "cyan",
+    "sky",
+    "blue",
+    "indigo",
+    "violet",
+    "purple",
+    "fuchsia",
+    "pink",
+    "rose",
+]
+
 
 class Label(models.Model):
     """Badges that can be put on other objects"""

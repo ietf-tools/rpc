@@ -1,5 +1,5 @@
 <template>
-  <table>
+  <table class="text-gray-900 dark:text-neutral-300">
     <thead>
     <tr>
       <th>Label</th>

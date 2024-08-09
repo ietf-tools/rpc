@@ -4,7 +4,7 @@ import datetime
 
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -274,6 +274,13 @@ class RfcToBeViewSet(viewsets.ModelViewSet):
     queryset = RfcToBe.objects.all()
     serializer_class = RfcToBeSerializer
     lookup_field = "draft__name"
+
+    @extend_schema(responses=RfcToBeSerializer(many=True))
+    @action(detail=False)
+    def in_progress(self, request):
+        in_progress = RfcToBe.objects.filter(disposition_id="in_progress")
+        serializer = self.get_serializer(in_progress, many=True)
+        return Response(serializer.data)
 
 
 class LabelViewSet(viewsets.ModelViewSet):

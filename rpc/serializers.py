@@ -332,7 +332,7 @@ class SubmissionListItemSerializer(serializers.Serializer):
 
     Only includes a subset of the SubmissionSerializer fields
     """
-    id = serializers.IntegerField(source="pk")
+    id = serializers.IntegerField()
     name = serializers.CharField()
     stream = serializers.CharField()
     submitted = serializers.DateTimeField()

@@ -9,8 +9,14 @@
             :key="col.key"
             scope="col"
             class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 dark:text-neutral-400"
+            :aria-sort="state.sortField === col.field ? state.sortDirection === 'asc' ? 'ascending' : 'descending' : undefined"
           >
-            <a v-if="col.sortable !== false" href="#" @click.prevent="sortBy(col.field)">
+            <button
+              v-if="col.sortable !== false"
+              @click.prevent="sortBy(col.field)"
+              class="bg-transparent border-none"
+              :aria-pressed="state.sortField === col.field"
+            >
               <span>{{ col.label }}</span>
               <template v-if="state.sortField === col.field">
                 <Icon v-if="state.sortDirection === 'asc'" name="uil:arrow-up" class="text-lg -mt-0.5" />
@@ -22,8 +28,8 @@
                   name="uil:arrow-down"
                   class="text-lg -mt-0.5 opacity-0"
                 />
-            </template>
-            </a>
+              </template>
+            </button>
             <span v-else>{{ col.label }}</span>
           </th>
         </tr>

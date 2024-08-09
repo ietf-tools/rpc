@@ -101,17 +101,15 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Return documents in datatracker that have been submitted to the RPC but are not yet in the queue
 
-    {
-        "submitted": [
-            {
-                "pk": 123456,
-                "name": "draft-foo-bar",
-                "stream": "ietf",
-                "submitted" : "2023-09-19"
-            }
-            ...
-        ]
-    }
+    [
+        {
+            "id": 123456,
+            "name": "draft-foo-bar",
+            "stream": "ietf",
+            "submitted" : "2023-09-19"
+        }
+        ...
+    ]
 
     Fed by doing a server->server API query that returns essentially the union of:
     >> Document.objects.filter(states__type_id="draft-iesg",states__slug__in=["approved","ann"])

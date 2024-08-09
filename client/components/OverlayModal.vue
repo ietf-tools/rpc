@@ -29,8 +29,8 @@
   </HeadlessTransitionRoot>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
+import { overlayModalMethodsKey } from '../providers/providerKeys'
 // PROPS / EMITS
 
 defineProps({
@@ -56,12 +56,12 @@ const emit = defineEmits(['update:isShown', 'closeOk', 'closeCancel'])
 
 // PROVIDE
 
-provide('overlayModalMethods', {
+provide(overlayModalMethodsKey, {
   ok: (val) => {
     emit('update:isShown', false)
     emit('closeOk', val)
   },
-  cancel: (val) => {
+  cancel: (val?: unknown) => {
     emit('update:isShown', false)
     emit('closeCancel', val)
   }

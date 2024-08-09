@@ -61,9 +61,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RpcLabel, Icon, NuxtLink } from '#components'
 import { isArray, isFunction, orderBy } from 'lodash-es'
+import type { Column, Row } from './DocumentTableTypes'
 
 // PROPS
 
@@ -117,7 +118,7 @@ const rows = computed(() => {
 
 // METHODS
 
-function sortBy (fieldName) {
+function sortBy (fieldName: string) {
   if (state.sortField === fieldName) {
     state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc'
   } else {
@@ -128,13 +129,10 @@ function sortBy (fieldName) {
 
 /**
  * Build cell node
- *
- * @param {Object} col Column properties
- * @param {Object} row Current row object
  */
-function buildCell (col, row) {
+function buildCell<T extends Table>(col: Column<Table>, row: Row<Table>) {
   const values = isArray(row[col.field]) ? row[col.field] : [row[col.field]]
-  const formattedValues = col.format ? values.map(v => col.format(v)) : values
+  const formattedValues = col.format ? values.map(v => col.format ? col.format(v) : undefined) : values
   const children = []
 
   const isLink = isFunction(col.link)

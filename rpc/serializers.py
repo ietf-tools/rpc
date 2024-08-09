@@ -144,19 +144,29 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         ]
 
     def get_name(self, rfc_to_be) -> str:
-        return rfc_to_be.draft.name if rfc_to_be.draft else "Some Apr 1 RFC" # TODO: reconcile when we teach the app to handle Apr 1 RFCs
+        return (
+            rfc_to_be.draft.name if rfc_to_be.draft else "Some Apr 1 RFC"
+        )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_rev(self, rfc_to_be) -> str:
-        return rfc_to_be.draft.rev  if rfc_to_be.draft else "none" # TODO: reconcile when we teach the app to handle Apr 1 RFCs
+        return (
+            rfc_to_be.draft.rev if rfc_to_be.draft else "none"
+        )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_title(self, rfc_to_be) -> str:
-        return rfc_to_be.draft.title if rfc_to_be.draft else "Some Apr 1 RFC" # TODO: reconcile when we teach the app to handle Apr 1 RFCs
+        return (
+            rfc_to_be.draft.title if rfc_to_be.draft else "Some Apr 1 RFC"
+        )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_stream(self, rfc_to_be) -> str:
-        return rfc_to_be.draft.stream if rfc_to_be.draft else "ISE" # TODO: reconcile when we teach the app to handle Apr 1 RFCs
+        return (
+            rfc_to_be.draft.stream if rfc_to_be.draft else "ISE"
+        )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_pages(self, rfc_to_be) -> int:
-        return rfc_to_be.draft.pages if rfc_to_be.draft else 0 # TODO: reconcile when we teach the app to handle Apr 1 RFCs
+        return (
+            rfc_to_be.draft.pages if rfc_to_be.draft else 0
+        )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_cluster(self, rfc_to_be) -> Optional[int]:
         return rfc_to_be.cluster.number if rfc_to_be.cluster else None

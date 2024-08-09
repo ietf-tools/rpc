@@ -22,7 +22,7 @@
     "eslint-config-standard": "17.1.0",
     "eslint-plugin-nuxt": "4.0.0",
     "eslint-plugin-vue": "9.24.0",
-    "nuxt": "3.11.1",
+    "nuxt": "3.12.4",
     "nuxt-headlessui": "1.1.5",
     "nuxt-icon": "0.6.10",
     "nuxt-svgo": "4.0.0",

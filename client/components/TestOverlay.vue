@@ -31,14 +31,17 @@
   </div>
 </template>
 
-<script setup>
-const { ok, cancel } = inject('overlayModalMethods')
+<script setup lang="ts">
+import { overlayModalMethodsKey } from '~/providers/providerKeys';
+
+const overlayModalMethods = inject(overlayModalMethodsKey) 
+if(!overlayModalMethods) throw Error('overlayModalMethods used outside provider');
+const { ok, cancel } = overlayModalMethods
 
 function save () {
-  ok({
-    beep: true,
-    boop: 1
-  })
+  ok(
+    // { beep: true, boop: 1 }
+  )
 }
 
 </script>

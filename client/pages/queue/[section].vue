@@ -97,7 +97,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: row => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
+      link: row => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.id}` : `/docs/${row.name}`
     },
     {
       key: 'labels',
@@ -288,10 +288,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
   {
     server: false,
     lazy: true,
-    default: () => ([]),
-    transform: (resp) => {
-      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : resp
-    }
+    default: () => ([])
   })
 
 onMounted(() => {

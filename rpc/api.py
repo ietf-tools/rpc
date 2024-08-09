@@ -24,6 +24,8 @@ from .serializers import (
     RfcToBeSerializer,
     RpcPersonSerializer,
     RpcRoleSerializer,
+    SubmissionListItemSerializer,
+    SubmissionSerializer,
 )
 
 
@@ -93,9 +95,7 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
-@extend_schema(
-    operation_id="submissions_list", responses=OpenApiTypes.OBJECT
-)  # not very specific...
+@extend_schema(operation_id="submissions_list", responses=SubmissionListItemSerializer(many=True))
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -132,24 +132,23 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     Those queries overreturn - there may be things, particularly not from the IETF stream that are already in the queue.
     This api will filter those out.
     """
-    submitted = []
     # Get submissions list from Datatracker
     response = rpcapi.submitted_to_rpc()
-    submitted.extend(response.to_dict()["submitted_to_rpc"])
+    submitted = response.submitted_to_rpc
     # Filter out I-Ds that already have an RfcToBe
     already_in_queue = RfcToBe.objects.filter(
-        draft__datatracker_id__in=[s["pk"] for s in submitted]
+        draft__datatracker_id__in=[s.pk for s in submitted]
     ).values_list("draft__datatracker_id", flat=True)
-    submitted = [s for s in submitted if s["pk"] not in already_in_queue]
-    return JsonResponse({"submitted": submitted}, safe=False)
+    submitted = [s for s in submitted if s.pk not in already_in_queue]
+    return Response(SubmissionListItemSerializer(submitted, many=True).data)
 
 
-@extend_schema(operation_id="submissions_retrieve", responses=OpenApiTypes.OBJECT)
+@extend_schema(operation_id="submissions_retrieve", responses=SubmissionSerializer)
 @api_view(["GET"])
 @with_rpcapi
 def submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
     draft = rpcapi.get_draft_by_id(document_id)
-    return Response(draft.to_dict())
+    return Response(SubmissionSerializer(draft).data)
 
 
 @extend_schema(

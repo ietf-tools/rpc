@@ -309,3 +309,31 @@ class QueueItemSerializer(RfcToBeSerializer):
 
     def get_requested_approvals(self, rfc_to_be) -> list:
         return []  # todo return a value
+
+
+class SubmissionAuthorSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    plain_name = serializers.CharField()
+
+
+class SubmissionSerializer(serializers.Serializer):
+    """Serialize a submission"""
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    rev = serializers.CharField()
+    stream = serializers.CharField()
+    title = serializers.CharField()
+    pages = serializers.IntegerField()
+    authors = SubmissionAuthorSerializer(many=True)
+
+
+class SubmissionListItemSerializer(serializers.Serializer):
+    """Serialize a submission list item
+
+    Only includes a subset of the SubmissionSerializer fields
+    """
+    id = serializers.IntegerField(source="pk")
+    name = serializers.CharField()
+    stream = serializers.CharField()
+    submitted = serializers.CharField()
+

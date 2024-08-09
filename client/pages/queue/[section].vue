@@ -110,7 +110,7 @@ const columns = computed(() => {
       key: 'submitted',
       label: 'Submitted',
       field: 'submitted',
-      format: val => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+      format: val => val ? DateTime.fromJSDate(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
       classes: 'text-xs'
     })
   }

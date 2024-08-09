@@ -335,5 +335,5 @@ class SubmissionListItemSerializer(serializers.Serializer):
     id = serializers.IntegerField(source="pk")
     name = serializers.CharField()
     stream = serializers.CharField()
-    submitted = serializers.CharField()
+    submitted = serializers.DateTimeField()
 

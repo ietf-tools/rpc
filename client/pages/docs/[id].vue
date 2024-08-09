@@ -196,8 +196,8 @@
                 <tbody class="divide-y divide-gray-200">
                   <tr v-for="entry of draft?.history ?? []" :key="entry.id">
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">
-                      <time :datetime="DateTime.fromObject(entry.date).toISO()">
-                        {{ DateTime.fromObject(entry.date).toLocaleString(DateTime.DATE_MED) }}
+                      <time :datetime="DateTime.fromJSDate(entry.date).toISO()">
+                        {{ DateTime.fromJSDate(entry.date).toLocaleString(DateTime.DATE_MED) }}
                       </time>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm">

@@ -102,7 +102,7 @@ const submission = computed(() => dtDraftData.value
       datatrackerId: dtDraftData.value.id,
       name: dtDraftData.value.name,
       rev: dtDraftData.value.rev,
-      authors: ['Jane Smith', 'Joan Jones'],
+      authors: dtDraftData.value.authors.map(a => a.plain_name),
       pages: dtDraftData.value.pages,
       shepherd: 'Dolly Shepherd',
       streamManager: 'Ari Drecker',

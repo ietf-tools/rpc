@@ -12,10 +12,10 @@ class NoSuchSlug(Exception):
     pass
 
 
-def datatracker_stdlevelname(slug: str) -> tuple[str, str, str]:
+def datatracker_name(namemodel: str, slug: str) -> tuple[str, str, str]:
     try:
         response = requests.get(
-            f"{settings.DATATRACKER_API_V1_BASE}/name/stdlevelname?fmt=json&slug={slug}"
+            f"{settings.DATATRACKER_API_V1_BASE}/name/{namemodel}?fmt=json&slug={slug}"
         )
     except requests.exceptions.ConnectionError:
         raise DatatrackerFetchFailure
@@ -32,3 +32,11 @@ def datatracker_stdlevelname(slug: str) -> tuple[str, str, str]:
     else:
         obj = api_response["objects"][0]
         return (obj["slug"], obj["name"], obj["desc"])
+
+
+def datatracker_stdlevelname(slug: str) -> tuple[str, str, str]:
+    return datatracker_name("stdlevelname", slug)
+
+
+def datatracker_streamname(slug: str) -> tuple[str, str, str]:
+    return datatracker_name("streamname", slug)

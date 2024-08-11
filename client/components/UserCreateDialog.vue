@@ -138,7 +138,18 @@ const { ok, cancel } = overlayModalMethods
 
 // DATA
 
-const state = reactive({
+type State = {
+  name: string
+  email: string
+  datatracker: string
+  timezone: string
+  hours: number
+  manager: string
+  roles: string[]
+  confirmShown: boolean
+}
+
+const state = reactive<State>({
   name: '',
   email: '',
   datatracker: '',

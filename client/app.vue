@@ -18,6 +18,8 @@
 </template>
 
 <script setup>
+import { overlayModalKey, overlayModalMethodsKey } from './providers/providerKeys';
+
 // const colorMode = useColorMode()
 
 useHead({
@@ -48,15 +50,7 @@ const overlayModalState = shallowReactive({
   promiseReject: null
 })
 
-provide('overlayModal', {
-  /**
-   * Open an overlay modal
-   *
-   * @param {Object} opts - Modal options
-   * @param {Component|string} opts.component - Component to display
-   * @param {Object} opts.componentProps - Properties to bind to the component
-   * @returns {Promise} Promise that resolves when the user closes the modal with a value
-   */
+provide(overlayModalKey, {
   openOverlayModal: (opts) => {
     overlayModalState.opts = {
       component: opts.component,

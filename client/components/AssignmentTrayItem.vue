@@ -18,14 +18,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue'
+import { deleteAssignmentKey } from '~/providers/providerKeys';
 
-const props = defineProps({
-  assignment: Object
-})
+const props = defineProps<{
+  assignment: {
+    id: string
+    person?: {
+      name: string
+    }
+    role: string
+  }
+}>()
 
-const deleteAssignment = inject('deleteAssignment')
+const _deleteAssignment = inject(deleteAssignmentKey)
+if(!_deleteAssignment) throw Error("Sdfsdf")
+const deleteAssignment= _deleteAssignment
 
 const assignment = computed(() => ({
   id: props.assignment.id,

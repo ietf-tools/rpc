@@ -9,24 +9,22 @@
   </span>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
-defineProps({
+export type Props = {
   /**
    * Label text
    */
-  label: {
-    type: String,
-    required: false,
-    default: ''
-  },
+  label?: string
   /**
    * Tailwind color name
    */
-  color: {
-    type: String,
-    default: 'violet'
-  }
+  color?: keyof typeof colors
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  color: "violet",
+  label: ''
 })
 
 const colors = {

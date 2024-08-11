@@ -29,7 +29,7 @@
         </tr>
       </thead>
       <tbody v-if="!loading" class="text-sm divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
-        <tr v-for="row of rows" :key="row[rowKey]">
+        <tr v-for="row of rows">
           <td class="pl-3">
             <Icon name="uil:file-alt" size="1.25em" class="text-gray-400 dark:text-neutral-500" />
           </td>
@@ -66,43 +66,28 @@ import { RpcLabel, Icon, NuxtLink } from '#components'
 import { isArray, isFunction, orderBy } from 'lodash-es'
 import type { Column, Row } from './DocumentTableTypes'
 
-// PROPS
-
-const props = defineProps({
-  /**
-   * Rows to display
-   */
-  data: {
-    type: Array,
-    default: () => ([])
-  },
+const props = defineProps<{
   /**
    * Column definitions
    */
-  columns: {
-    type: Array,
-    default: () => ([]),
-    required: true
-  },
+  columns: Column[]
+  data: Row[]  
   /**
    * The property to use as the unique key for each row
-   */
-  rowKey: {
-    type: String,
-    default: 'id'
-  },
+   */ 
+  rowKey: string
   /**
    * Whether to show the loading animation or not
    */
-  loading: {
-    type: Boolean,
-    default: false
-  }
-})
+   loading: Boolean
+}>()
 
 // DATA
 
-const state = reactive({
+const state = reactive<{
+  sortField: string
+  sortDirection: boolean | "asc" | "desc"
+}>({
   sortField: '',
   sortDirection: 'asc'
 })
@@ -130,15 +115,14 @@ function sortBy (fieldName: string) {
 /**
  * Build cell node
  */
-function buildCell<T extends Table>(col: Column<Table>, row: Row<Table>) {
-  const values = isArray(row[col.field]) ? row[col.field] : [row[col.field]]
-  const formattedValues = col.format ? values.map(v => col.format ? col.format(v) : undefined) : values
+function buildCell(col: Column, row: Row) {
+  const value = row[col.field]
+  const values = isArray(value) ? value : [value]
+  const formattedValues = col.format ? values.map(v => col.format ? col.format(v) : v) : values
   const children = []
 
-  const isLink = isFunction(col.link)
-
   for (const [idx, val] of formattedValues.entries()) {
-    const contents = [h('span', val)]
+    const contents = [typeof val === "string" || typeof val === "number" ? h('span', val) : val]
     const cssClasses = []
     if (col.icon) {
       contents.unshift(
@@ -152,7 +136,7 @@ function buildCell<T extends Table>(col: Column<Table>, row: Row<Table>) {
       cssClasses.push('flex items-center')
     }
 
-    if (isLink) {
+    if (isFunction(col.link)) {
       children.push(h(NuxtLink, {
         class: [
           ...cssClasses,
@@ -163,7 +147,9 @@ function buildCell<T extends Table>(col: Column<Table>, row: Row<Table>) {
     } else {
       children.push(h('span', {
         class: cssClasses
-      }, contents))
+      }, contents.map(val => {
+        return val
+      })))
     }
 
     if (idx < formattedValues.length - 1) {
@@ -182,11 +168,8 @@ function buildCell<T extends Table>(col: Column<Table>, row: Row<Table>) {
 
 /**
  * Handle labels array in either string or object format
- *
- * @param {Array} val Array of labels
- * @param {String} defaultColor Default color name
  */
-function transformLabels (val, defaultColor) {
+function transformLabels (val: string[], defaultColor: string) {
   return val.map(item => {
     if (typeof item === 'string') {
       return {

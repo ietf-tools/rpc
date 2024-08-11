@@ -1,17 +1,23 @@
-import type { Component } from 'vue'
+import type { Component, VNode } from 'vue'
 
-export type Table<Columns extends Column[]> = {
-    columns: Column<Keys>[],
+export type Table = {
+    columns: Column[]
     rows: Row[]
 }
 
-export type Column<Keys extends string[]> = {
-    field: Keys[number],
-    link: string,
-    format?: () => Component,
+export type Column = {
+    key: string
+    label: string
+    labels: (row: Row) => string[]
+    labelDefaultColor: string
+    field: string
+    classes: string | ((val: Value) => string)
+    sortable: boolean
+    link: string
+    format?: (value: Value) => VNode
     icon: string
 }
 
-export type Row<T extends string> = Record<T, Value>
+export type Row = Record<string, Value>
 
-export type Value = string | number | string[] | number[]
+export type Value = string | number | string[]

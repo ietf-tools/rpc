@@ -12,11 +12,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const route = useRoute()
 
 // Only allow numbers as route parameter, rejecting leading zeros
-definePageMeta({ validate: route => /^[1-9]\d*$/.test(route.params.number) })
+definePageMeta({ validate: route => /^[1-9]\d*$/.test(route.params.number.toString()) })
 
 const clusterNumber = route.params.number
 
@@ -38,7 +38,7 @@ const { data: cluster, pending, refresh } = await useFetch(`/api/rpc/clusters/${
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {
-    state.notifDialogMessage = error
+    state.notifDialogMessage = error.toString()
     state.notifDialogShown = true
   },
   onResponseError ({ response, error }) {

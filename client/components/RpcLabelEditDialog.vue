@@ -68,19 +68,24 @@
   </form>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ColorEnum } from '~/rpctracker_client'
+import type { Label } from '~/rpctracker_client'
+import { overlayModalMethodsKey } from '../providers/providerKeys'
 
 const api = useApi()
 
-const { ok, cancel } = inject('overlayModalMethods')
+const _overlayModalMethods = inject(overlayModalMethodsKey)
+if(!_overlayModalMethods) throw Error("Expected provider of overlayModalMethods")
+const { ok, cancel } = _overlayModalMethods
 const snackbar = useSnackbar()
 
 const props = defineProps(['label', 'create'])
 const label = reactive(props.label)
 
 async function save () {
-  const labelData = {
+  const labelData: Label = {
+    id: 0, // FIXME: is this ok?
     slug: label.slug,
     isException: label.isException,
     color: label.color

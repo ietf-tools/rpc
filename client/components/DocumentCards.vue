@@ -9,15 +9,18 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { provide } from 'vue'
 import { assignEditorKey, deleteAssignmentKey } from '~/providers/providerKeys';
+import type { ADocument } from './DocumentCardsTypes';
 
-const props = defineProps({
-  documents: Array
-})
+type Props = {
+  documents: ADocument[]
+}
 
-const state = reactive({
+const props = defineProps<Props>()
+
+const state = reactive<{ selectedDoc: null | ADocument }>({
   selectedDoc: null
 })
 
@@ -26,7 +29,7 @@ const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment', 'selecti
 provide(assignEditorKey, (doc, editor) => emit('assignEditorToDocument', doc, editor))
 provide(deleteAssignmentKey, (assignment) => emit('deleteAssignment', assignment))
 
-function cardClicked (doc) {
+function cardClicked (doc: ADocument) {
   if (state.selectedDoc?.id === doc.id) {
     state.selectedDoc = null
   } else {

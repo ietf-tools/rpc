@@ -17,7 +17,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { overlayModalKey, overlayModalMethodsKey } from './providers/providerKeys';
 
 // const colorMode = useColorMode()
@@ -40,7 +40,18 @@ useHead({
 
 // OVERLAY MODAL
 
-const overlayModalState = shallowReactive({
+type OverlayModalState = {
+  isShown: boolean
+  opts: {
+    component: null | VNode
+    componentProps: Record<string, unknown>
+    mode?: "overlay"
+  }
+  promiseResolve: null | Promise<void>
+  promiseReject: null | Promise<void>
+}
+
+const overlayModalState = shallowReactive<OverlayModalState>({
   isShown: false,
   opts: {
     component: null,

@@ -33,35 +33,34 @@
 import { overlayModalMethodsKey } from '../providers/providerKeys'
 // PROPS / EMITS
 
-defineProps({
-  /**
-   * Dialog Options
-   */
+export type Props = {
   opts: {
-    type: Object,
-    default: () => ({}),
-    required: true
-  },
-  /**
-   * Modal Visibility State
-   */
-  isShown: {
-    type: Boolean,
-    default: false,
-    required: true
+    mode?: "side" | "overlay"
+    component?: VNode
+    componentProps?: Record<string, unknown>
   }
+  isShown: boolean
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  opts: () => ({}),
+  isShown: false
 })
 
-const emit = defineEmits(['update:isShown', 'closeOk', 'closeCancel'])
+const emit = defineEmits<{
+  (e: 'update:isShown', isShown: boolean): void
+  (e: 'closeOk', value?: string): void
+  (e: 'closeCancel', value?: string): void
+}>()
 
 // PROVIDE
 
 provide(overlayModalMethodsKey, {
-  ok: (val) => {
+  ok: (val?: string) => {
     emit('update:isShown', false)
     emit('closeOk', val)
   },
-  cancel: (val?: unknown) => {
+  cancel: (val?: string) => {
     emit('update:isShown', false)
     emit('closeCancel', val)
   }

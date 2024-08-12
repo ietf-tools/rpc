@@ -126,27 +126,37 @@
   <ConfirmDialog v-model:isShown="state.confirmShown" title="Manager Role Selected" caption="Are you sure you want to create a new team member with the Manager role?" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 // PROPS / EMITS
 
-defineProps({
-  isShown: {
-    type: Boolean,
-    default: false,
-    required: true
-  },
-  submissions: {
-    type: Array,
-    required: true
-  }
+export type Props = {
+  isShown: boolean
+  submissions: any[] // FIXME: improve typing
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isShown: false
 })
 
 const emit = defineEmits(['update:isShown'])
 
 // DATA
 
-const state = reactive({
+type State = {
+  documentId: number
+  email: string
+  datatracker: string
+  timezone: string
+  hours: number
+  manager: string
+  roles: any[] //FIXME: improve typing
+  confirmShown: boolean
+  labelsApplied?: string
+  capabilitiesNeeded?: string
+}
+
+const state = reactive<State>({
   documentId: 0,
   email: '',
   datatracker: '',
@@ -160,8 +170,15 @@ const state = reactive({
 const managers = []
 const timezones = process.client ? Intl.supportedValuesOf('timeZone') : []
 
+type Label = {
+  value: string
+  label: string
+  description: string
+  caution?: boolean
+}
+
 // todo get these from backend
-const capabilities = [
+const capabilities: Label[] = [
   { value: 'clusters-beginner', label: 'Clusters: beginner', description: 'New to working with RFC clusters.' },
   { value: 'codecomp-abnf', label: 'Code components: ABNF', description: 'Can work on ABNF components.' },
   { value: 'codecomp-mib', label: 'Code components: MIB', description: 'Can work on MIB components.' },
@@ -171,7 +188,7 @@ const capabilities = [
 ]
 
 // todo get these from backend
-const labels = [
+const labels: Label[] = [
   { value: 'badversion', label: 'Version mismatch', description: 'Version does not match' },
   { value: 'badfont', label: 'Font issues', description: 'A font problem has been identified.' },
   { value: 'badv3xml', label: 'v3 XML Conv Failed', description: 'Conversion to v3 XML failed.' },

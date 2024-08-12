@@ -8,16 +8,16 @@ export type Table = {
 export type Column = {
     key: string
     label: string
-    labels: (row: Row) => string[]
-    labelDefaultColor: string
+    labels?: (row: Row) => string[]
+    labelDefaultColor?: string
     field: string
-    classes: string | ((val: Value) => string)
-    sortable: boolean
-    link: string
+    classes?: string | ((val: Value) => string)
+    sortable?: boolean
+    link?: string | ((row: Row, val: Value) => string)
     format?: (value: Value) => VNode
-    icon: string
+    icon?: string
 }
 
 export type Row = Record<string, Value>
 
-export type Value = string | number | string[]
+export type Value = unknown

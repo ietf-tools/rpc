@@ -1,10 +1,14 @@
-import type { InjectionKey, VNode } from 'vue'
+import type { InjectionKey, VNode, Component } from 'vue'
 
 export const overlayModalKey = Symbol() as InjectionKey<{
    /**
    * Open an overlay modal
    */
-    openOverlayModal: (opts: { component: VNode | string, componentProps: unknown, mode: string}) => Promise<void>
+    openOverlayModal: (opts: {
+        component: null | VNode | Component,
+        componentProps: null | Record<string, unknown>,
+        mode?: "overlay" | "side"
+    }) => Promise<void>
     closeOverlayModal: () => void
 }>
 

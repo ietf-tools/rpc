@@ -16,16 +16,20 @@
       </td>
       <td>{{ documentById[stat.documentId]?.name }}</td>
       <td>
-        {{ humanizeDuration(Duration.fromObject({ seconds: stat.seconds }), { largest: 1, round: true}) }}</td>
+        {{ humanizeDuration(
+            Duration.fromObject({ second: stat.seconds }).milliseconds,
+            { largest: 1, round: true}
+          ) }}</td>
     </tr>
     </tbody>
   </table>
 </template>
-
-<script setup>
+ 
+<script setup lang="ts">
 
 import { Duration } from 'luxon'
 import humanizeDuration from 'humanize-duration'
+import type { LabelStats }  from '../rpctracker_client'
 
 const api = useApi()
 
@@ -41,6 +45,11 @@ const { data: labels } = await useAsyncData(() => api.labelsList(), { server: fa
 
 const { data: documents } = await useAsyncData(() => api.documentsList(), { server: false, default: () => [] })
 
-const { data: labelStats } = await useAsyncData(() => api.statsLabels(), { server: false, default: () => [] })
+const { data: labelStats } = await useAsyncData(
+  () => api.statsLabels(), {
+    server: false,
+    default: () => ({ labelStats: [] }) as LabelStats,
+  }
+)
 
 </script>

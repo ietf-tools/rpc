@@ -79,7 +79,7 @@ const props = defineProps<{
   /**
    * Whether to show the loading animation or not
    */
-   loading: Boolean
+  loading?: Boolean
 }>()
 
 // DATA

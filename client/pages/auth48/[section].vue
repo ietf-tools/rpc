@@ -6,7 +6,7 @@
   <!-- TABS -->
 
   <div class="flex justify-center items-center">
-    <TabNav :tabs="tabs" :selected="currentTab" />
+    <TabNav :tabs="tabs" :selected="currentTab.toString()" />
     <RefreshButton :pending="pending" @refresh="refresh" class="ml-3"/>
     <button type="button" @click="" class="btn-secondary ml-3">
       <span class="sr-only">Filter</span>
@@ -26,7 +26,9 @@
   <p class="pt-5 text-center text-gray-500">(data are mocked)</p>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { Column } from '~/components/DocumentTableTypes';
+
 const route = useRoute()
 
 // COMPUTED
@@ -106,17 +108,18 @@ const docs = computed(() => {
         }
       ]
   }
+  return []
 })
 
 // DATA
 
 const columns = computed(() => {
-  const cols = [
+  const cols: Column[] = [
     {
       key: 'ed',
       label: 'Managing Editor',
       field: 'ed',
-      format: (v) => v.name,
+      format: (v) => (v as any).name,
       link: (row, val) => `/team/${val}`
     },
     {

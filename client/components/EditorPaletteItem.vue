@@ -2,7 +2,7 @@
 Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-4ec337def61b547035ce908c128bca5c
 -->
 <template>
-  <div :key="cookedEditor.id" class="col-span-1 flex rounded-md shadow-sm">
+  <div :key="editor.id" class="col-span-1 flex rounded-md shadow-sm">
     <div
       :class="[cookedEditor.bgColor, 'flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white']">
       {{ cookedEditor.initials }}
@@ -24,20 +24,28 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { DateTime } from 'luxon'
 
-const props = defineProps({
-  editor: Object
-})
+export type Props = {
+  editor: {
+    id: string
+    name: string
+    completeBy?: Date
+  }
+}
+
+const props = defineProps<Props>()
+
+DateTime.DATE_MED
 
 // Compute data for the component
 const cookedEditor = computed(() => ({
   name: props.editor.name,
   initials: props.editor.name[0],
   href: '#',
-  detail: props.editor.completeBy ? `Can complete by ${props.editor.completeBy.toLocaleString(DateTime.DATE_MED)}` : '',
+  detail: props.editor.completeBy ? `Can complete by ${props.editor.completeBy.toLocaleString("en", DateTime.DATE_MED)}` : '',
   bgColor: 'bg-pink-600'
 }))
 

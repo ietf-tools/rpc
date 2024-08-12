@@ -59,19 +59,11 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 import { inject } from 'vue'
 import { DateTime } from 'luxon'
 import { assignEditorKey } from '~/providers/providerKeys';
+import type { ADocument } from './DocumentCardsTypes';
 
 type Props = {
-  document: {
-    id: string
-    name:string
-    external_deadline: string
-    needsAssignment?: {
-      name: string
-    }
-    assignments: string[]
-    pages: number
-  }
-  selected: boolean
+  document: ADocument
+  selected?: boolean
 }
 
 const props = defineProps<Props>()

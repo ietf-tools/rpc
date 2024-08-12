@@ -14,7 +14,7 @@
     <label for="cluster-select">Cluster: </label>
     <select id="cluster-select" v-model="state.selectedClusterNumber">
       <option disabled value="">Select</option>
-      <option v-for="cluster in clusters">{{ cluster.number }}</option>
+      <option v-for="cluster in clusters">{{ cluster?.number }}</option>
     </select>
   </div>
   <div class="mt-8 flow-root">
@@ -44,7 +44,7 @@
   <!--    <UserCreateDialog v-model:isShown="state.createDialogShown"/>-->
 </template>
 
-<script setup>
+<script setup lang="ts">
 import RefreshButton from '~/components/RefreshButton.vue'
 
 useHead({
@@ -55,7 +55,7 @@ const snackbar = useSnackbar()
 
 // COMPUTED
 const selectedCluster = computed(() => {
-  if (clusters && clusters.value && state.selectedClusterNumber) {
+  if (clusters && clusters.value && Array.isArray(clusters.value) && state.selectedClusterNumber) {
     return clusters.value.find(cluster => String(cluster.number) === state.selectedClusterNumber)
   }
   return null
@@ -70,6 +70,7 @@ const state = reactive({
 })
 
 // METHODS
+
 
 const { data: clusters, pending, refresh } = await useFetch('/api/rpc/clusters/', {
   baseURL: '/',
@@ -89,4 +90,5 @@ const { data: clusters, pending, refresh } = await useFetch('/api/rpc/clusters/'
     })
   }
 })
+
 </script>

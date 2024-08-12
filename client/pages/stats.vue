@@ -19,7 +19,8 @@
         {{ humanizeDuration(
             Duration.fromObject({ second: stat.seconds }).milliseconds,
             { largest: 1, round: true}
-          ) }}</td>
+          ) }}
+      </td>
     </tr>
     </tbody>
   </table>
@@ -48,7 +49,7 @@ const { data: documents } = await useAsyncData(() => api.documentsList(), { serv
 const { data: labelStats } = await useAsyncData(
   () => api.statsLabels(), {
     server: false,
-    default: () => ({ labelStats: [] }) as LabelStats,
+    default: () => ({ labelStats: [] }) as LabelStats
   }
 )
 

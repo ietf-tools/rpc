@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { inject } from 'vue'
-import { deleteAssignmentKey } from '~/providers/providerKeys';
+import { deleteAssignmentKey } from '~/providers/providerKeys'
 
 const props = defineProps<{
   assignment: {
@@ -33,8 +33,10 @@ const props = defineProps<{
 }>()
 
 const _deleteAssignment = inject(deleteAssignmentKey)
-if(!_deleteAssignment) throw Error("Sdfsdf")
-const deleteAssignment= _deleteAssignment
+if(!_deleteAssignment) {
+  throw Error('Expected delete assignment to be available')
+}
+const deleteAssignment = _deleteAssignment
 
 const assignment = computed(() => ({
   id: props.assignment.id,

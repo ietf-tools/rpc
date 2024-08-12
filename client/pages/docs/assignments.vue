@@ -60,7 +60,7 @@
 
 <script setup lang="ts">
 import { DateTime } from 'luxon'
-import type { Assignment } from '~/rpctracker_client';
+import type { Assignment } from '~/rpctracker_client'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 const api = useApi()
@@ -129,7 +129,7 @@ async function saveAssignment (assignment: Assignment) {
       role: documents.value.find((d: any) => d.id === assignment.rfcToBe)?.needsAssignment?.slug ?? 'first_editor'
     },
     method: 'POST',
-    headers: { 'X-CSRFToken': csrf.value?.toString() ?? "" }
+    headers: { 'X-CSRFToken': csrf.value?.toString() ?? '' }
   })
   await refresh()
 }
@@ -147,7 +147,7 @@ function compareEditors (a, b) {
 async function deleteAssignment (assignment: Assignment) {
   await $fetch(`/api/rpc/assignments/${assignment.id}`, {
     method: 'DELETE',
-    headers: { 'X-CSRFToken': csrf?.value ?? "" }
+    headers: { 'X-CSRFToken': csrf?.value ?? '' }
   })
   await refresh()
 }

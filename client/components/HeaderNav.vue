@@ -165,7 +165,9 @@ const { data: _allUsers } = await useAsyncData(
   }
 )
 
-if (!_allUsers || !Array.isArray(_allUsers)) throw Error("Required allUsers data")
+if (!_allUsers || !Array.isArray(_allUsers)) {
+  throw Error('Required allUsers data')
+}
 const allUsers = _allUsers
 
 </script>

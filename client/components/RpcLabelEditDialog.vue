@@ -76,7 +76,9 @@ import { overlayModalMethodsKey } from '../providers/providerKeys'
 const api = useApi()
 
 const _overlayModalMethods = inject(overlayModalMethodsKey)
-if(!_overlayModalMethods) throw Error("Expected provider of overlayModalMethods")
+if(!_overlayModalMethods) {
+  throw Error('Expected injection of overlayModalMethods')
+}
 const { ok, cancel } = _overlayModalMethods
 const snackbar = useSnackbar()
 

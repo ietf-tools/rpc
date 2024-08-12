@@ -48,7 +48,7 @@ import { DateTime } from 'luxon'
 import Fuse from 'fuse.js/basic'
 import { useSiteStore } from '@/stores/site'
 import Badge from '../../components/Badge.vue'
-import type { Column } from '~/components/DocumentTableTypes';
+import type { Column } from '~/components/DocumentTableTypes'
 
 // ROUTING
 

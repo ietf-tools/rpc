@@ -11,8 +11,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 
 <script setup lang="ts">
 import { provide } from 'vue'
-import { assignEditorKey, deleteAssignmentKey } from '~/providers/providerKeys';
-import type { ADocument } from './DocumentCardsTypes';
+import { assignEditorKey, deleteAssignmentKey } from '~/providers/providerKeys'
+import type { ADocument } from './DocumentCardsTypes'
 
 type Props = {
   documents: ADocument[]

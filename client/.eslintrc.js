@@ -1,3 +1,6 @@
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
 module.exports = {
   root: true,
   env: {
@@ -9,9 +12,11 @@ module.exports = {
   },
   extends: [
     'standard',
-    'plugin:nuxt/recommended'
+    'plugin:nuxt/recommended',
     // 'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
     // 'plugin:vue/vue3-strongly-recommended' // Priority B: Strongly Recommended (Improving Readability)
+    'plugin:@typescript-eslint/recommended',
+    'plugin:@typescript-eslint/stylistic',
   ],
   globals: {
     d3: true

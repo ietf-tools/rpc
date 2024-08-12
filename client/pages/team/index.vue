@@ -42,11 +42,13 @@
 
 <script setup lang="ts">
 import { UserCreateDialog } from '#components'
-import { overlayModalKey } from '~/providers/providerKeys';
+import { overlayModalKey } from '~/providers/providerKeys'
 
 const snackbar = useSnackbar()
 const _overlayModal = inject(overlayModalKey)
-if(!_overlayModal) throw Error("_overlayModal must be used in provider")
+if(!_overlayModal) {
+  throw Error('Expected injection of overlayModalKey')
+}
 const { openOverlayModal } = _overlayModal
 
 useHead({

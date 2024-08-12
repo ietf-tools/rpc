@@ -271,7 +271,7 @@ const { data: people } = await useAsyncData(
 async function saveLabels (labels: number[]) {
   if (!draftPending.value) {
     await api.documentsPartialUpdate({
-      draftName: draft.value?.name ?? "",
+      draftName: draft.value?.name ?? '',
       patchedRfcToBe: { labels }
     })
   }

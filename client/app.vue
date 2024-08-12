@@ -18,7 +18,8 @@
 </template>
 
 <script setup lang="ts">
-import { overlayModalKey, overlayModalMethodsKey } from './providers/providerKeys';
+import { overlayModalKey } from './providers/providerKeys'
+import type { Mode } from './providers/providerKeys'
 
 // const colorMode = useColorMode()
 
@@ -43,12 +44,12 @@ useHead({
 type OverlayModalState = {
   isShown: boolean
   opts: {
-    component: null | VNode
+    component: null | Component
     componentProps: Record<string, unknown>
-    mode?: "overlay"
+    mode?: Mode
   }
-  promiseResolve: null | Promise<void>
-  promiseReject: null | Promise<void>
+  promiseResolve: null | ((value: void | PromiseLike<void>) => void)
+  promiseReject: null | ((value: void | PromiseLike<void>) => void)
 }
 
 const overlayModalState = shallowReactive<OverlayModalState>({

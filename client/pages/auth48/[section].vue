@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Column } from '~/components/DocumentTableTypes';
+import type { Column } from '~/components/DocumentTableTypes'
 
 const route = useRoute()
 

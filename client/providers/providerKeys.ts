@@ -1,26 +1,46 @@
 import type { InjectionKey, VNode, Component } from 'vue'
 
-export const overlayModalKey = Symbol() as InjectionKey<{
-   /**
+export type Mode = 'overlay' | 'side'
+
+/**
+ * Overlay modal (injection for Vue)
+ */
+export const overlayModalKey = Symbol('overlayModalKey') as InjectionKey<{
+  /**
    * Open an overlay modal
    */
-    openOverlayModal: (opts: {
-        component: null | VNode | Component,
-        componentProps?: null | Record<string, unknown>,
-        mode?: "overlay" | "side"
-    }) => Promise<void>
-    closeOverlayModal: () => void
+  openOverlayModal: (opts: {
+    component: null | VNode | Component
+    componentProps?: null | Record<string, unknown>
+    mode?: Mode
+  }) => Promise<void>
+  /**
+ * Close an overlay modal
+ */
+  closeOverlayModal: () => void
 }>
 
-export const overlayModalMethodsKey = Symbol() as InjectionKey<{
-    ok: (val?: string) => void,
-    cancel: () => void,
+/**
+ * Overlay modal methods for use in modal buttons
+ * (injection for Vue)
+ */
+export const overlayModalMethodsKey = Symbol('overlayModalMethodsKey') as InjectionKey<{
+  ok: (val?: string) => void
+  cancel: () => void
 }>
 
-export const assignEditorKey = Symbol() as InjectionKey<
-    (doc: unknown, editor: unknown) => void
+/**
+ * Assign editor FIXME: better description
+ * (injection for Vue)
+ */
+export const assignEditorKey = Symbol('assignEditorKey') as InjectionKey<
+(doc: unknown, editor: unknown) => void
 >
 
-export const deleteAssignmentKey = Symbol() as InjectionKey<
-    (assignment: unknown) => void
+/**
+ * Delete assignment key FIXME: better description
+ * (injection for Vue)
+ */
+export const deleteAssignmentKey = Symbol('deleteAssignmentKey') as InjectionKey<
+(assignment: unknown) => void
 >

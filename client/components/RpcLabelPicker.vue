@@ -37,7 +37,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Label } from '~/rpctracker_client';
+import type { Label } from '~/rpctracker_client'
 
 type Props = {
   /**

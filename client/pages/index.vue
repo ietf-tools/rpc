@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { TestOverlay } from '#components'
-import { overlayModalKey } from '~/providers/providerKeys';
+import { overlayModalKey } from '~/providers/providerKeys'
 
 const userStore = useUserStore()
 
@@ -61,7 +61,9 @@ const stats = [
 // OVERLAY TEST
 
 const _overlayModal = inject(overlayModalKey)
-if(!_overlayModal) throw Error("Require provider overlayModalKey")
+if(!_overlayModal) {
+  throw Error('Expected injection of overlayModalKey')
+}
 const { openOverlayModal } = _overlayModal
 
 async function addDocument () {

@@ -58,8 +58,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 <script setup lang="ts">
 import { inject } from 'vue'
 import { DateTime } from 'luxon'
-import { assignEditorKey } from '~/providers/providerKeys';
-import type { ADocument } from './DocumentCardsTypes';
+import { assignEditorKey } from '~/providers/providerKeys'
+import type { ADocument } from './DocumentCardsTypes'
 
 type Props = {
   document: ADocument
@@ -69,7 +69,9 @@ type Props = {
 const props = defineProps<Props>()
 
 const _assignEditor = inject(assignEditorKey)
-if(!_assignEditor) throw Error("Required assignEditor provider")
+if(!_assignEditor) {
+  throw Error('Required assignEditor injection')
+}
 const assignEditor = _assignEditor
 
 const cookedDocument = computed(() => ({

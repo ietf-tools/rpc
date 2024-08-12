@@ -40,11 +40,14 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { UserCreateDialog } from '#components'
+import { overlayModalKey } from '~/providers/providerKeys';
 
 const snackbar = useSnackbar()
-const { openOverlayModal } = inject('overlayModal')
+const _overlayModal = inject(overlayModalKey)
+if(!_overlayModal) throw Error("_overlayModal must be used in provider")
+const { openOverlayModal } = _overlayModal
 
 useHead({
   title: 'Manage Team Members'

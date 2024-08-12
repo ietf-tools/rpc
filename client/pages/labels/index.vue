@@ -37,7 +37,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RpcLabelEditDialog } from '#components'
 
 const api = useApi()

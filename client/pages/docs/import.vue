@@ -80,7 +80,7 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { DateTime } from 'luxon'
 import humanizeDuration from 'humanize-duration'
 

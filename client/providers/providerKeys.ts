@@ -6,7 +6,7 @@ export const overlayModalKey = Symbol() as InjectionKey<{
    */
     openOverlayModal: (opts: {
         component: null | VNode | Component,
-        componentProps: null | Record<string, unknown>,
+        componentProps?: null | Record<string, unknown>,
         mode?: "overlay" | "side"
     }) => Promise<void>
     closeOverlayModal: () => void

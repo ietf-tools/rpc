@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useAsyncData } from '#app'
 
 const api = useApi()

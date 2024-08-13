@@ -16,7 +16,7 @@ from datatracker.rpcapi import with_rpcapi
 
 from datatracker.models import Document
 from .factories import StdLevelNameFactory, StreamNameFactory
-from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole
+from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole, SourceFormatName
 from .serializers import (
     AssignmentSerializer,
     LabelSerializer,
@@ -25,7 +25,7 @@ from .serializers import (
     RpcPersonSerializer,
     RpcRoleSerializer,
     SubmissionListItemSerializer,
-    SubmissionSerializer,
+    SourceFormatNameSerializer,
 )
 
 
@@ -141,12 +141,37 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     return Response(SubmissionListItemSerializer(submitted, many=True).data)
 
 
-@extend_schema(operation_id="submissions_retrieve", responses=SubmissionSerializer)
+@extend_schema(operation_id="submissions_retrieve", responses=RfcToBeSerializer)
 @api_view(["GET"])
 @with_rpcapi
 def submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
-    draft = rpcapi.get_draft_by_id(document_id)
-    return Response(SubmissionSerializer(draft).data)
+    # Create a Document to which the RfcToBe can refer. If it already exists, update
+    # its values with whatever the datatracker currently says.
+    draft, _ = Document.objects.update_or_create_from_rpcapi_draft(
+        rpcapi.get_draft_by_id(document_id)
+    )
+    source_format = SourceFormatName.objects.get(slug=draft.source_format)
+    rtb = RfcToBe(
+        draft=draft,
+        disposition_id="in_progress",
+        submitted_boilerplate_id="trust200902",
+        intended_boilerplate_id="trust200902",
+        submitted_format=source_format,
+        submitted_std_level=StdLevelNameFactory(
+            slug="ps", name="Proposed Standard"
+        ),
+        intended_std_level=StdLevelNameFactory(
+            slug="ps", name="Proposed Standard"
+        ),
+        submitted_stream=StreamNameFactory(
+            slug=draft.stream, name=draft.stream.upper()
+        ),
+        intended_stream=StreamNameFactory(
+            slug=draft.stream, name=draft.stream.upper()
+        ),
+        # internal_goal=initial_data["external_deadline"],
+    )
+    return Response(RfcToBeSerializer(rtb).data)
 
 
 @extend_schema(
@@ -330,3 +355,8 @@ class StatsLabels(views.APIView):
                         }
                     )
         return Response({"label_stats": results})
+
+
+class SourceFormatNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SourceFormatName.objects.all()
+    serializer_class = SourceFormatNameSerializer

@@ -1,7 +1,7 @@
 <template>
   <TitleBlock
     class="pb-3"
-    :title="`Add Document: ${submission.name}`"
+    :title="`Add Document: ${submission?.name}`"
     summary="Pull the submission into the queue so the editing process can begin."/>
   <form>
     <div class="space-y-12">
@@ -13,20 +13,20 @@
           <div class="px-4 py-5 sm:p-2">
             <ul class="px-2">
               <li>
-                <NuxtLink v-if="submission.datatrackerUrl"
+                <NuxtLink v-if="submission?.datatrackerUrl"
                           :to="submission.datatrackerUrl"
                           class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
-                  {{ submission.name }}-{{ submission.rev }}
+                  {{ submission?.name }}-{{ submission?.rev }}
                 </NuxtLink>
                 <span v-else>
-                  {{ submission.name }}-{{ submission.rev }}
+                  {{ submission?.name }}-{{ submission?.rev }}
                 </span>
               </li>
-              <li><span v-for="auth of submission.authors" class="pr-2 ">{{ auth }}</span></li>
-              <li>Submitted pages: {{ submission.pages }}</li>
-              <li>Document shepherd: {{ submission.shepherd }}</li>
-              <li>Stream manager: {{ submission.streamManager }}</li>
-              <li>Submitted format: {{ submission.submittedFormat }}</li>
+              <li><span v-for="auth of submission?.authors" class="pr-2 ">{{ auth }}</span></li>
+              <li>Submitted pages: {{ submission?.pages }}</li>
+              <li>Document shepherd: {{ submission?.shepherd }}</li>
+              <li>Stream manager: {{ submission?.streamManager }}</li>
+              <li>Submitted format: {{ submittedFormat }}</li>
             </ul>
           </div>
         </div>
@@ -97,20 +97,29 @@ const state = reactive({
 
 // COMPUTED
 
-const submission = computed(() => dtDraftData.value
+const wasSubmission = computed(() => submission.value
   ? {
-      datatrackerId: dtDraftData.value.id,
-      name: dtDraftData.value.name,
-      rev: dtDraftData.value.rev,
-      authors: dtDraftData.value.authors.map(a => a.plainName),
-      pages: dtDraftData.value.pages,
+      documentId: submission.value.id,
+      name: submission.value.name,
+      rev: submission.value.rev,
+      authors: submission.value.authors.map(a => a.plainName),
+      pages: submission.value.pages,
       shepherd: 'Dolly Shepherd',
       streamManager: 'Ari Drecker',
-      submittedFormat: dtDraftData.value.sourceFormat,
-      datatrackerUrl: `http://localhost:8000/doc/${dtDraftData.value.name}-${dtDraftData.value.rev}/`
+      submittedFormat: submission.value.sourceFormat,
+      datatrackerUrl: `http://localhost:8000/doc/${submission.value.name}-${submission.value.rev}/`
     }
   : {}
 )
+
+const submittedFormat = computed(() => {
+  if (sourceFormatNames.value && submission.value) {
+    const fmt = sourceFormatNames.value.find(sfn => sfn.slug === submission.value.submittedFormat)
+    return fmt ? fmt.name : "unknown"
+  } else {
+    return "-"
+  }
+})
 
 const timeToDeadline = computed(() => {
   try {
@@ -175,8 +184,26 @@ const { data: labels } = await useAsyncData(
   }
 )
 
-const { data: dtDraftData } = await useAsyncData(
-  'dtDraftData',
+const { data: sourceFormatNames } = await useAsyncData(
+  'sourceFormatNames',
+  async () => {
+    try {
+      return await api.sourceFormatNamesList()
+    } catch (e) {
+      snackbar.add({
+        type: 'error',
+        title: 'Data fetch not successful',
+        text: e
+      })
+    }
+  }, {
+    server: false,
+    default: () => ([])
+  }
+)
+
+const { data: submission } = await useAsyncData(
+  'submission',
   async () => {
     try {
       return await api.submissionsRetrieve({ documentId: route.query.documentId })

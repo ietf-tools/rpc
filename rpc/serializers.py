@@ -17,6 +17,7 @@ from .models import (
     RfcToBe,
     RpcPerson,
     RpcRole,
+    SourceFormatName,
 )
 
 
@@ -324,8 +325,14 @@ class SubmissionSerializer(serializers.Serializer):
     stream = serializers.CharField()
     title = serializers.CharField()
     pages = serializers.IntegerField()
+    source_format = serializers.CharField()
     authors = SubmissionAuthorSerializer(many=True)
 
+    def to_representation(self, instance):
+        """Convert slug to name"""
+        rep = super().to_representation(instance)
+        rep["source_format"] = SourceFormatName.objects.get(slug=rep["source_format"]).name
+        return rep
 
 class SubmissionListItemSerializer(serializers.Serializer):
     """Serialize a submission list item

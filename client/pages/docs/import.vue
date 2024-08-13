@@ -106,7 +106,7 @@ const submission = computed(() => dtDraftData.value
       pages: dtDraftData.value.pages,
       shepherd: 'Dolly Shepherd',
       streamManager: 'Ari Drecker',
-      submittedFormat: 'v2',
+      submittedFormat: dtDraftData.value.sourceFormat,
       datatrackerUrl: `http://localhost:8000/doc/${dtDraftData.value.name}-${dtDraftData.value.rev}/`
     }
   : {}

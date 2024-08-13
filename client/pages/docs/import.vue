@@ -22,11 +22,11 @@
                   {{ submission?.name }}-{{ submission?.rev }}
                 </span>
               </li>
-              <li><span v-for="auth of submission?.authors" class="pr-2 ">{{ auth }}</span></li>
+              <li><span v-for="auth of submission?.authors" class="pr-2 ">{{ auth.plainName }}</span></li>
               <li>Submitted pages: {{ submission?.pages }}</li>
               <li>Document shepherd: {{ submission?.shepherd }}</li>
               <li>Stream manager: {{ submission?.streamManager }}</li>
-              <li>Submitted format: {{ submittedFormat }}</li>
+              <li>Submitted format: {{ submission?.sourceFormat.name }}</li>
             </ul>
           </div>
         </div>
@@ -112,15 +112,6 @@ const wasSubmission = computed(() => submission.value
   : {}
 )
 
-const submittedFormat = computed(() => {
-  if (sourceFormatNames.value && submission.value) {
-    const fmt = sourceFormatNames.value.find(sfn => sfn.slug === submission.value.submittedFormat)
-    return fmt ? fmt.name : "unknown"
-  } else {
-    return "-"
-  }
-})
-
 const timeToDeadline = computed(() => {
   try {
     if (state.deadline) {
@@ -171,24 +162,6 @@ const { data: labels } = await useAsyncData(
   async () => {
     try {
       return await api.labelsList()
-    } catch (e) {
-      snackbar.add({
-        type: 'error',
-        title: 'Data fetch not successful',
-        text: e
-      })
-    }
-  }, {
-    server: false,
-    default: () => ([])
-  }
-)
-
-const { data: sourceFormatNames } = await useAsyncData(
-  'sourceFormatNames',
-  async () => {
-    try {
-      return await api.sourceFormatNamesList()
     } catch (e) {
       snackbar.add({
         type: 'error',

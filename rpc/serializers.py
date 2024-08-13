@@ -312,9 +312,62 @@ class QueueItemSerializer(RfcToBeSerializer):
         return []  # todo return a value
 
 
+class SourceFormatNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourceFormatName
+        fields = ["slug", "name", "desc"]
+
+
+@dataclass
+class SubmissionAuthor:
+    id: int
+    plain_name: str
+
+    @classmethod
+    def from_rpcapi_draft_author(cls, author):
+        return cls(id=author.id, plain_name=author.plain_name)
+
+
+@dataclass
+class Submission:
+    id: int
+    name: str
+    rev: str
+    stream: str
+    title: str
+    pages: int
+    source_format: SourceFormatName
+    authors: list[SubmissionAuthor]
+
+    @classmethod
+    def from_rpcapi_draft(cls, draft):
+        return cls(
+            id=draft.id,
+            name=draft.name,
+            rev=draft.rev,
+            stream=draft.stream,
+            title=draft.title,
+            pages=draft.pages,
+            source_format=SourceFormatName.objects.get(slug=draft.source_format),
+            authors=[SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors],
+        )
+
+
 class SubmissionAuthorSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     plain_name = serializers.CharField()
+
+
+class SubmissionSerializer(serializers.Serializer):
+    """Serialize a submission"""
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    rev = serializers.CharField()
+    stream = serializers.CharField()
+    title = serializers.CharField()
+    pages = serializers.IntegerField()
+    source_format = SourceFormatNameSerializer()
+    authors = SubmissionAuthorSerializer(many=True)
 
 
 class SubmissionListItemSerializer(serializers.Serializer):
@@ -326,9 +379,3 @@ class SubmissionListItemSerializer(serializers.Serializer):
     name = serializers.CharField()
     stream = serializers.CharField()
     submitted = serializers.DateTimeField()
-
-
-class SourceFormatNameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SourceFormatName
-        fields = ["slug", "name", "desc"]

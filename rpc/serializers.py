@@ -19,6 +19,7 @@ from .models import (
     RpcRole,
     SourceFormatName,
     StdLevelName,
+    StreamName,
 )
 
 
@@ -324,6 +325,13 @@ class StdLevelNameSerializer(serializers.ModelSerializer):
         model = StdLevelName
         fields = ["slug", "name", "desc"]
 
+
+class StreamNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StreamName
+        fields = ["slug", "name", "desc"]
+
+
 @dataclass
 class SubmissionAuthor:
     id: int
@@ -339,13 +347,13 @@ class Submission:
     id: int
     name: str
     rev: str
-    stream: str
+    stream: StreamName
     title: str
     pages: int
     source_format: SourceFormatName
     authors: list[SubmissionAuthor]
     shepherd: str
-    std_level: str
+    std_level: StdLevelName | None
 
     @classmethod
     def from_rpcapi_draft(cls, draft):
@@ -353,7 +361,7 @@ class Submission:
             id=draft.id,
             name=draft.name,
             rev=draft.rev,
-            stream=draft.stream,
+            stream=StreamName.objects.from_slug(draft.stream),
             title=draft.title,
             pages=draft.pages,
             source_format=SourceFormatName.objects.get(slug=draft.source_format),
@@ -373,7 +381,7 @@ class SubmissionSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     name = serializers.CharField()
     rev = serializers.CharField()
-    stream = serializers.CharField()
+    stream = StreamNameSerializer()
     title = serializers.CharField()
     pages = serializers.IntegerField()
     source_format = SourceFormatNameSerializer()

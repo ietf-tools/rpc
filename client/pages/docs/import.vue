@@ -27,6 +27,7 @@
               <li>Document shepherd: {{ submission?.shepherd }}</li>
               <li>Stream manager: {{ submission?.streamManager }}</li>
               <li>Submitted format: {{ submission?.sourceFormat.name }}</li>
+              <li>Submitted standard level: {{ submission?.stdLevel.name }}</li>
             </ul>
           </div>
         </div>

@@ -18,6 +18,7 @@ from .models import (
     RpcPerson,
     RpcRole,
     SourceFormatName,
+    StdLevelName,
 )
 
 
@@ -318,6 +319,11 @@ class SourceFormatNameSerializer(serializers.ModelSerializer):
         fields = ["slug", "name", "desc"]
 
 
+class StdLevelNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StdLevelName
+        fields = ["slug", "name", "desc"]
+
 @dataclass
 class SubmissionAuthor:
     id: int
@@ -339,6 +345,7 @@ class Submission:
     source_format: SourceFormatName
     authors: list[SubmissionAuthor]
     shepherd: str
+    std_level: str
 
     @classmethod
     def from_rpcapi_draft(cls, draft):
@@ -352,6 +359,7 @@ class Submission:
             source_format=SourceFormatName.objects.get(slug=draft.source_format),
             authors=[SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors],
             shepherd=draft.shepherd,
+            std_level=StdLevelName.objects.from_slug(draft.intended_std_level) if draft.intended_std_level else None
         )
 
 
@@ -371,6 +379,7 @@ class SubmissionSerializer(serializers.Serializer):
     source_format = SourceFormatNameSerializer()
     authors = SubmissionAuthorSerializer(many=True)
     shepherd = serializers.EmailField()
+    std_level = StdLevelNameSerializer(required=False)
 
 
 class SubmissionListItemSerializer(serializers.Serializer):

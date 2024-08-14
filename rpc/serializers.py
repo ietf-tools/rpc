@@ -338,6 +338,7 @@ class Submission:
     pages: int
     source_format: SourceFormatName
     authors: list[SubmissionAuthor]
+    shepherd: str
 
     @classmethod
     def from_rpcapi_draft(cls, draft):
@@ -350,6 +351,7 @@ class Submission:
             pages=draft.pages,
             source_format=SourceFormatName.objects.get(slug=draft.source_format),
             authors=[SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors],
+            shepherd=draft.shepherd,
         )
 
 
@@ -368,6 +370,7 @@ class SubmissionSerializer(serializers.Serializer):
     pages = serializers.IntegerField()
     source_format = SourceFormatNameSerializer()
     authors = SubmissionAuthorSerializer(many=True)
+    shepherd = serializers.EmailField()
 
 
 class SubmissionListItemSerializer(serializers.Serializer):

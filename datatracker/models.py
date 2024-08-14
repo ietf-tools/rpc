@@ -70,6 +70,7 @@ class Document(models.Model):
     stream = models.CharField(max_length=32, help_text="Stream of draft")
     pages = models.PositiveSmallIntegerField(help_text="Number of pages")
     source_format = models.CharField(max_length=16, help_text="Draft source file format")
+    shepherd = models.EmailField(blank=True, max_length=254)
 
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships

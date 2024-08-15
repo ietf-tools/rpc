@@ -3,11 +3,13 @@
 import datetime
 
 from dataclasses import dataclass
+from django.conf import settings
 from itertools import pairwise
 from rest_framework import serializers
 from simple_history.models import ModelDelta
 from simple_history.utils import update_change_reason
 from typing import Optional
+from urllib.parse import urljoin
 
 from .models import (
     ActionHolder,
@@ -354,6 +356,7 @@ class Submission:
     authors: list[SubmissionAuthor]
     shepherd: str
     std_level: StdLevelName | None
+    datatracker_url: str
 
     @classmethod
     def from_rpcapi_draft(cls, draft):
@@ -367,7 +370,8 @@ class Submission:
             source_format=SourceFormatName.objects.get(slug=draft.source_format),
             authors=[SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors],
             shepherd=draft.shepherd,
-            std_level=StdLevelName.objects.from_slug(draft.intended_std_level) if draft.intended_std_level else None
+            std_level=StdLevelName.objects.from_slug(draft.intended_std_level) if draft.intended_std_level else None,
+            datatracker_url=urljoin(settings.DATATRACKER_BASE, f"/doc/{draft.name}-{draft.rev}")
         )
 
 
@@ -388,6 +392,7 @@ class SubmissionSerializer(serializers.Serializer):
     authors = SubmissionAuthorSerializer(many=True)
     shepherd = serializers.EmailField()
     std_level = StdLevelNameSerializer(required=False)
+    datatracker_url = serializers.URLField()
 
 
 class SubmissionListItemSerializer(serializers.Serializer):

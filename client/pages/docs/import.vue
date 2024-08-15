@@ -98,21 +98,6 @@ const state = reactive({
 
 // COMPUTED
 
-const wasSubmission = computed(() => submission.value
-  ? {
-      documentId: submission.value.id,
-      name: submission.value.name,
-      rev: submission.value.rev,
-      authors: submission.value.authors.map(a => a.plainName),
-      pages: submission.value.pages,
-      shepherd: 'Dolly Shepherd',
-      streamManager: 'Ari Drecker',
-      submittedFormat: submission.value.sourceFormat,
-      datatrackerUrl: `http://localhost:8000/doc/${submission.value.name}-${submission.value.rev}/`
-    }
-  : {}
-)
-
 const timeToDeadline = computed(() => {
   try {
     if (state.deadline) {

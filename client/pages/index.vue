@@ -61,7 +61,7 @@ const stats = [
 // OVERLAY TEST
 
 const _overlayModal = inject(overlayModalKey)
-if(!_overlayModal) {
+if (!_overlayModal) {
   throw Error('Expected injection of overlayModalKey')
 }
 const { openOverlayModal } = _overlayModal

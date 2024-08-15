@@ -13,7 +13,7 @@ module.exports = {
     // 'plugin:vue/vue3-essential', // Priority A: Essential (Error Prevention)
     // 'plugin:vue/vue3-strongly-recommended' // Priority B: Strongly Recommended (Improving Readability)
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/stylistic',
+    'plugin:@typescript-eslint/stylistic'
   ],
   globals: {
     d3: true

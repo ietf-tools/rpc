@@ -33,7 +33,7 @@ const props = defineProps<{
 }>()
 
 const _deleteAssignment = inject(deleteAssignmentKey)
-if(!_deleteAssignment) {
+if (!_deleteAssignment) {
   throw Error('Expected delete assignment to be available')
 }
 const deleteAssignment = _deleteAssignment

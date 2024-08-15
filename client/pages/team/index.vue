@@ -46,7 +46,7 @@ import { overlayModalKey } from '~/providers/providerKeys'
 
 const snackbar = useSnackbar()
 const _overlayModal = inject(overlayModalKey)
-if(!_overlayModal) {
+if (!_overlayModal) {
   throw Error('Expected injection of overlayModalKey')
 }
 const { openOverlayModal } = _overlayModal

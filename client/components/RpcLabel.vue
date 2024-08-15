@@ -6,7 +6,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Label } from '~/rpctracker_client';
+import type { Label } from '~/rpctracker_client'
 
 export type Props = {
   label: Label

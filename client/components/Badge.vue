@@ -10,6 +10,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ColorEnum } from '~/rpctracker_client'
 
 export type Props = {
   /**
@@ -19,7 +20,7 @@ export type Props = {
   /**
    * Tailwind color name
    */
-  color?: keyof typeof colors
+  color?: ColorEnum
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -27,7 +28,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: ''
 })
 
-const colors = {
+export const colors: Record<ColorEnum, string> = {
   slate: 'bg-slate-50 text-slate-700 ring-slate-700/10',
   gray: 'bg-gray-50 text-gray-700 ring-gray-700/10',
   zinc: 'bg-zinc-50 text-zinc-700 ring-zinc-700/10',

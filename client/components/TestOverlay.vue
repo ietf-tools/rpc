@@ -35,8 +35,8 @@
 import { overlayModalMethodsKey } from '~/providers/providerKeys'
 
 const overlayModalMethods = inject(overlayModalMethodsKey) 
-if(!overlayModalMethods) {
-  throw Error('expected injection of overlayModalMethods');
+if (!overlayModalMethods) {
+  throw Error('expected injection of overlayModalMethods')
 }
 const { ok, cancel } = overlayModalMethods
 

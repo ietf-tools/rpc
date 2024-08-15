@@ -69,7 +69,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const _assignEditor = inject(assignEditorKey)
-if(!_assignEditor) {
+if (!_assignEditor) {
   throw Error('Required assignEditor injection')
 }
 const assignEditor = _assignEditor

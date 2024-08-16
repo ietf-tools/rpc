@@ -3,9 +3,13 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 -->
 <template>
   <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
-    <DocumentCard v-for="doc of props.documents" :document="doc"
-                  :selected="state.selectedDoc?.id === doc.id"
-                  @click="e => cardClicked(doc)"/>
+    <DocumentCard
+      v-for="doc of props.documents"
+      :document="doc"
+      :editors="props.editors"
+      :selected="state.selectedDoc?.id === doc.id"
+      @click="e => cardClicked(doc)"
+    />
   </ul>
 </template>
 
@@ -13,7 +17,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 import { provide } from 'vue'
 
 const props = defineProps({
-  documents: Array
+  documents: Array,
+  editors: Array
 })
 
 const state = reactive({

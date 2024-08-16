@@ -3,7 +3,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 -->
 <template>
   <li :key="cookedDocument.name"
-      :class="[props.selected ? 'border-violet-700' : 'border-gray-200', 'overflow-hidden rounded-xl border']">
+      :class="[props.selected ? 'border-violet-700' : 'border-gray-200', 'rounded-xl border']">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
       <Icon name="solar:document-text-line-duotone"
             class="h-8 w-8 flex-none"/>
@@ -47,8 +47,65 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
       <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Assignments</dt>
         <dd class="grow flex items-start gap-x-2">
-          <AssignmentTray :assignments="cookedDocument.assignments"
-                          @assignEditor="(editorId) => assignEditor(cookedDocument.id, editorId)"/>
+
+          <HeadlessListbox
+            :modelValue="cookedDocument.assignments_persons"
+            @update:modelValue="value => console.log(value)"
+            multiple
+          >
+            <div class="relative w-full">
+              <HeadlessListboxButton
+                class="flex flex-row gap-1 items-center relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-1 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
+              >
+                <div class="flex-auto ">
+                  <div v-for="person in uniqBy(cookedDocument.assignments_persons, person => person.id)" :key="assignment">
+                    {{ person.name }}
+                  </div>
+                  {{ selectedEditors }}
+                </div>
+                <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5" aria-hidden="true"/>
+              </HeadlessListboxButton>
+
+              <transition
+                leave-active-class="transition duration-100 ease-in"
+                leave-from-class="opacity-100"
+                leave-to-class="opacity-0"
+              >
+                <HeadlessListboxOptions
+                  class="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm z-50"
+                >
+                  <HeadlessListboxOption
+                    v-for="editor in cookedDocument.editors"
+                    v-slot="{ active, selected }"
+                    :key="editor.id"
+                    :value="editor"
+                    as="template"
+
+                  >
+                    <li
+                      :class="[
+                        active ? 'bg-amber-100 text-amber-900' : 'text-gray-900',
+                        'relative cursor-default select-none py-1 pl-1 pr-4',
+                      ]"
+                    >
+                      <div class="flex flex-row items-center">
+                        <span class="flex-auto"> {{ editor.avatar }}  {{ editor.name }}</span>
+                        <span
+                          class="w-5"
+                        >
+                          <Icon v-if="selected" name="heroicons:check-16-solid" class="h-5 w-5" aria-hidden="true"/>
+                        </span>
+                      </div>
+                      <p class="text-gray-500">Can complete by {{ editor.completeBy.toLocaleString(DateTime.DATE_MED) }}</p>
+                    </li>
+                  </HeadlessListboxOption>
+                </HeadlessListboxOptions>
+              </transition>
+            </div>
+          </HeadlessListbox>
+          <!-- <AssignmentTray :assignments="cookedDocument.assignments"
+                          @assignEditor="(editorId) => assignEditor(cookedDocument.id, editorId)"/> -->
+
         </dd>
       </div>
     </dl>
@@ -58,17 +115,39 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 <script setup>
 import { inject } from 'vue'
 import { DateTime } from 'luxon'
+import { uniqBy } from 'lodash-es'
 
 const props = defineProps({
   document: { type: Object, required: true },
-  selected: Boolean
+  selected: Boolean,
+  editors: Array
 })
 
+// const deleteAssignment = inject('deleteAssignment')
 const assignEditor = inject('assignEditor')
 
-const cookedDocument = computed(() => ({
-  ...props.document,
-  external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
-  assignments: props.document.assignments
-}))
+const emit = defineEmits(['assignEditorToDocument'])
+
+function toggleEditor (documentId, editorId) {
+  emit('assignEditorToDocument', documentId, editorId)
+}
+
+const cookedDocument = computed(() => {
+  const now = DateTime.now()
+  const teamPagesPerHour = 1.0
+  return ({
+    ...props.document,
+    external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
+    assignments: props.document.assignments,
+    assignments_persons: props.document.assignments.map(
+      assignment => props.editors.find(editor => editor.id === assignment.person.id)
+    ),
+    editors: props.editors.map(editor => ({
+      ...editor,
+      completeBy: now.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
+    }))
+  })
+})
+
+
 </script>

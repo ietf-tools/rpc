@@ -53,8 +53,10 @@
     <DocumentCards :documents="filteredDocuments"
                    @assign-editor-to-document="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"
                    @delete-assignment="deleteAssignment"
-                   @selection-changed="doc => state.selectedDoc = doc"/>
-    <EditorPalette :editors="editors?.toSorted(compareEditors)"/>
+                   @selection-changed="doc => state.selectedDoc = doc"
+                   :editors="editors?.toSorted(compareEditors)"
+                   />
+    <!-- <EditorPalette :editors="editors?.toSorted(compareEditors)"/> -->
   </div>
 </template>
 
@@ -74,7 +76,7 @@ const teamPagesPerHour = 1.0
 
 // COMPUTED
 
-const pending = computed(() => pendingPeople?.value || pendingDocs?.value || pendingAssignments?.value)
+const pending = computed(() => /*!!pendingPeople?.value || */ pendingDocs?.value || pendingAssignments?.value)
 const cookedAssignments = computed(() => assignments.value?.map(a => ({
   ...a,
   // person is a Person id - replace it with person details
@@ -102,11 +104,6 @@ const editors = computed(() => {
   return people.value?.map(person => ({
     ...person,
     assignments: assignments.value?.filter(a => a.person === person.id),
-    completeBy: (
-      state.selectedDoc
-        ? now.plus({ days: 7 * state.selectedDoc.pages / teamPagesPerHour / person.hours_per_week })
-        : null
-    )
   }))
 })
 
@@ -152,6 +149,7 @@ async function deleteAssignment (assignment) {
 }
 
 async function refresh () {
+  return
   const promises = []
   refreshPeople && promises.push(refreshPeople())
   refreshDocs && promises.push(refreshDocs())
@@ -162,6 +160,7 @@ async function refresh () {
 // DATA RETRIEVAL
 
 const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
+
 const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useAsyncData(
   'rfcsToBe',
   () => api.documentsInProgressList(),

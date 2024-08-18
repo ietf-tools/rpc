@@ -2,7 +2,7 @@
 Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-2beafc928684743ff886c0b164edb126
 -->
 <template>
-  <li :key="cookedDocument.name"
+  <li :key="cookedDocument.id"
       :class="[props.selected ? 'border-violet-700' : 'border-gray-200', 'rounded-xl border']">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
       <Icon name="solar:document-text-line-duotone"
@@ -49,8 +49,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
         <dd class="grow flex items-start gap-x-2">
 
           <HeadlessListbox
-            :modelValue="cookedDocument.assignments_persons"
-            @update:modelValue="value => console.log(value)"
+            :modelValue="cookedDocument.assignmentsPersonIds"
+            @update:modelValue="toggleEditor"
             multiple
           >
             <div class="relative w-full">
@@ -58,10 +58,9 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                 class="flex flex-row gap-1 items-center relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-1 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
               >
                 <div class="flex-auto ">
-                  <div v-for="person in uniqBy(cookedDocument.assignments_persons, person => person.id)" :key="assignment">
+                  <div v-for="person in uniqBy(cookedDocument.assignmentsPersons, person => person.id)" :key="person.id">
                     {{ person.name }}
                   </div>
-                  {{ selectedEditors }}
                 </div>
                 <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5" aria-hidden="true"/>
               </HeadlessListboxButton>
@@ -78,9 +77,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                     v-for="editor in cookedDocument.editors"
                     v-slot="{ active, selected }"
                     :key="editor.id"
-                    :value="editor"
+                    :value="editor.id"
                     as="template"
-
                   >
                     <li
                       :class="[
@@ -88,15 +86,17 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                         'relative cursor-default select-none py-1 pl-1 pr-4',
                       ]"
                     >
-                      <div class="flex flex-row items-center">
-                        <span class="flex-auto"> {{ editor.avatar }}  {{ editor.name }}</span>
+                      <div class="flex flex-column items-center">
                         <span
-                          class="w-5"
+                          class="w-8 pl-1"
                         >
                           <Icon v-if="selected" name="heroicons:check-16-solid" class="h-5 w-5" aria-hidden="true"/>
                         </span>
+                        <div class="flex-auto">
+                          {{ editor.name }}
+                          <p class="text-gray-500">Can complete by {{ editor.completeBy.toLocaleString(DateTime.DATE_MED) }}</p>
+                        </div>
                       </div>
-                      <p class="text-gray-500">Can complete by {{ editor.completeBy.toLocaleString(DateTime.DATE_MED) }}</p>
                     </li>
                   </HeadlessListboxOption>
                 </HeadlessListboxOptions>
@@ -113,7 +113,6 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 </template>
 
 <script setup>
-import { inject } from 'vue'
 import { DateTime } from 'luxon'
 import { uniqBy } from 'lodash-es'
 
@@ -123,31 +122,49 @@ const props = defineProps({
   editors: Array
 })
 
-// const deleteAssignment = inject('deleteAssignment')
 const assignEditor = inject('assignEditor')
+const deleteAssignment = inject('deleteAssignment')
 
-const emit = defineEmits(['assignEditorToDocument'])
+function toggleEditor (editorIds) {
+  console.log('toggleEditor', editorIds)
 
-function toggleEditor (documentId, editorId) {
-  emit('assignEditorToDocument', documentId, editorId)
+  const existingAssignmentEditorIds = props.document.assignments.map(
+    assignment => assignment.person.id
+  )
+
+  // Add new editors
+
+  const addEditorIds = editorIds.filter(editorId => !existingAssignmentEditorIds.includes(editorId))
+  console.log("Add", addEditorIds)
+  addEditorIds.forEach(editorId => assignEditor(props.document.id, editorId))
+
+  // Remove old editors (as assignments)
+  const removeEditorIds = existingAssignmentEditorIds.filter(editorId => !editorIds.includes(editorId))
+  const removeAssignments = props.document.assignments.filter(
+    assignment => removeEditorIds.includes(assignment.person.id)
+  )
+  removeAssignments.forEach(assignment => deleteAssignment(assignment))
+  console.log("Remove", removeAssignments)
 }
 
 const cookedDocument = computed(() => {
   const now = DateTime.now()
   const teamPagesPerHour = 1.0
+  const assignmentsPersons = props.document.assignments.map(
+    assignment => props.editors.find(editor => editor.id === assignment.person.id)
+  )
+
   return ({
     ...props.document,
     external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
     assignments: props.document.assignments,
-    assignments_persons: props.document.assignments.map(
-      assignment => props.editors.find(editor => editor.id === assignment.person.id)
-    ),
+    assignmentsPersons,
+    assignmentsPersonIds: assignmentsPersons.map(editor => editor.id),
     editors: props.editors.map(editor => ({
       ...editor,
       completeBy: now.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
     }))
   })
 })
-
 
 </script>

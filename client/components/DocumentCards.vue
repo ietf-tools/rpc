@@ -8,7 +8,6 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
       :document="doc"
       :editors="props.editors"
       :selected="state.selectedDoc?.id === doc.id"
-      @click="e => cardClicked(doc)"
     />
   </ul>
 </template>

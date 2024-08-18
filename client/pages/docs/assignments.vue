@@ -72,8 +72,6 @@ const state = reactive({
   roleFilter: null
 })
 
-const teamPagesPerHour = 1.0
-
 // COMPUTED
 
 const pending = computed(() => /*!!pendingPeople?.value || */ pendingDocs?.value || pendingAssignments?.value)
@@ -118,6 +116,8 @@ const currentFilterDesc = computed(() => {
 // METHODS
 
 async function saveAssignment (assignment) {
+  console.log('save assignment', assignment.rfcToBeId, assignment.personId)
+
   await $fetch('/api/rpc/assignments/', {
     body: {
       rfc_to_be: assignment.rfcToBeId,
@@ -141,6 +141,7 @@ function compareEditors (a, b) {
 }
 
 async function deleteAssignment (assignment) {
+  console.log('delete assignment', assignment.id)
   await $fetch(`/api/rpc/assignments/${assignment.id}`, {
     method: 'DELETE',
     headers: { 'X-CSRFToken': csrf.value }
@@ -149,7 +150,6 @@ async function deleteAssignment (assignment) {
 }
 
 async function refresh () {
-  return
   const promises = []
   refreshPeople && promises.push(refreshPeople())
   refreshDocs && promises.push(refreshDocs())

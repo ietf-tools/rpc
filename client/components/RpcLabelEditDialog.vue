@@ -82,7 +82,12 @@ if (!_overlayModalMethods) {
 const { ok, cancel } = _overlayModalMethods
 const snackbar = useSnackbar()
 
-const props = defineProps(['label', 'create'])
+type Props = {
+  label: Label
+  create: boolean
+}
+
+const props = defineProps<Props>()
 const label = reactive(props.label)
 
 async function save () {

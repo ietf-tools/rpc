@@ -49,6 +49,8 @@ import Fuse from 'fuse.js/basic'
 import { useSiteStore } from '@/stores/site'
 import Badge from '../../components/Badge.vue'
 import type { Column } from '~/components/DocumentTableTypes'
+import type { Assignment } from '~/rpctracker_client'
+import type { Tab } from '~/components/TabNavTypes'
 
 // ROUTING
 
@@ -68,7 +70,7 @@ const api = useApi()
 
 // DATA
 
-const tabs = [
+const tabs: Tab[] = [
   { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
   { id: 'pending', name: 'Pending Assignment', to: '/queue/pending', icon: 'uil:clock' },
   { id: 'exceptions', name: 'Exceptions', to: '/queue/exceptions', icon: 'uil:exclamation-triangle' },
@@ -98,20 +100,21 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: (row: any) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
+      link: (row) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
     },
     {
       key: 'labels',
+      field: 'labels',
       label: 'Labels',
-      labels: (row: any) => row.labels || []
+      labels: (row) => (row.labels || []) as string[]
     }
   ]
-  if (['submissions', 'exceptions'].includes(currentTab.value)) {
+  if (['submissions', 'exceptions'].includes(currentTab.value.toString())) {
     cols.push({
       key: 'submitted',
       label: 'Submitted',
       field: 'submitted',
-      format: (val: any) => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+      format: (val) => val ? DateTime.fromISO(val.toString()).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
       classes: 'text-xs'
     })
   }
@@ -134,16 +137,17 @@ const columns = computed(() => {
       classes: 'text-rose-600 dark:text-rose-500'
     })
   }
-  if (['exceptions', 'inprocess'].includes(currentTab.value)) {
+  if (['exceptions', 'inprocess'].includes(currentTab.value.toString())) {
     cols.push(...[
       {
         key: 'assignmentSet',
         label: 'Assignee (should allow multiple)',
         field: 'assignmentSet',
-        format: (assignment: any) => {
-          if (!assignment) {
+        format: (val: unknown) => {
+          if (!val) {
             return 'No assignments'
           }
+          const assignment = val as Assignment
           const person = people.value.find(p => p.id === assignment.person)
           if (!person) {
             return '(unknown person)'
@@ -223,7 +227,7 @@ const columns = computed(() => {
 })
 
 const currentTab = computed(() => {
-  return route.params.section || 'submissions'
+  return route.params.section.toString() || 'submissions'
 })
 
 const filteredDocuments = computed(() => {
@@ -291,7 +295,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
     lazy: true,
     default: () => ([]),
     transform: (resp) => {
-      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : resp
+      return currentTab.value === 'submissions' ? (resp && 'submitted' in resp ? resp.submitted : []) : resp
     }
   })
 

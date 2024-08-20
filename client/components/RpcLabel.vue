@@ -12,6 +12,6 @@ export type Props = {
   label: Label
 }
 
-const props = defineProps<Props>()
+export const props = defineProps<Props>()
 
 </script>

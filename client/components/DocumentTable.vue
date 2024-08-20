@@ -65,28 +65,29 @@
 import { RpcLabel, Icon, NuxtLink } from '#components'
 import { isArray, isFunction, orderBy } from 'lodash-es'
 import type { Column, Row } from './DocumentTableTypes'
+import type { ColorEnum, Label } from '~/rpctracker_client'
 
 const props = defineProps<{
   /**
    * Column definitions
    */
   columns: Column[]
-  data: Row[]  
+  data: Row[]
   /**
    * The property to use as the unique key for each row
-   */ 
+   */
   rowKey: string
   /**
    * Whether to show the loading animation or not
    */
-  loading?: Boolean
+  loading?: boolean
 }>()
 
 // DATA
 
 const state = reactive<{
   sortField: string
-  sortDirection: boolean | "asc" | "desc"
+  sortDirection: boolean | 'asc' | 'desc'
 }>({
   sortField: '',
   sortDirection: 'asc'
@@ -115,14 +116,14 @@ function sortBy (fieldName: string) {
 /**
  * Build cell node
  */
-function buildCell(col: Column, row: Row) {
+function buildCell (col: Column, row: Row) {
   const value = row[col.field]
   const values = isArray(value) ? value : [value]
   const formattedValues = col.format ? values.map(v => col.format ? col.format(v) : v) : values
   const children = []
 
   for (const [idx, val] of formattedValues.entries()) {
-    const contents = [typeof val === "string" || typeof val === "number" ? h('span', val) : val]
+    const contents = [typeof val === 'string' || typeof val === 'number' ? h('span', val) : val]
     const cssClasses = []
     if (col.icon) {
       contents.unshift(
@@ -169,15 +170,16 @@ function buildCell(col: Column, row: Row) {
 /**
  * Handle labels array in either string or object format
  */
-function transformLabels (val: string[], defaultColor: string) {
-  return val.map(item => {
+function transformLabels (val: string[], defaultColor: ColorEnum): Label[] {
+  return val.map((item): Label => {
     if (typeof item === 'string') {
       return {
-        label: item,
+        id: 0,
+        slug: item,
         color: defaultColor
       }
     } else {
-      return item
+      return item as Label
     }
   })
 }

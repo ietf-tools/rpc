@@ -76,7 +76,6 @@
                       </div>
                     </div>
 
-
                     <!-- Complexity Checks -->
                     <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                       <div>
@@ -127,15 +126,19 @@
 </template>
 
 <script setup lang="ts">
-
 // PROPS / EMITS
+
+type Submission = {
+  id: string
+  name: string
+}
 
 export type Props = {
   isShown: boolean
-  submissions: any[] // FIXME: improve typing
+  submissions: Submission[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+export const props = withDefaults(defineProps<Props>(), {
   isShown: false
 })
 
@@ -150,7 +153,7 @@ type State = {
   timezone: string
   hours: number
   manager: string
-  roles: any[] //FIXME: improve typing
+  roles: string[]
   confirmShown: boolean
   labelsApplied?: string
   capabilitiesNeeded?: string
@@ -167,8 +170,8 @@ const state = reactive<State>({
   confirmShown: false
 })
 
-const managers = []
-const timezones = process.client ? Intl.supportedValuesOf('timeZone') : []
+// const managers: string[] = []
+// const timezones: string[] = process.client ? Intl.supportedValuesOf('timeZone') : []
 
 type Label = {
   value: string
@@ -184,7 +187,7 @@ const capabilities: Label[] = [
   { value: 'codecomp-mib', label: 'Code components: MIB', description: 'Can work on MIB components.' },
   { value: 'codecomp-xml', label: 'Code components: XML', description: 'Can work on XML components.' },
   { value: 'codecomp-yang', label: 'Code components: YANG', description: 'Can work on YANG components.' },
-  { value: 'ianaconsid-beginner', label: 'IANA considerations: beginner', description: 'New to IANA considerations.'},
+  { value: 'ianaconsid-beginner', label: 'IANA considerations: beginner', description: 'New to IANA considerations.' }
 ]
 
 // todo get these from backend
@@ -192,7 +195,7 @@ const labels: Label[] = [
   { value: 'badversion', label: 'Version mismatch', description: 'Version does not match' },
   { value: 'badfont', label: 'Font issues', description: 'A font problem has been identified.' },
   { value: 'badv3xml', label: 'v3 XML Conv Failed', description: 'Conversion to v3 XML failed.' },
-  { value: 'badother', label: 'Other', description: 'A general problem has been identified.' },
+  { value: 'badother', label: 'Other', description: 'A general problem has been identified.' }
 ]
 
 const nameIpt = ref(null)

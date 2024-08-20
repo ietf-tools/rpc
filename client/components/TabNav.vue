@@ -36,14 +36,7 @@
 </template>
 
 <script setup lang="ts">
-
-type Tab = {
-  id: string
-  name: string
-  to: string
-  icon: string
-  iconAnimate: boolean
-}
+import type { Tab } from './TabNavTypes'
 
 export type Props = {
   tabs: Tab[]

@@ -132,9 +132,9 @@ import { overlayModalMethodsKey } from '~/providers/providerKeys'
 
 // DIALOG
 
-const overlayModalMethods = inject(overlayModalMethodsKey) 
+const overlayModalMethods = inject(overlayModalMethodsKey)
 if (!overlayModalMethods) {
-  throw Error('Expected injection of overlayModalMethods');
+  throw Error('Expected injection of overlayModalMethods')
 }
 const { ok, cancel } = overlayModalMethods
 

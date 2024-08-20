@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   middleware: [
-    function (to, from) {
+    function () {
       return navigateTo('/queue/submissions')
     }
   ]

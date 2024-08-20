@@ -25,12 +25,12 @@
     </tbody>
   </table>
 </template>
- 
+
 <script setup lang="ts">
 
 import { Duration } from 'luxon'
 import humanizeDuration from 'humanize-duration'
-import type { LabelStats }  from '../rpctracker_client'
+import type { LabelStats } from '../rpctracker_client'
 
 const api = useApi()
 

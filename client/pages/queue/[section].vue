@@ -46,6 +46,7 @@
 <script setup>
 import { DateTime } from 'luxon'
 import Fuse from 'fuse.js/basic'
+import { groupBy } from 'lodash-es'
 import { useSiteStore } from '@/stores/site'
 import Badge from '../components/Badge'
 
@@ -139,18 +140,27 @@ const columns = computed(() => {
         key: 'assignmentSet',
         label: 'Assignee (should allow multiple)',
         field: 'assignmentSet',
-        format: (assignment) => {
-          if (!assignment) {
+        formatType: 'all',
+        format: (assignments) => {
+          if (!assignments) {
             return 'No assignments'
           }
-          const person = people.value.find(p => p.id === assignment.person)
-          if (!person) {
-            return '(unknown person)'
+          const formattedValue = []
+          const assignmentsByPerson = groupBy(assignments, assignment => assignment.person.id)
+          for (const [, assignments] of Object.entries(assignmentsByPerson)) {
+            const person = people.value.find(p => p.id === assignments[0].person)
+            formattedValue.push(
+              h('span', [
+                person ? person.name : '(unknown person)',
+                ' ',
+                ...assignments
+                  .sort((a, b) => a.role.localeCompare(b.role, 'en'))
+                  .map(assignment => h(Badge, { label: assignment.role }))
+              ])
+            )
           }
-          return h('span', [
-            person.name,
-            h(Badge, { label: assignment.role })
-          ])
+
+          return formattedValue
         },
         link: row => row.assignee ? `/team/${row.assignee.id}` : undefined
       }

@@ -140,7 +140,11 @@ function sortBy (fieldName) {
  */
 function buildCell (col, row) {
   const values = isArray(row[col.field]) ? row[col.field] : [row[col.field]]
-  const formattedValues = col.format ? values.map(v => col.format(v)) : values
+  const formattedValues = col.format
+    ? col.formatType === 'all'
+      ? col.format(values)
+      : values.map(v => col.format(v))
+    : values
   const children = []
 
   const isLink = isFunction(col.link)

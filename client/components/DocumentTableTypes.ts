@@ -14,7 +14,8 @@ export interface Column {
   classes?: string | ((val: Value) => string)
   sortable?: boolean
   link?: string | ((row: Row, val: Value) => string)
-  format?: (value: Value) => VNode | string
+  formatType?: 'all'
+  format?: (value: Value) => VNode | VNode[] | string
   icon?: string
 }
 

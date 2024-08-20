@@ -46,6 +46,7 @@
 <script setup lang="ts">
 import { DateTime } from 'luxon'
 import Fuse from 'fuse.js/basic'
+import { groupBy } from 'lodash-es'
 import { useSiteStore } from '@/stores/site'
 import Badge from '../../components/Badge.vue'
 import type { Column } from '~/components/DocumentTableTypes'
@@ -138,28 +139,37 @@ const columns = computed(() => {
     })
   }
   if (['exceptions', 'inprocess'].includes(currentTab.value.toString())) {
-    cols.push(...[
+    cols.push(
       {
         key: 'assignmentSet',
         label: 'Assignee (should allow multiple)',
         field: 'assignmentSet',
-        format: (val: unknown) => {
+        formatType: 'all',
+        format: (val) => {
           if (!val) {
             return 'No assignments'
           }
-          const assignment = val as Assignment
-          const person = people.value.find(p => p.id === assignment.person)
-          if (!person) {
-            return '(unknown person)'
+          const assignments = val as Assignment[]
+          const formattedValue: VNode[] = []
+          const assignmentsByPerson = groupBy(assignments, assignment => assignment.person)
+          for (const [, assignments] of Object.entries(assignmentsByPerson)) {
+            const person = people.value.find(p => p.id === assignments[0].person)
+            formattedValue.push(
+              h('span', [
+                person ? person.name : '(unknown person)',
+                ' ',
+                ...assignments
+                  .sort((a, b) => a.role.localeCompare(b.role, 'en'))
+                  .map(assignment => h(Badge, { label: assignment.role }))
+              ])
+            )
           }
-          return h('span', [
-            person.name,
-            h(Badge, { label: assignment.role })
-          ])
+
+          return formattedValue
         },
         link: (row: any) => row.assignee ? `/team/${row.assignee.id}` : ''
       }
-    ])
+    )
     cols.push(...[
       {
         key: 'holder',

@@ -8,6 +8,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
       :document="doc"
       :editors="props.editors"
       :selected="state.selectedDoc?.id === doc.id"
+      :editorAssignedDocuments="editorAssignedDocuments"
     />
   </ul>
 </template>
@@ -29,12 +30,21 @@ const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment', 'selecti
 provide('assignEditor', (doc, editor) => emit('assignEditorToDocument', doc, editor))
 provide('deleteAssignment', (assignment) => emit('deleteAssignment', assignment))
 
-function cardClicked (doc) {
-  if (state.selectedDoc?.id === doc.id) {
-    state.selectedDoc = null
-  } else {
-    state.selectedDoc = doc
-  }
-  emit('selectionChanged', state.selectedDoc)
-}
+const editorAssignedDocuments = computed(() =>
+  props.documents.reduce((document, editorAssignedDocuments) => {
+    document.assignments?.forEach(assignment => {
+      const editorId = assignment.person.id
+      if (!editorAssignedDocuments[editorId]) {
+        editorAssignedDocuments[editorId] = []
+      }
+      if (!editorAssignedDocuments[editorId].find(
+        existingDocument => existingDocument.id === document.id
+      )) {
+        editorAssignedDocuments[editorId].push(document)
+      }
+    })
+    return editorAssignedDocuments
+  }, {})
+)
+
 </script>

@@ -56,12 +56,10 @@
                    @selection-changed="doc => state.selectedDoc = doc"
                    :editors="editors?.toSorted(compareEditors)"
                    />
-    <!-- <EditorPalette :editors="editors?.toSorted(compareEditors)"/> -->
   </div>
 </template>
 
 <script setup>
-import { DateTime } from 'luxon'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 const api = useApi()
@@ -74,7 +72,7 @@ const state = reactive({
 
 // COMPUTED
 
-const pending = computed(() => /*!!pendingPeople?.value || */ pendingDocs?.value || pendingAssignments?.value)
+const pending = computed(() => pendingPeople?.value || pendingDocs?.value || pendingAssignments?.value)
 const cookedAssignments = computed(() => assignments.value?.map(a => ({
   ...a,
   // person is a Person id - replace it with person details
@@ -98,10 +96,9 @@ const filteredDocuments = computed(
 )
 
 const editors = computed(() => {
-  const now = DateTime.now()
   return people.value?.map(person => ({
     ...person,
-    assignments: assignments.value?.filter(a => a.person === person.id),
+    assignments: assignments.value?.filter(a => a.person === person.id)
   }))
 })
 

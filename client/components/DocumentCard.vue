@@ -92,9 +92,19 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                         >
                           <Icon v-if="selected" name="heroicons:check-16-solid" class="h-5 w-5" aria-hidden="true"/>
                         </span>
-                        <div class="flex-auto">
+                        <div class="flex-1">
                           {{ editor.name }}
-                          <p class="text-gray-500">Can complete by {{ editor.completeBy.toLocaleString(DateTime.DATE_MED) }}</p>
+                          <p class="text-gray-500">
+                            <template v-if="editor.assignedDocuments">
+                              Currently assigned
+                              <span v-for="document in editor.assignedDocuments">
+                                {{ document.name }}, {{ document.pages }} pages
+                              </span>
+                            </template>
+                            <template v-else>
+                              Can complete by {{ editor.completeBy.toLocaleString(DateTime.DATE_MED) }}
+                            </template>
+                          </p>
                         </div>
                       </div>
                     </li>
@@ -103,9 +113,6 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
               </transition>
             </div>
           </HeadlessListbox>
-          <!-- <AssignmentTray :assignments="cookedDocument.assignments"
-                          @assignEditor="(editorId) => assignEditor(cookedDocument.id, editorId)"/> -->
-
         </dd>
       </div>
     </dl>
@@ -119,23 +126,20 @@ import { uniqBy } from 'lodash-es'
 const props = defineProps({
   document: { type: Object, required: true },
   selected: Boolean,
-  editors: Array
+  editors: Array,
+  editorAssignedDocuments: Object
 })
 
 const assignEditor = inject('assignEditor')
 const deleteAssignment = inject('deleteAssignment')
 
 function toggleEditor (editorIds) {
-  console.log('toggleEditor', editorIds)
-
   const existingAssignmentEditorIds = props.document.assignments.map(
     assignment => assignment.person.id
   )
 
   // Add new editors
-
   const addEditorIds = editorIds.filter(editorId => !existingAssignmentEditorIds.includes(editorId))
-  console.log("Add", addEditorIds)
   addEditorIds.forEach(editorId => assignEditor(props.document.id, editorId))
 
   // Remove old editors (as assignments)
@@ -144,7 +148,6 @@ function toggleEditor (editorIds) {
     assignment => removeEditorIds.includes(assignment.person.id)
   )
   removeAssignments.forEach(assignment => deleteAssignment(assignment))
-  console.log("Remove", removeAssignments)
 }
 
 const cookedDocument = computed(() => {
@@ -160,10 +163,17 @@ const cookedDocument = computed(() => {
     assignments: props.document.assignments,
     assignmentsPersons,
     assignmentsPersonIds: assignmentsPersons.map(editor => editor.id),
-    editors: props.editors.map(editor => ({
-      ...editor,
-      completeBy: now.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
-    }))
+    editors: props.editors
+      .filter(editor => {
+        // TODO: filter inactive editors see https://github.com/ietf-tools/rpc/pull/165#issuecomment-2297493964
+        return true
+      })
+      .map(editor => ({
+        ...editor,
+        assignedDocuments: props.editorAssignedDocuments[editor.id],
+        completeBy: now.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
+      }))
+      .sort((a, b) => a.completeBy.toMillis() - b.completeBy.toMillis())
   })
 })
 

@@ -164,10 +164,6 @@ const cookedDocument = computed(() => {
     assignmentsPersons,
     assignmentsPersonIds: assignmentsPersons.map(editor => editor.id),
     editors: props.editors
-      .filter(editor => {
-        // TODO: filter inactive editors see https://github.com/ietf-tools/rpc/pull/165#issuecomment-2297493964
-        return true
-      })
       .map(editor => ({
         ...editor,
         assignedDocuments: props.editorAssignedDocuments[editor.id],

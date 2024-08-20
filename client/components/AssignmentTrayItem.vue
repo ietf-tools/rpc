@@ -21,15 +21,12 @@
 <script setup lang="ts">
 import { inject } from 'vue'
 import { deleteAssignmentKey } from '~/providers/providerKeys'
+import type { Assignment, RpcPerson } from '~/rpctracker_client'
+
+type AssignmentResolvedPerson = Omit<Assignment, 'person'> & { person: RpcPerson }
 
 const props = defineProps<{
-  assignment: {
-    id: string
-    person?: {
-      name: string
-    }
-    role: string
-  }
+  assignment: AssignmentResolvedPerson
 }>()
 
 const _deleteAssignment = inject(deleteAssignmentKey)

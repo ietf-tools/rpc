@@ -38,14 +38,12 @@ export type Props = {
 
 const props = defineProps<Props>()
 
-DateTime.DATE_MED
-
 // Compute data for the component
 const cookedEditor = computed(() => ({
   name: props.editor.name,
   initials: props.editor.name[0],
   href: '#',
-  detail: props.editor.completeBy ? `Can complete by ${props.editor.completeBy.toLocaleString("en", DateTime.DATE_MED)}` : '',
+  detail: props.editor.completeBy ? `Can complete by ${props.editor.completeBy.toLocaleString('en', DateTime.DATE_MED)}` : '',
   bgColor: 'bg-pink-600'
 }))
 

@@ -33,7 +33,7 @@ const sortableOptions = {
   sort: false
 }
 
-function addEditor (event: SortableEvent )  {
+function addEditor (event: SortableEvent) {
   event.item.remove() // remove the cloned editor from the DOM
   emit('assignEditor', event.clone.dataset.editorId)
 }

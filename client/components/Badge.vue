@@ -23,8 +23,8 @@ export type Props = {
   color?: ColorEnum
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  color: "violet",
+export const props = withDefaults(defineProps<Props>(), {
+  color: 'violet',
   label: ''
 })
 

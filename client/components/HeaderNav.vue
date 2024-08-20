@@ -146,7 +146,7 @@ function switchUser (rpcPersonId: string | null | number) {
 // DATA
 
 const userNavigation = [
-  { name: 'Your profile', href: '/' },
+  { name: 'Your profile', href: '/' }
 ]
 
 const { data: _allUsers } = await useAsyncData(

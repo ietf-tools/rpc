@@ -8,12 +8,11 @@
 </template>
 
 <script setup lang="ts">
-
 type Props = {
   pending: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+export const props = withDefaults(defineProps<Props>(), {
   pending: false
 })
 

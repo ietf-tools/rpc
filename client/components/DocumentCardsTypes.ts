@@ -1,4 +1,4 @@
-export interface ADocument {
+export interface DocumentCardType {
   id: string
   name: string
   external_deadline: string

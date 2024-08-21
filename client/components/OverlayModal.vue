@@ -31,14 +31,11 @@
 
 <script setup lang="ts">
 import { overlayModalMethodsKey } from '../providers/providerKeys'
+import type { OverlayModal } from '../providers/providerKeys'
 // PROPS / EMITS
 
 export type Props = {
-  opts: {
-    mode?: 'side' | 'overlay'
-    component?: VNode
-    componentProps?: Record<string, unknown>
-  }
+  opts: Parameters<OverlayModal['openOverlayModal']>[0]
   isShown: boolean
 }
 
@@ -50,7 +47,7 @@ export const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   'update:isShown': [isShown: boolean]
   'closeOk': [value?: string]
-  'closeCancel': [value?: string]
+  'closeCancel': [reason?: any]
 }>()
 
 // PROVIDE

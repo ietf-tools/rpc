@@ -34,6 +34,7 @@ module.exports = {
     'vue/singleline-html-element-content-newline': 'off',
     'no-undef': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
-    '@typescript-eslint/no-explicit-any': 'off' // Reenable after types improve
+    '@typescript-eslint/no-explicit-any': 'off', // Reenable after types improve
+    '@typescript-eslint/ban-ts-comment': 'off'
   }
 }

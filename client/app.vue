@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { overlayModalKey } from './providers/providerKeys'
-import type { Mode } from './providers/providerKeys'
+import type { OverlayModal } from './providers/providerKeys'
 
 // const colorMode = useColorMode()
 
@@ -43,23 +43,19 @@ useHead({
 
 type OverlayModalState = {
   isShown: boolean
-  opts: {
-    component: null | Component
-    componentProps: Record<string, unknown>
-    mode?: Mode
-  }
-  promiseResolve: null | ((value: void | PromiseLike<void>) => void)
-  promiseReject: null | ((value: void | PromiseLike<void>) => void)
+  opts: Parameters<OverlayModal['openOverlayModal']>[0]
+  promiseResolve?: (value?: string | PromiseLike<string | undefined>) => void
+  promiseReject?: (reason?: any) => void
 }
 
 const overlayModalState = shallowReactive<OverlayModalState>({
   isShown: false,
   opts: {
-    component: null,
-    componentProps: {}
+    component: undefined,
+    componentProps: undefined
   },
-  promiseResolve: null,
-  promiseReject: null
+  promiseResolve: undefined,
+  promiseReject: undefined
 })
 
 provide(overlayModalKey, {
@@ -69,7 +65,7 @@ provide(overlayModalKey, {
       componentProps: opts.componentProps ?? {},
       mode: opts.mode ?? 'overlay'
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<string | undefined>((resolve, reject) => {
       overlayModalState.promiseResolve = resolve
       overlayModalState.promiseReject = reject
       overlayModalState.isShown = true

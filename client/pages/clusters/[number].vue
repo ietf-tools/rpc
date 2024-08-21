@@ -34,7 +34,12 @@ const state = reactive({
 
 // METHODS
 
-const { data: cluster, pending, refresh } = await useFetch(`/api/rpc/clusters/${clusterNumber}`, {
+type Cluster = {
+  number: number
+  documents: { name: string }[]
+}
+
+const { data: cluster, pending, refresh } = await useFetch<Cluster>(`/api/rpc/clusters/${clusterNumber}`, {
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {

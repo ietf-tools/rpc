@@ -2,23 +2,25 @@ import type { InjectionKey, VNode, Component } from 'vue'
 
 export type Mode = 'overlay' | 'side'
 
-/**
- * Overlay modal (injection for Vue)
- */
-export const overlayModalKey = Symbol('overlayModalKey') as InjectionKey<{
+export type OverlayModal = {
   /**
    * Open an overlay modal
    */
   openOverlayModal: (opts: {
-    component: null | VNode | Component
+    component?: null | VNode | Component
     componentProps?: null | Record<string, unknown>
     mode?: Mode
-  }) => Promise<void>
+  }) => Promise<string | undefined>
   /**
  * Close an overlay modal
  */
   closeOverlayModal: () => void
-}>
+}
+
+/**
+ * Overlay modal (injection for Vue)
+ */
+export const overlayModalKey = Symbol('overlayModalKey') as InjectionKey<OverlayModal>
 
 /**
  * Overlay modal methods for use in modal buttons

@@ -71,7 +71,6 @@ const state = reactive({
 
 // METHODS
 
-
 const { data: clusters, pending, refresh } = await useFetch('/api/rpc/clusters/', {
   baseURL: '/',
   server: false,

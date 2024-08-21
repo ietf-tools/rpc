@@ -34,7 +34,7 @@
 <script setup lang="ts">
 import { overlayModalMethodsKey } from '~/providers/providerKeys'
 
-const overlayModalMethods = inject(overlayModalMethodsKey) 
+const overlayModalMethods = inject(overlayModalMethodsKey)
 if (!overlayModalMethods) {
   throw Error('expected injection of overlayModalMethods')
 }

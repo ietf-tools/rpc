@@ -59,10 +59,10 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 import { inject } from 'vue'
 import { DateTime } from 'luxon'
 import { assignEditorKey } from '~/providers/providerKeys'
-import type { ADocument } from './DocumentCardsTypes'
+import type { DocumentCardType } from './DocumentCardsTypes'
 
 type Props = {
-  document: ADocument
+  document: DocumentCardType
   selected?: boolean
 }
 

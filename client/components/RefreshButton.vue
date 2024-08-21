@@ -8,7 +8,7 @@
 </template>
 
 <script setup lang="ts">
-type Props = {
+export type Props = {
   pending: boolean
 }
 

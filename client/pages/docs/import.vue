@@ -180,7 +180,9 @@ const { data: dtDraftData } = await useAsyncData(
   async () => {
     try {
       const { documentId } = route.query
-      if (typeof documentId !== 'number') throw Error('Expected documentId')
+      if (typeof documentId !== 'number') {
+        throw Error('Expected documentId')
+      }
       return await api.submissionsRetrieve({ documentId })
     } catch (e) {
       snackbar.add({

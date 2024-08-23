@@ -12,7 +12,7 @@
 <script setup lang="ts">
 import type { ColorEnum } from '~/rpctracker_client'
 
-export type Props = {
+type Props = {
   /**
    * Label text
    */
@@ -23,12 +23,12 @@ export type Props = {
   color?: ColorEnum
 }
 
-export const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   color: 'violet',
   label: ''
 })
 
-export const colors: Record<ColorEnum, string> = {
+const colors: Record<ColorEnum, string> = {
   slate: 'bg-slate-50 text-slate-700 ring-slate-700/10',
   gray: 'bg-gray-50 text-gray-700 ring-gray-700/10',
   zinc: 'bg-zinc-50 text-zinc-700 ring-zinc-700/10',

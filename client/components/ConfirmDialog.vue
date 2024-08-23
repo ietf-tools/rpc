@@ -37,13 +37,13 @@
 <script setup lang="ts">
 // PROPS / EMITS
 
-export type Props = {
+type Props = {
   isShown: boolean
   title: string
   caption: string
 }
 
-export const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   title: 'Confirm',
   caption: 'Are you sure you want to continue?'
 })

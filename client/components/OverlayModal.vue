@@ -34,12 +34,12 @@ import { overlayModalMethodsKey } from '../providers/providerKeys'
 import type { OverlayModal } from '../providers/providerKeys'
 // PROPS / EMITS
 
-export type Props = {
+type Props = {
   opts: Parameters<OverlayModal['openOverlayModal']>[0]
   isShown: boolean
 }
 
-export const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   opts: () => ({}),
   isShown: false
 })

@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import type { Tab } from './TabNavTypes'
 
-export type Props = {
+type Props = {
   tabs: Tab[]
   selected: string
 }

@@ -150,6 +150,7 @@ class Name(models.Model):
     slug = models.CharField(max_length=32, primary_key=True)
     name = models.CharField(max_length=255)
     desc = models.TextField(blank=True)
+    used = models.BooleanField(default=True)
 
     class Meta:
         abstract = True
@@ -185,6 +186,7 @@ class StdLevelName(Name):
 class TlpBoilerplateChoiceName(Name):
     pass
 
+
 class StreamNameManager(models.Manager):
     def from_slug(self, slug):
         if self.filter(slug=slug).exists():
@@ -195,6 +197,7 @@ class StreamNameManager(models.Manager):
                 return self.create(slug=slug, name=name, desc=desc)
             except (DatatrackerFetchFailure, NoSuchSlug):
                 raise self.model.DoesNotExist
+
 
 class StreamName(Name):
     objects = StreamNameManager()

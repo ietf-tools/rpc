@@ -8,10 +8,10 @@
 <script setup lang="ts">
 import type { Label } from '~/rpctracker_client'
 
-export type Props = {
+type Props = {
   label: Label
 }
 
-export const props = defineProps<Props>()
+const props = defineProps<Props>()
 
 </script>

@@ -133,12 +133,12 @@ type Submission = {
   name: string
 }
 
-export type Props = {
+type Props = {
   isShown: boolean
   submissions: Submission[]
 }
 
-export const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   isShown: false
 })
 

@@ -149,7 +149,7 @@ const userNavigation = [
   { name: 'Your profile', href: '/' }
 ]
 
-const { data: _allUsers } = await useAsyncData(
+const { data: allUsers } = await useAsyncData(
   'allUsers',
   async () => {
     try {
@@ -164,10 +164,5 @@ const { data: _allUsers } = await useAsyncData(
     transform: (resp) => resp?.toSorted((a, b) => a.name.localeCompare(b.name))
   }
 )
-
-if (!_allUsers || !Array.isArray(_allUsers)) {
-  throw Error('Required allUsers data')
-}
-const allUsers = _allUsers
 
 </script>

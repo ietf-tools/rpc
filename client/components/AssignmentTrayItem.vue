@@ -18,14 +18,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue'
+import { deleteAssignmentKey } from '~/providers/providerKeys'
+import type { Assignment, RpcPerson } from '~/rpctracker_client'
 
-const props = defineProps({
-  assignment: Object
-})
+type AssignmentResolvedPerson = Omit<Assignment, 'person'> & { person: RpcPerson }
 
-const deleteAssignment = inject('deleteAssignment')
+const props = defineProps<{
+  assignment: AssignmentResolvedPerson
+}>()
+
+const _deleteAssignment = inject(deleteAssignmentKey)
+if (!_deleteAssignment) {
+  throw Error('Expected delete assignment to be available')
+}
+const deleteAssignment = _deleteAssignment
 
 const assignment = computed(() => ({
   id: props.assignment.id,

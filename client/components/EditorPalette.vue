@@ -18,12 +18,14 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Sortable } from 'sortablejs-vue3'
 
-const props = defineProps({
-  editors: Array
-})
+type Props = {
+  editors: never[]
+}
+
+const props = defineProps<Props>()
 
 const sortableOptions = {
   group: {
@@ -33,4 +35,5 @@ const sortableOptions = {
   },
   sort: false
 }
+
 </script>

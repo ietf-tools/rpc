@@ -14,8 +14,9 @@
   </Sortable>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Sortable } from 'sortablejs-vue3'
+import type { SortableEvent } from 'sortablejs'
 
 const props = defineProps({
   assignments: Array
@@ -32,7 +33,7 @@ const sortableOptions = {
   sort: false
 }
 
-function addEditor (event) {
+function addEditor (event: SortableEvent) {
   event.item.remove() // remove the cloned editor from the DOM
   emit('assignEditor', event.clone.dataset.editorId)
 }

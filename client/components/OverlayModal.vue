@@ -29,39 +29,35 @@
   </HeadlessTransitionRoot>
 </template>
 
-<script setup>
-
+<script setup lang="ts">
+import { overlayModalMethodsKey } from '../providers/providerKeys'
+import type { OverlayModal } from '../providers/providerKeys'
 // PROPS / EMITS
 
-defineProps({
-  /**
-   * Dialog Options
-   */
-  opts: {
-    type: Object,
-    default: () => ({}),
-    required: true
-  },
-  /**
-   * Modal Visibility State
-   */
-  isShown: {
-    type: Boolean,
-    default: false,
-    required: true
-  }
+export type Props = {
+  opts: Parameters<OverlayModal['openOverlayModal']>[0]
+  isShown: boolean
+}
+
+export const props = withDefaults(defineProps<Props>(), {
+  opts: () => ({}),
+  isShown: false
 })
 
-const emit = defineEmits(['update:isShown', 'closeOk', 'closeCancel'])
+const emit = defineEmits<{
+  'update:isShown': [isShown: boolean]
+  'closeOk': [value?: string]
+  'closeCancel': [reason?: any]
+}>()
 
 // PROVIDE
 
-provide('overlayModalMethods', {
-  ok: (val) => {
+provide(overlayModalMethodsKey, {
+  ok: (val?: string) => {
     emit('update:isShown', false)
     emit('closeOk', val)
   },
-  cancel: (val) => {
+  cancel: (val?: string) => {
     emit('update:isShown', false)
     emit('closeCancel', val)
   }

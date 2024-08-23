@@ -35,17 +35,16 @@
   </nav>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { Tab } from './TabNavTypes'
 
-const props = defineProps({
-  tabs: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
-  selected: {
-    type: String
-  }
+export type Props = {
+  tabs: Tab[]
+  selected: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  tabs: () => []
 })
 
 // defineEmits(['update:selected'])

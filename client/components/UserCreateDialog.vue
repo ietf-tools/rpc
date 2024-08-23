@@ -127,15 +127,31 @@
   <ConfirmDialog v-model:isShown="state.confirmShown" title="Manager Role Selected" caption="Are you sure you want to create a new team member with the Manager role?" />
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { overlayModalMethodsKey } from '~/providers/providerKeys'
 
 // DIALOG
 
-const { ok, cancel } = inject('overlayModalMethods')
+const overlayModalMethods = inject(overlayModalMethodsKey)
+if (!overlayModalMethods) {
+  throw Error('Expected injection of overlayModalMethods')
+}
+const { ok, cancel } = overlayModalMethods
 
 // DATA
 
-const state = reactive({
+type State = {
+  name: string
+  email: string
+  datatracker: string
+  timezone: string
+  hours: number
+  manager: string
+  roles: string[]
+  confirmShown: boolean
+}
+
+const state = reactive<State>({
   name: '',
   email: '',
   datatracker: '',
@@ -146,7 +162,7 @@ const state = reactive({
   confirmShown: false
 })
 
-const managers = []
+const managers: string[] = []
 const timezones = process.client ? Intl.supportedValuesOf('timeZone') : []
 const roles = [
   { value: 'formatting', label: 'Formatter', description: 'An editor for docs that require extensive XML formatting.' },

@@ -55,20 +55,29 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
   </li>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject } from 'vue'
 import { DateTime } from 'luxon'
+import { assignEditorKey } from '~/providers/providerKeys'
+import type { DocumentCardType } from './DocumentCardsTypes'
 
-const props = defineProps({
-  document: { type: Object, required: true },
-  selected: Boolean
-})
+type Props = {
+  document: DocumentCardType
+  selected?: boolean
+}
 
-const assignEditor = inject('assignEditor')
+const props = defineProps<Props>()
+
+const _assignEditor = inject(assignEditorKey)
+if (!_assignEditor) {
+  throw Error('Required assignEditor injection')
+}
+const assignEditor = _assignEditor
 
 const cookedDocument = computed(() => ({
   ...props.document,
   external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
   assignments: props.document.assignments
 }))
+
 </script>

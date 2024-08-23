@@ -20,8 +20,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useAsyncData } from '#app'
+import type { Column } from '~/components/DocumentTableTypes';
 
 const api = useApi()
 const userStore = useUserStore()
@@ -38,7 +39,7 @@ const pending = computed(() => assignmentsPending.value || documentsPending.valu
 
 // DATA
 
-const columns = [
+const columns: Column[] = [
   {
     key: 'name',
     label: 'Document',
@@ -47,9 +48,13 @@ const columns = [
     link: row => `/docs/${row.name}`
   },
   {
+    field: 'labels',
     key: 'labels',
     label: 'Labels',
-    labels: row => row.labels.map(lblId => labels.value.find(lbl => lbl.id === lblId)) || []
+    labels: row => {
+      // @ts-ignore
+      return row.labels.map(lblId => labels.value.find(lbl => lbl.id === lblId)) || []
+    }
   }
 ]
 

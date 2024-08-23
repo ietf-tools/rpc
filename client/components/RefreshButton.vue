@@ -7,12 +7,13 @@
   </button>
 </template>
 
-<script setup>
-defineProps({
-  pending: {
-    type: Boolean,
-    default: false
-  }
+<script setup lang="ts">
+export type Props = {
+  pending: boolean
+}
+
+export const props = withDefaults(defineProps<Props>(), {
+  pending: false
 })
 
 defineEmits(['refresh'])

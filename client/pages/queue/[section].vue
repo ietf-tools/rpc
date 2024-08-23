@@ -43,12 +43,15 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { DateTime } from 'luxon'
 import Fuse from 'fuse.js/basic'
 import { groupBy } from 'lodash-es'
 import { useSiteStore } from '@/stores/site'
-import Badge from '../components/Badge'
+import Badge from '../../components/Badge.vue'
+import type { Column } from '~/components/DocumentTableTypes'
+import type { Assignment } from '~/rpctracker_client'
+import type { Tab } from '~/components/TabNavTypes'
 
 // ROUTING
 
@@ -68,7 +71,7 @@ const api = useApi()
 
 // DATA
 
-const tabs = [
+const tabs: Tab[] = [
   { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
   { id: 'pending', name: 'Pending Assignment', to: '/queue/pending', icon: 'uil:clock' },
   { id: 'exceptions', name: 'Exceptions', to: '/queue/exceptions', icon: 'uil:exclamation-triangle' },
@@ -82,7 +85,7 @@ const deadlineCol = {
   key: 'deadline',
   label: 'Deadline',
   field: 'deadline',
-  format: val => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+  format: (val: any) => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
   classes: 'text-xs'
 }
 
@@ -92,26 +95,27 @@ const { data: people } = await useAsyncData(
 )
 
 const columns = computed(() => {
-  const cols = [
+  const cols: Column[] = [
     {
       key: 'name',
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: row => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
+      link: (row) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
     },
     {
       key: 'labels',
+      field: 'labels',
       label: 'Labels',
-      labels: row => row.labels || []
+      labels: (row) => (row.labels || []) as string[]
     }
   ]
-  if (['submissions', 'exceptions'].includes(currentTab.value)) {
+  if (['submissions', 'exceptions'].includes(currentTab.value.toString())) {
     cols.push({
       key: 'submitted',
       label: 'Submitted',
       field: 'submitted',
-      format: val => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+      format: (val) => val ? DateTime.fromISO(val.toString()).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
       classes: 'text-xs'
     })
   }
@@ -123,7 +127,7 @@ const columns = computed(() => {
       key: 'rfc',
       label: 'RFC',
       field: 'rfc',
-      format: val => `RFC ${val}`
+      format: (val: any) => `RFC ${val}`
     })
   }
   if (currentTab.value === 'exception') {
@@ -134,19 +138,20 @@ const columns = computed(() => {
       classes: 'text-rose-600 dark:text-rose-500'
     })
   }
-  if (['exceptions', 'inprocess'].includes(currentTab.value)) {
-    cols.push(...[
+  if (['exceptions', 'inprocess'].includes(currentTab.value.toString())) {
+    cols.push(
       {
         key: 'assignmentSet',
         label: 'Assignee (should allow multiple)',
         field: 'assignmentSet',
         formatType: 'all',
-        format: (assignments) => {
-          if (!assignments) {
+        format: (val) => {
+          if (!val) {
             return 'No assignments'
           }
-          const formattedValue = []
-          const assignmentsByPerson = groupBy(assignments, assignment => assignment.person.id)
+          const assignments = val as Assignment[]
+          const formattedValue: VNode[] = []
+          const assignmentsByPerson = groupBy(assignments, assignment => assignment.person)
           for (const [, assignments] of Object.entries(assignmentsByPerson)) {
             const person = people.value.find(p => p.id === assignments[0].person)
             formattedValue.push(
@@ -162,16 +167,16 @@ const columns = computed(() => {
 
           return formattedValue
         },
-        link: row => row.assignee ? `/team/${row.assignee.id}` : undefined
+        link: (row: any) => row.assignee ? `/team/${row.assignee.id}` : ''
       }
-    ])
+    )
     cols.push(...[
       {
         key: 'holder',
         label: 'Action Holder (should allow multiple)',
         field: 'holder',
-        format: val => val?.name || 'No Action Holders',
-        link: row => `/team/${row.holder?.id}`
+        format: (val: any) => val?.name || 'No Action Holders',
+        link: (row: any) => `/team/${row.holder?.id}`
       },
       deadlineCol
     ])
@@ -187,7 +192,7 @@ const columns = computed(() => {
         key: 'estimatedCompletion',
         label: 'Estimated Completion',
         field: 'estimatedCompletion',
-        format: val => {
+        format: (val: any) => {
           const dt = DateTime.fromISO(val)
           return dt.isValid ? dt.toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '---'
         },
@@ -197,7 +202,7 @@ const columns = computed(() => {
         key: 'status',
         label: 'Status',
         field: 'status',
-        classes: val => (val === 'overdue') ? 'font-medium text-rose-600 dark:text-rose-500' : 'text-emerald-600 dark:text-emerald-500'
+        classes: (val: any) => (val === 'overdue') ? 'font-medium text-rose-600 dark:text-rose-500' : 'text-emerald-600 dark:text-emerald-500'
       }
     ])
   }
@@ -207,7 +212,7 @@ const columns = computed(() => {
       label: 'Cluster',
       field: 'cluster',
       icon: 'pajamas:group',
-      link: val => val ? `/clusters/${val.cluster}` : ''
+      link: (val: any) => val ? `/clusters/${val.cluster}` : ''
     })
   }
   if (currentTab.value === 'published') {
@@ -216,14 +221,14 @@ const columns = computed(() => {
         key: 'owner',
         label: 'PUB Owner',
         field: 'owner',
-        format: val => val?.name || 'Unknown',
-        link: row => `/team/${row.holder?.id}`
+        format: (val: any) => val?.name || 'Unknown',
+        link: (row: any) => `/team/${row.holder?.id}`
       },
       {
         key: 'published',
         label: 'Published',
         field: 'published',
-        format: val => DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY),
+        format: (val: any) => DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY),
         classes: 'text-xs'
       }
     ])
@@ -232,7 +237,7 @@ const columns = computed(() => {
 })
 
 const currentTab = computed(() => {
-  return route.params.section || 'submissions'
+  return route.params.section.toString() || 'submissions'
 })
 
 const filteredDocuments = computed(() => {
@@ -244,13 +249,13 @@ const filteredDocuments = computed(() => {
       docs = documents.value
       break
     case 'pending':
-      docs = documents.value?.filter(d => d.assignmentSet?.length === 0)
+      docs = documents.value?.filter((d: any) => d.assignmentSet?.length === 0)
       break
     case 'exceptions':
-      docs = documents.value?.filter(d => d.labels?.filter(lbl => lbl.isException).length)
+      docs = documents.value?.filter((d: any) => d.labels?.filter((lbl: any) => lbl.isException).length)
       break
     case 'inprocess':
-      docs = documents.value?.filter(d => d.assignmentSet?.length > 0).map(d => ({
+      docs = documents.value?.filter((d: any) => d.assignmentSet?.length > 0).map((d: any) => ({
         ...d,
         currentState: `${d.assignmentSet[0].role} (${d.assignmentSet[0].state})`,
         assignee: d.assignmentSet[0],
@@ -300,7 +305,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
     lazy: true,
     default: () => ([]),
     transform: (resp) => {
-      return currentTab.value === 'submissions' ? (resp?.submitted ?? []) : resp
+      return currentTab.value === 'submissions' ? (resp && 'submitted' in resp ? resp.submitted : []) : resp
     }
   })
 

@@ -58,7 +58,7 @@
         </button>
 
         <!-- Select User (for demo only) -->
-        <HeadlessMenu v-if="allUsers.length > 0" as="div" class="relative">
+        <HeadlessMenu v-if="allUsers && allUsers.length > 0" as="div" class="relative">
           <HeadlessMenuButton class="-m-2.5 mx-2 text-gray-400 dark:text-neutral-400 hover:text-gray-500 dark:hover:text-violet-400">
             <span class="sr-only">Select user (for demo only)</span>
             <Icon name="solar:users-group-two-rounded-line-duotone" size="1.25em" aria-hidden="true" />
@@ -121,7 +121,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useSiteStore } from '@/stores/site'
 import { useUserStore } from '@/stores/user'
 
@@ -129,7 +129,7 @@ const api = useApi()
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 
 async function logout () {
-  await $fetch('/oidc/logout/', { method: 'POST', headers: { 'X-CSRFToken': csrf.value } })
+  await $fetch('/oidc/logout/', { method: 'POST', headers: { 'X-CSRFToken': csrf.value! } })
   userStore.refreshAuth()
 }
 
@@ -140,16 +140,16 @@ const userStore = useUserStore()
 
 // FUNCTIONS
 
-function switchUser (rpcPersonId) {
+function switchUser (rpcPersonId: string | null | number) {
   userStore.pretendToBe(rpcPersonId)
 }
 // DATA
 
 const userNavigation = [
-  { name: 'Your profile', href: '/' },
+  { name: 'Your profile', href: '/' }
 ]
 
-const { data: allUsers } = await useAsyncData(
+const { data: _allUsers } = await useAsyncData(
   'allUsers',
   async () => {
     try {
@@ -161,8 +161,13 @@ const { data: allUsers } = await useAsyncData(
   {
     default: () => ([]),
     server: false,
-    transform: (resp) => resp.toSorted((a, b) => a.name.localeCompare(b.name))
+    transform: (resp) => resp?.toSorted((a, b) => a.name.localeCompare(b.name))
   }
 )
+
+if (!_allUsers || !Array.isArray(_allUsers)) {
+  throw Error('Required allUsers data')
+}
+const allUsers = _allUsers
 
 </script>

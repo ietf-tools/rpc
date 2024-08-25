@@ -9,27 +9,26 @@
   </span>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import type { ColorEnum } from '~/rpctracker_client'
 
-defineProps({
+type Props = {
   /**
    * Label text
    */
-  label: {
-    type: String,
-    required: false,
-    default: ''
-  },
+  label?: string
   /**
    * Tailwind color name
    */
-  color: {
-    type: String,
-    default: 'violet'
-  }
+  color?: ColorEnum
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  color: 'violet',
+  label: ''
 })
 
-const colors = {
+const colors: Record<ColorEnum, string> = {
   slate: 'bg-slate-50 text-slate-700 ring-slate-700/10',
   gray: 'bg-gray-50 text-gray-700 ring-gray-700/10',
   zinc: 'bg-zinc-50 text-zinc-700 ring-zinc-700/10',

@@ -35,7 +35,7 @@
         </tr>
       </thead>
       <tbody v-if="!loading" class="text-sm divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
-        <tr v-for="row of rows" :key="row[rowKey]">
+        <tr v-for="row of rows">
           <td class="pl-3">
             <Icon name="uil:file-alt" size="1.25em" class="text-gray-400 dark:text-neutral-500" />
           </td>
@@ -67,47 +67,34 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RpcLabel, Icon, NuxtLink } from '#components'
 import { isArray, isFunction, orderBy } from 'lodash-es'
+import type { Column, Row } from './DocumentTableTypes'
+import type { ColorEnum, Label } from '~/rpctracker_client'
 
-// PROPS
-
-const props = defineProps({
-  /**
-   * Rows to display
-   */
-  data: {
-    type: Array,
-    default: () => ([])
-  },
+const props = defineProps<{
   /**
    * Column definitions
    */
-  columns: {
-    type: Array,
-    default: () => ([]),
-    required: true
-  },
+  columns: Column[]
+  data: Row[]
   /**
    * The property to use as the unique key for each row
    */
-  rowKey: {
-    type: String,
-    default: 'id'
-  },
+  rowKey: string
   /**
    * Whether to show the loading animation or not
    */
-  loading: {
-    type: Boolean,
-    default: false
-  }
-})
+  loading?: boolean
+}>()
 
 // DATA
 
-const state = reactive({
+const state = reactive<{
+  sortField: string
+  sortDirection: boolean | 'asc' | 'desc'
+}>({
   sortField: '',
   sortDirection: 'asc'
 })
@@ -123,7 +110,7 @@ const rows = computed(() => {
 
 // METHODS
 
-function sortBy (fieldName) {
+function sortBy (fieldName: string) {
   if (state.sortField === fieldName) {
     state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc'
   } else {
@@ -134,19 +121,20 @@ function sortBy (fieldName) {
 
 /**
  * Build cell node
- *
- * @param {Object} col Column properties
- * @param {Object} row Current row object
  */
-function buildCell (col, row) {
-  const values = isArray(row[col.field]) ? row[col.field] : [row[col.field]]
-  const formattedValues = col.format ? values.map(v => col.format(v)) : values
+function buildCell (col: Column, row: Row) {
+  const value = row[col.field]
+  const values = isArray(value) ? value : [value]
+  const formattedValues = col.format
+    ? col.formatType === 'all'
+      ? col.format(values)
+      : values.map(v => col.format && col.format(v))
+    : values
   const children = []
+  const formattedValuesArray = Array.isArray(formattedValues) ? formattedValues : [formattedValues]
 
-  const isLink = isFunction(col.link)
-
-  for (const [idx, val] of formattedValues.entries()) {
-    const contents = [h('span', val)]
+  for (const [idx, val] of formattedValuesArray.entries()) {
+    const contents = [typeof val === 'string' || typeof val === 'number' ? h('span', val) : val]
     const cssClasses = []
     if (col.icon) {
       contents.unshift(
@@ -160,7 +148,7 @@ function buildCell (col, row) {
       cssClasses.push('flex items-center')
     }
 
-    if (isLink) {
+    if (isFunction(col.link)) {
       children.push(h(NuxtLink, {
         class: [
           ...cssClasses,
@@ -171,10 +159,12 @@ function buildCell (col, row) {
     } else {
       children.push(h('span', {
         class: cssClasses
-      }, contents))
+      }, contents.map(val => {
+        return val
+      })))
     }
 
-    if (idx < formattedValues.length - 1) {
+    if (idx < formattedValuesArray.length - 1) {
       children.push(h('span', ', '))
     }
   }
@@ -190,19 +180,17 @@ function buildCell (col, row) {
 
 /**
  * Handle labels array in either string or object format
- *
- * @param {Array} val Array of labels
- * @param {String} defaultColor Default color name
  */
-function transformLabels (val, defaultColor) {
-  return val.map(item => {
+function transformLabels (val: string[], defaultColor: ColorEnum): Label[] {
+  return val.map((item): Label => {
     if (typeof item === 'string') {
       return {
-        label: item,
+        id: 0,
+        slug: item,
         color: defaultColor
       }
     } else {
-      return item
+      return item as Label
     }
   })
 }

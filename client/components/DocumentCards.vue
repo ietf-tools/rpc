@@ -13,38 +13,44 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { provide } from 'vue'
+import { assignEditorKey, deleteAssignmentKey } from '~/providers/providerKeys'
+import type { ResolvedDocument, ResolvedPerson } from './AssignmentsTypes'
 
-const props = defineProps({
-  documents: Array,
-  editors: Array
-})
+type Props = {
+  documents: ResolvedDocument[]
+  editors: ResolvedPerson[]
+}
 
-const state = reactive({
+const props = defineProps<Props>()
+
+const state = reactive<{ selectedDoc: null | ResolvedDocument }>({
   selectedDoc: null
 })
 
-const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment', 'selectionChanged'])
+const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment'])
 
-provide('assignEditor', (doc, editor) => emit('assignEditorToDocument', doc, editor))
-provide('deleteAssignment', (assignment) => emit('deleteAssignment', assignment))
+provide(assignEditorKey, (doc, editor) => emit('assignEditorToDocument', doc, editor))
+provide(deleteAssignmentKey, (assignment) => emit('deleteAssignment', assignment))
 
 const editorAssignedDocuments = computed(() =>
-  props.documents.reduce((document, editorAssignedDocuments) => {
-    document.assignments?.forEach(assignment => {
-      const editorId = assignment.person.id
-      if (!editorAssignedDocuments[editorId]) {
+  props.documents.reduce((editorAssignedDocuments, resolvedDocument) => {
+    resolvedDocument.assignments?.forEach(assignment => {
+      const editorId = assignment.person?.id
+      if (editorId && !editorAssignedDocuments[editorId]) {
         editorAssignedDocuments[editorId] = []
       }
-      if (!editorAssignedDocuments[editorId].find(
-        existingDocument => existingDocument.id === document.id
+      if (editorId &&
+      Array.isArray(editorAssignedDocuments[editorId]) &&
+      !editorAssignedDocuments[editorId]?.find(
+        existingDocument => existingDocument.id === resolvedDocument.id
       )) {
-        editorAssignedDocuments[editorId].push(document)
+        editorAssignedDocuments[editorId].push(resolvedDocument)
       }
     })
     return editorAssignedDocuments
-  }, {})
+  }, {} as Record<string, ResolvedDocument[] | undefined>)
 )
 
 </script>

@@ -4,6 +4,11 @@ from django.db import migrations
 def forward(apps, schema_editor):
     SourceFormatName = apps.get_model("rpc", "SourceFormatName")
     SourceFormatName.objects.create(
+        slug="unknown",
+        name="Source Format Unknown",
+        desc="Don't know in which format the source was submitted",
+    )
+    SourceFormatName.objects.create(
         slug="xml-v3",
         name="RFCXML v3",
         desc="RFCXML v3",
@@ -25,6 +30,11 @@ def forward(apps, schema_editor):
     )
 
     TlpBoilerplateChoiceName = apps.get_model("rpc", "TlpBoilerplateChoiceName")
+    TlpBoilerplateChoiceName.objects.create(
+        slug="unknown",
+        name="TLP IPR Boilerplate Choice Unknown",
+        desc="Don't know what ipr boilerplate was used",
+    )
     TlpBoilerplateChoiceName.objects.create(
         slug="trust200902",
         name="trust200902",
@@ -87,6 +97,7 @@ def reverse(apps, schema_editor):
     TlpBoilerplateChoiceName = apps.get_model("rpc", "TlpBoilerplateChoiceName")
     TlpBoilerplateChoiceName.objects.filter(
         slug__in=[
+            "unknown",
             "trust200902",
             "noModificationTrust200902",
             "noDerivativesTrust200902",
@@ -98,7 +109,9 @@ def reverse(apps, schema_editor):
     ).delete()
 
     SourceFormatName = apps.get_model("rpc", "SourceFormatName")
-    SourceFormatName.objects.filter(slug__in=["xml-v3", "xml-v2", "md", "txt"]).delete()
+    SourceFormatName.objects.filter(
+        slug__in=["unknown", "xml-v3", "xml-v2", "md", "txt"]
+    ).delete()
 
 
 class Migration(migrations.Migration):

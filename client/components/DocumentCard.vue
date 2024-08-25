@@ -58,7 +58,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                 class="flex flex-row gap-1 items-center relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-1 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
               >
                 <div class="flex-auto ">
-                  <div v-for="person in uniqBy(cookedDocument.assignmentsPersons, person => person.id)" :key="person.id">
+                  <div v-for="person in uniqBy(cookedDocument.assignmentsPersons, person => person?.id)" :key="person?.id">
                     {{ person.name }}
                   </div>
                 </div>
@@ -118,51 +118,63 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
     </dl>
   </li>
 </template>
-
-<script setup>
+<script setup lang="ts">
+import { inject } from 'vue'
 import { DateTime } from 'luxon'
 import { uniqBy } from 'lodash-es'
+import { assignEditorKey, deleteAssignmentKey } from '~/providers/providerKeys'
+import type { ResolvedDocument, ResolvedPerson } from './AssignmentsTypes'
 
-const props = defineProps({
-  document: { type: Object, required: true },
-  selected: Boolean,
-  editors: Array,
-  editorAssignedDocuments: Object
-})
+type Props = {
+  document: ResolvedDocument
+  selected?: boolean
+  editors: ResolvedPerson[]
+  editorAssignedDocuments: Record<string, ResolvedDocument[] | undefined>
+}
 
-const assignEditor = inject('assignEditor')
-const deleteAssignment = inject('deleteAssignment')
+const props = defineProps<Props>()
 
-function toggleEditor (editorIds) {
-  const existingAssignmentEditorIds = props.document.assignments.map(
-    assignment => assignment.person.id
+const _assignEditor = inject(assignEditorKey)
+if (!_assignEditor) {
+  throw Error('Required assignEditor injection')
+}
+const assignEditor = _assignEditor
+const _deleteAssignment = inject(deleteAssignmentKey)
+if (!_deleteAssignment) {
+  throw Error('Required deleteAssignment injection')
+}
+const deleteAssignment = _deleteAssignment
+
+function toggleEditor (editorIds: number[]) {
+  const existingAssignmentEditorIds = props.document.assignments?.map(
+    assignment => assignment.person?.id
   )
 
   // Add new editors
-  const addEditorIds = editorIds.filter(editorId => !existingAssignmentEditorIds.includes(editorId))
+  const addEditorIds = editorIds.filter(editorId => !existingAssignmentEditorIds?.includes(editorId))
   addEditorIds.forEach(editorId => assignEditor(props.document.id, editorId))
 
   // Remove old editors (as assignments)
-  const removeEditorIds = existingAssignmentEditorIds.filter(editorId => !editorIds.includes(editorId))
-  const removeAssignments = props.document.assignments.filter(
-    assignment => removeEditorIds.includes(assignment.person.id)
+  const removeEditorIds = existingAssignmentEditorIds?.filter(editorId => typeof editorId === 'number' && !editorIds.includes(editorId))
+  const removeAssignments = props.document.assignments?.filter(
+    assignment => removeEditorIds?.includes(assignment.person?.id)
   )
-  removeAssignments.forEach(assignment => deleteAssignment(assignment))
+  removeAssignments?.forEach(assignment => deleteAssignment(assignment))
 }
 
 const cookedDocument = computed(() => {
   const now = DateTime.now()
   const teamPagesPerHour = 1.0
-  const assignmentsPersons = props.document.assignments.map(
-    assignment => props.editors.find(editor => editor.id === assignment.person.id)
-  )
+  const assignmentsPersons = props.document?.assignments?.map(
+    assignment => props.editors.find(editor => editor.id === assignment.person?.id)
+  ).filter(editor => !!editor) ?? []
 
   return ({
     ...props.document,
     external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
     assignments: props.document.assignments,
     assignmentsPersons,
-    assignmentsPersonIds: assignmentsPersons.map(editor => editor.id),
+    assignmentsPersonIds: assignmentsPersons?.map(editor => editor?.id),
     editors: props.editors
       .map(editor => ({
         ...editor,

@@ -25,7 +25,7 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
-              <tr v-for="person in people" :key="person.email">
+              <tr v-for="person in people" :key="person.id">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 dark:text-neutral-100 sm:pl-6">
                   <NuxtLink :to="`/team/${person.id}`" class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">{{ person.name }}</NuxtLink>
                 </td>
@@ -40,11 +40,17 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { UserCreateDialog } from '#components'
+import { overlayModalKey } from '~/providers/providerKeys'
+import type { RpcPerson } from '~/rpctracker_client'
 
 const snackbar = useSnackbar()
-const { openOverlayModal } = inject('overlayModal')
+const _overlayModal = inject(overlayModalKey)
+if (!_overlayModal) {
+  throw Error('Expected injection of overlayModalKey')
+}
+const { openOverlayModal } = _overlayModal
 
 useHead({
   title: 'Manage Team Members'
@@ -63,7 +69,7 @@ function newTeamMember () {
 
 // INIT
 
-const { data: people, pending, refresh } = await useFetch('/api/rpc/rpc_person/', {
+const { data: people, pending, refresh } = await useFetch<RpcPerson[]>('/api/rpc/rpc_person/', {
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {

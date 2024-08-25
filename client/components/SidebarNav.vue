@@ -99,7 +99,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { useSiteStore } from '@/stores/site'
 import { Icon } from '#components'
 import confetti from 'canvas-confetti'
@@ -116,7 +116,14 @@ const currentBaseLink = computed(() => route.path.indexOf('/', 1) > 0 ? `/${rout
 
 // DATA
 
-const navigation = [
+type Navigation = {
+  name: string
+  href: string
+  icon: ReturnType<typeof h>
+  current?: boolean
+}
+
+const navigation: Navigation[] = [
   { name: 'Dashboard', href: '/', icon: h(Icon, { name: 'solar:widget-6-bold-duotone' }) },
   { name: 'Queue', href: '/queue', icon: h(Icon, { name: 'solar:layers-minimalistic-bold-duotone' }) },
   { name: 'My Documents', href: '/docs', icon: h(Icon, { name: 'solar:documents-minimalistic-line-duotone' }) },
@@ -124,6 +131,15 @@ const navigation = [
   { name: 'Statistics', href: '/stats', icon: h(Icon, { name: 'solar:chart-line-duotone' }) },
   { name: 'Final Reviews', href: '/auth48', icon: h(Icon, { name: 'solar:diploma-verified-broken' }) }
 ]
+
+type Team = {
+  name: string
+  href: string
+  current: boolean
+  initial: string
+}
+
+const teams: Team[] = []
 
 const links = computed(() => {
   const val = userStore.isManager

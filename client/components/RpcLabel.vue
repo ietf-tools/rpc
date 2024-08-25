@@ -5,14 +5,13 @@
   </Badge>
 </template>
 
-<script setup>
-defineProps({
-  /**
-   * Label to be rendered
-   */
-  label: {
-    type: Object,
-    required: true
-  }
-})
+<script setup lang="ts">
+import type { Label } from '~/rpctracker_client'
+
+type Props = {
+  label: Label
+}
+
+const props = defineProps<Props>()
+
 </script>

@@ -76,7 +76,6 @@
                       </div>
                     </div>
 
-
                     <!-- Complexity Checks -->
                     <div class="space-y-2 px-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:space-y-0 sm:px-6 sm:py-5">
                       <div>
@@ -126,27 +125,41 @@
   <ConfirmDialog v-model:isShown="state.confirmShown" title="Manager Role Selected" caption="Are you sure you want to create a new team member with the Manager role?" />
 </template>
 
-<script setup>
-
+<script setup lang="ts">
 // PROPS / EMITS
 
-defineProps({
-  isShown: {
-    type: Boolean,
-    default: false,
-    required: true
-  },
-  submissions: {
-    type: Array,
-    required: true
-  }
+type Submission = {
+  id: string
+  name: string
+}
+
+type Props = {
+  isShown: boolean
+  submissions: Submission[]
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  isShown: false
 })
 
 const emit = defineEmits(['update:isShown'])
 
 // DATA
 
-const state = reactive({
+type State = {
+  documentId: number
+  email: string
+  datatracker: string
+  timezone: string
+  hours: number
+  manager: string
+  roles: string[]
+  confirmShown: boolean
+  labelsApplied?: string
+  capabilitiesNeeded?: string
+}
+
+const state = reactive<State>({
   documentId: 0,
   email: '',
   datatracker: '',
@@ -157,25 +170,32 @@ const state = reactive({
   confirmShown: false
 })
 
-const managers = []
-const timezones = process.client ? Intl.supportedValuesOf('timeZone') : []
+// const managers: string[] = []
+// const timezones: string[] = process.client ? Intl.supportedValuesOf('timeZone') : []
+
+type Label = {
+  value: string
+  label: string
+  description: string
+  caution?: boolean
+}
 
 // todo get these from backend
-const capabilities = [
+const capabilities: Label[] = [
   { value: 'clusters-beginner', label: 'Clusters: beginner', description: 'New to working with RFC clusters.' },
   { value: 'codecomp-abnf', label: 'Code components: ABNF', description: 'Can work on ABNF components.' },
   { value: 'codecomp-mib', label: 'Code components: MIB', description: 'Can work on MIB components.' },
   { value: 'codecomp-xml', label: 'Code components: XML', description: 'Can work on XML components.' },
   { value: 'codecomp-yang', label: 'Code components: YANG', description: 'Can work on YANG components.' },
-  { value: 'ianaconsid-beginner', label: 'IANA considerations: beginner', description: 'New to IANA considerations.'},
+  { value: 'ianaconsid-beginner', label: 'IANA considerations: beginner', description: 'New to IANA considerations.' }
 ]
 
 // todo get these from backend
-const labels = [
+const labels: Label[] = [
   { value: 'badversion', label: 'Version mismatch', description: 'Version does not match' },
   { value: 'badfont', label: 'Font issues', description: 'A font problem has been identified.' },
   { value: 'badv3xml', label: 'v3 XML Conv Failed', description: 'Conversion to v3 XML failed.' },
-  { value: 'badother', label: 'Other', description: 'A general problem has been identified.' },
+  { value: 'badother', label: 'Other', description: 'A general problem has been identified.' }
 ]
 
 const nameIpt = ref(null)

@@ -37,8 +37,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { RpcLabelEditDialog } from '#components'
+import { overlayModalKey } from '~/providers/providerKeys'
+import type { Label } from '~/rpctracker_client'
 
 const api = useApi()
 const snackbar = useSnackbar()
@@ -60,7 +62,11 @@ const { data: labels, refresh } = await useAsyncData(
   { server: false }
 )
 
-const { openOverlayModal } = inject('overlayModal')
+const val = inject(overlayModalKey)
+if (!val) {
+  throw Error('Expected injection of overlayModal')
+}
+const { openOverlayModal } = val
 
 async function addLabel () {
   try {
@@ -87,7 +93,7 @@ async function addLabel () {
   refresh && await refresh()
 }
 
-async function editLabel (label) {
+async function editLabel (label: Label) {
   try {
     await openOverlayModal({
       component: RpcLabelEditDialog,

@@ -3,34 +3,54 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
 -->
 <template>
   <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
-    <DocumentCard v-for="doc of props.documents" :document="doc"
-                  :selected="state.selectedDoc?.id === doc.id"
-                  @click="e => cardClicked(doc)"/>
+    <DocumentCard
+      v-for="doc of props.documents"
+      :document="doc"
+      :editors="props.editors"
+      :selected="state.selectedDoc?.id === doc.id"
+      :editorAssignedDocuments="editorAssignedDocuments"
+    />
   </ul>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { provide } from 'vue'
+import { assignEditorKey, deleteAssignmentKey } from '~/providers/providerKeys'
+import type { ResolvedDocument, ResolvedPerson } from './AssignmentsTypes'
 
-const props = defineProps({
-  documents: Array
-})
+type Props = {
+  documents: ResolvedDocument[]
+  editors: ResolvedPerson[]
+}
 
-const state = reactive({
+const props = defineProps<Props>()
+
+const state = reactive<{ selectedDoc: null | ResolvedDocument }>({
   selectedDoc: null
 })
 
-const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment', 'selectionChanged'])
+const emit = defineEmits(['assignEditorToDocument', 'deleteAssignment'])
 
-provide('assignEditor', (doc, editor) => emit('assignEditorToDocument', doc, editor))
-provide('deleteAssignment', (assignment) => emit('deleteAssignment', assignment))
+provide(assignEditorKey, (doc, editor) => emit('assignEditorToDocument', doc, editor))
+provide(deleteAssignmentKey, (assignment) => emit('deleteAssignment', assignment))
 
-function cardClicked (doc) {
-  if (state.selectedDoc?.id === doc.id) {
-    state.selectedDoc = null
-  } else {
-    state.selectedDoc = doc
-  }
-  emit('selectionChanged', state.selectedDoc)
-}
+const editorAssignedDocuments = computed(() =>
+  props.documents.reduce((editorAssignedDocuments, resolvedDocument) => {
+    resolvedDocument.assignments?.forEach(assignment => {
+      const editorId = assignment.person?.id
+      if (editorId && !editorAssignedDocuments[editorId]) {
+        editorAssignedDocuments[editorId] = []
+      }
+      if (editorId &&
+      Array.isArray(editorAssignedDocuments[editorId]) &&
+      !editorAssignedDocuments[editorId]?.find(
+        existingDocument => existingDocument.id === resolvedDocument.id
+      )) {
+        editorAssignedDocuments[editorId].push(resolvedDocument)
+      }
+    })
+    return editorAssignedDocuments
+  }, {} as Record<string, ResolvedDocument[] | undefined>)
+)
+
 </script>

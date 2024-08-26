@@ -81,7 +81,7 @@
 
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { DateTime } from 'luxon'
 import humanizeDuration from 'humanize-duration'
 
@@ -165,7 +165,12 @@ const { data: submission } = await useAsyncData(
   'submission',
   async () => {
     try {
-      return await api.submissionsRetrieve({ documentId: route.query.documentId })
+      const { documentId } = route.query
+      // This check fails and prevents the page from loading
+      // if (typeof documentId !== 'number') {
+      //   throw Error('Expected documentId')
+      // }
+      return await api.submissionsRetrieve({ documentId })
     } catch (e) {
       snackbar.add({
         type: 'error',

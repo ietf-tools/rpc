@@ -17,7 +17,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+import { overlayModalKey } from './providers/providerKeys'
+import type { OverlayModal } from './providers/providerKeys'
+
 // const colorMode = useColorMode()
 
 useHead({
@@ -38,32 +41,31 @@ useHead({
 
 // OVERLAY MODAL
 
-const overlayModalState = shallowReactive({
+type OverlayModalState = {
+  isShown: boolean
+  opts: Parameters<OverlayModal['openOverlayModal']>[0]
+  promiseResolve?: (value?: string | PromiseLike<string | undefined>) => void
+  promiseReject?: (reason?: any) => void
+}
+
+const overlayModalState = shallowReactive<OverlayModalState>({
   isShown: false,
   opts: {
-    component: null,
-    componentProps: {}
+    component: undefined,
+    componentProps: undefined
   },
-  promiseResolve: null,
-  promiseReject: null
+  promiseResolve: undefined,
+  promiseReject: undefined
 })
 
-provide('overlayModal', {
-  /**
-   * Open an overlay modal
-   *
-   * @param {Object} opts - Modal options
-   * @param {Component|string} opts.component - Component to display
-   * @param {Object} opts.componentProps - Properties to bind to the component
-   * @returns {Promise} Promise that resolves when the user closes the modal with a value
-   */
+provide(overlayModalKey, {
   openOverlayModal: (opts) => {
     overlayModalState.opts = {
       component: opts.component,
       componentProps: opts.componentProps ?? {},
       mode: opts.mode ?? 'overlay'
     }
-    return new Promise((resolve, reject) => {
+    return new Promise<string | undefined>((resolve, reject) => {
       overlayModalState.promiseResolve = resolve
       overlayModalState.promiseReject = reject
       overlayModalState.isShown = true

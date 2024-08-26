@@ -6,7 +6,9 @@
     <div class="relative mt-2">
       <HeadlessComboboxInput
         class="w-full rounded-md border-0 bg-white py-1.5 pl-3 pr-12 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        @change="state.query = $event.target.value" :display-value="(lbl) => lbl ? lbl.slug : null"/>
+        @change="state.query = $event.target.value"
+        :display-value="(lbl) => lbl ? (lbl as Label).slug : ''"
+      />
       <HeadlessComboboxButton class="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
         <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
       </HeadlessComboboxButton>
@@ -34,31 +36,28 @@
   </HeadlessCombobox>
 </template>
 
-<script setup>
-const props = defineProps({
+<script setup lang="ts">
+import type { Label } from '~/rpctracker_client'
+
+type Props = {
   /**
    * Available labels
    */
-  labels: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
+  labels: Label[]
   /**
    * Slugs of applied labels
    */
-  modelValue: {
-    type: Array,
-    required: true,
-    default: () => []
-  },
+  modelValue: number[]
   /**
    * Component UI label
    */
-  label: {
-    type: String,
-    default: 'Choose labels'
-  }
+  label: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  labels: () => [],
+  modelValue: () => [],
+  label: 'Choose labels'
 })
 
 const emit = defineEmits(['update:modelValue'])

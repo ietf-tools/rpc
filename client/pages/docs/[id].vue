@@ -59,7 +59,7 @@
                   <!-- Showing externalDeadline here - what about internal_goal? -->
                   <dt>Deadline</dt>
                   <dd>
-                    <time v-if="draft?.externalDeadline" :datetime="draft.externalDeadline">
+                    <time v-if="draft?.externalDeadline" :datetime="draft.externalDeadline.toISODate()?.toString()">
                       {{ draft.externalDeadline.toLocaleString(DateTime.DATE_MED) }}
                     </time>
                     <span v-else>-</span>
@@ -115,7 +115,7 @@
                   <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
                     {{ draft?.stream ?? '-' }}
                     <span v-if="draft?.submittedStream !== draft?.stream">
-                      (submitted as {{ draft.submittedStream }})
+                      (submitted as {{ draft?.submittedStream }})
                     </span>
                   </dd>
                 </div>
@@ -136,7 +136,7 @@
                   <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
                     {{ draft?.intendedBoilerplate ?? '-' }}
                     <span v-if="draft?.submittedBoilerplate !== draft?.intendedBoilerplate">
-                      (submitted as {{ draft.submittedBoilerplate }})
+                      (submitted as {{ draft?.submittedBoilerplate }})
                     </span>
                   </dd>
                 </div>
@@ -145,7 +145,7 @@
                   <dd class="mt-1 leading-6 sm:col-span-2 sm:mt-0">
                     {{ draft?.intendedStdLevel ?? '-' }}
                     <span v-if="draft?.submittedStdLevel !== draft?.intendedStdLevel">
-                      (submitted as {{ draft.submittedStdLevel }})
+                      (submitted as {{ draft?.submittedStdLevel }})
                     </span>
                   </dd>
                 </div>
@@ -196,7 +196,7 @@
                 <tbody class="divide-y divide-gray-200">
                   <tr v-for="entry of draft?.history ?? []" :key="entry.id">
                     <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6">
-                      <time :datetime="DateTime.fromJSDate(entry.date).toISO()">
+                      <time :datetime="DateTime.fromJSDate(entry.date).toISO()?.toString()">
                         {{ DateTime.fromJSDate(entry.date).toLocaleString(DateTime.DATE_MED) }}
                       </time>
                     </td>
@@ -222,7 +222,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 
 import { DateTime } from 'luxon'
 
@@ -253,7 +253,7 @@ const draft = computed(() => {
 const { data: labels } = await useAsyncData(() => api.labelsList(), { server: false, default: () => [] })
 
 const { data: rawDraft, pending: draftPending, refresh: draftRefresh } = await useAsyncData(
-  () => api.documentsRetrieve({ draftName: route.params.id }),
+  () => api.documentsRetrieve({ draftName: route.params.id.toString() }),
   { server: false }
 )
 
@@ -268,10 +268,10 @@ const { data: people } = await useAsyncData(
   { server: false, default: () => [] }
 )
 
-async function saveLabels (labels) {
+async function saveLabels (labels: number[]) {
   if (!draftPending.value) {
     await api.documentsPartialUpdate({
-      draftName: draft.value.name,
+      draftName: draft.value?.name ?? '',
       patchedRfcToBe: { labels }
     })
   }

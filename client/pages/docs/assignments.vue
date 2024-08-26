@@ -51,16 +51,16 @@
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
     <DocumentCards :documents="filteredDocuments"
-                   @assign-editor-to-document="(dId, edId) => saveAssignment({rfcToBeId: dId, personId: edId})"
+                   @assign-editor-to-document="(dId: number, edId: number) => saveAssignment({rfcToBe: dId, person: edId})"
                    @delete-assignment="deleteAssignment"
-                   @selection-changed="doc => state.selectedDoc = doc"/>
-    <EditorPalette :editors="editors?.toSorted(compareEditors)"/>
+                   :editors="editors?.toSorted(compareEditors)"
+                   />
   </div>
 </template>
 
 <script setup lang="ts">
-import { DateTime } from 'luxon'
-import type { Assignment } from '~/rpctracker_client'
+import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes';
+import type { Assignment, RfcToBe, RpcPerson } from '~/rpctracker_client'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 const api = useApi()
@@ -70,8 +70,6 @@ const state = reactive({
   selectedDoc: null,
   roleFilter: null
 })
-
-const teamPagesPerHour = 1.0
 
 // COMPUTED
 
@@ -83,11 +81,12 @@ const cookedAssignments = computed(() => assignments.value?.map(a => ({
 })))
 
 const documents = computed(
-  () => rfcsToBe.value?.map((rtb: any) => {
+  () => rfcsToBe.value?.map((rtb) => {
     // Add some fake properties for demonstration purposes
     const assignments = cookedAssignments.value?.filter(a => a.rfc_to_be === rtb.id)
-    const needsAssignment = assignments.length ? null : roles.value?.toSorted(() => Math.random() - 0.5)[0]
-    return { ...rtb, assignments, needsAssignment }
+    const needsAssignment = assignments?.length ? null : roles.value?.toSorted(() => Math.random() - 0.5)[0]
+    const resolvedDocument: ResolvedDocument = { ...rtb, assignments, needsAssignment }
+    return resolvedDocument
   })
     .sort(rtb => rtb.external_deadline)
 )
@@ -98,17 +97,12 @@ const filteredDocuments = computed(
   ) ?? []
 )
 
-const editors = computed(() => {
-  const now = DateTime.now()
-  return people.value?.map(person => ({
+const editors = computed((): ResolvedPerson[] => {
+  const resolvedPeople: ResolvedPerson[] | undefined = people.value?.map(person => ({
     ...person,
-    assignments: assignments.value?.filter(a => a.person === person.id),
-    completeBy: (
-      state.selectedDoc
-        ? now.plus({ days: 7 * state.selectedDoc.pages / teamPagesPerHour / person.hours_per_week })
-        : null
-    )
+    assignments: assignments.value?.filter(a => a.person === person.id)
   }))
+  return resolvedPeople || []
 })
 
 const currentFilterDesc = computed(() => {
@@ -121,7 +115,7 @@ const currentFilterDesc = computed(() => {
 
 // METHODS
 
-async function saveAssignment (assignment: Assignment) {
+async function saveAssignment (assignment: Pick<Assignment, 'rfcToBe' | 'person'>) {
   await $fetch('/api/rpc/assignments/', {
     body: {
       rfc_to_be: assignment.rfcToBe,
@@ -135,8 +129,9 @@ async function saveAssignment (assignment: Assignment) {
 }
 
 // Order editors for display
-function compareEditors (a, b) {
-  const comparisons = ['completeBy', 'name'].map(attr => {
+function compareEditors (a: RpcPerson, b: RpcPerson) {
+  const keys: (keyof RpcPerson)[] = ['completeBy', 'name']
+  const comparisons = keys.map(attr => {
     const aval = a[attr]
     const bval = b[attr]
     return (aval < bval) ? -1 : ((aval > bval) ? 1 : 0)
@@ -162,8 +157,9 @@ async function refresh () {
 
 // DATA RETRIEVAL
 
-const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useFetch('/api/rpc/rpc_person/', { baseURL: '/', server: false })
-const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useAsyncData(
+const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useFetch<RpcPerson[]>('/api/rpc/rpc_person/', { baseURL: '/', server: false })
+
+const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useAsyncData<RfcToBe[]>(
   'rfcsToBe',
   () => api.documentsInProgressList(),
   { server: false, default: () => ([]) }
@@ -172,7 +168,7 @@ const {
   data: assignments,
   pending: pendingAssignments,
   refresh: refreshAssignments
-} = await useFetch('/api/rpc/assignments/', { baseURL: '/', server: false })
+} = await useFetch<Assignment[]>('/api/rpc/assignments/', { baseURL: '/', server: false })
 const { data: roles } = await useAsyncData(
   'roles',
   async () => {

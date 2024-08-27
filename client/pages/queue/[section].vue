@@ -84,8 +84,8 @@ const tabs: Tab[] = [
 const deadlineCol = {
   key: 'deadline',
   label: 'Deadline',
-  field: 'deadline',
-  format: (val: any) => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+  field: 'externalDeadline',
+  format: (val: any) => val ? DateTime.fromJSDate(val as Date).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
   classes: 'text-xs'
 }
 

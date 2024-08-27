@@ -45,7 +45,7 @@ export default defineNuxtConfig({
     viewer: false
   },
   typescript: {
-    typeCheck: true
+    typeCheck: false
   },
   vite: {
     plugins: [

@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 type Props = {
-  pending: boolean
+  pending?: boolean
 }
 
 withDefaults(defineProps<Props>(), {

@@ -52,6 +52,7 @@ router.register(r"labels", rpc_api.LabelViewSet)
 router.register(r"queue", rpc_api.QueueViewSet, basename="queue")
 router.register(r"rpc_roles", rpc_api.RpcRoleViewSet)
 router.register(r"source_format_names", rpc_api.SourceFormatNameViewSet)
+router.register(r"tlp_boilerplate_choice_names", rpc_api.TlpBoilerplateChoiceNameViewSet)
 
 urlpatterns = [
     path("admin/", admin.site.urls),

@@ -66,7 +66,10 @@ class RfcToBe(models.Model):
         "StdLevelName", on_delete=models.PROTECT, related_name="+"
     )
     submitted_boilerplate = models.ForeignKey(
-        "TlpBoilerplateChoiceName", on_delete=models.PROTECT, related_name="+"
+        "TlpBoilerplateChoiceName",
+        on_delete=models.PROTECT,
+        related_name="+",
+        help_text="TLP IPR boilerplate option applicable when document entered the queue",
     )
     submitted_stream = models.ForeignKey(
         "StreamName", on_delete=models.PROTECT, related_name="+"
@@ -76,7 +79,10 @@ class RfcToBe(models.Model):
         "StdLevelName", on_delete=models.PROTECT, related_name="+"
     )
     intended_boilerplate = models.ForeignKey(
-        "TlpBoilerplateChoiceName", on_delete=models.PROTECT, related_name="+"
+        "TlpBoilerplateChoiceName",
+        on_delete=models.PROTECT,
+        related_name="+",
+        help_text="TLP IPR boilerplate option intended to apply upon publication as RFC",
     )
     intended_stream = models.ForeignKey(
         "StreamName", on_delete=models.PROTECT, related_name="+"

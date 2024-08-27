@@ -16,7 +16,16 @@ from datatracker.rpcapi import with_rpcapi
 
 from datatracker.models import Document
 from .factories import StdLevelNameFactory, StreamNameFactory
-from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole, SourceFormatName
+from .models import (
+    Assignment,
+    Cluster,
+    Label,
+    RfcToBe,
+    RpcPerson,
+    RpcRole,
+    SourceFormatName,
+    TlpBoilerplateChoiceName,
+)
 from .serializers import (
     AssignmentSerializer,
     LabelSerializer,
@@ -28,6 +37,7 @@ from .serializers import (
     Submission,
     SubmissionSerializer,
     SourceFormatNameSerializer,
+    TlpBoilerplateChoiceNameSerializer,
 )
 
 
@@ -97,7 +107,9 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
     )
 
 
-@extend_schema(operation_id="submissions_list", responses=SubmissionListItemSerializer(many=True))
+@extend_schema(
+    operation_id="submissions_list", responses=SubmissionListItemSerializer(many=True)
+)
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
@@ -189,8 +201,7 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
         dict(
             draft=draft.pk,
             disposition="in_progress",
-            submitted_boilerplate="trust200902",
-            intended_boilerplate="trust200902",
+            intended_boilerplate=initial_data.submitted_boilerplate,
             submitted_format="xml-v3",
             submitted_std_level=StdLevelNameFactory(
                 slug="ps", name="Proposed Standard"
@@ -340,3 +351,8 @@ class StatsLabels(views.APIView):
 class SourceFormatNameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SourceFormatName.objects.all()
     serializer_class = SourceFormatNameSerializer
+
+
+class TlpBoilerplateChoiceNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = TlpBoilerplateChoiceName.objects.all()
+    serializer_class = TlpBoilerplateChoiceNameSerializer

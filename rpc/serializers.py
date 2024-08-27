@@ -334,6 +334,12 @@ class StreamNameSerializer(serializers.ModelSerializer):
         fields = ["slug", "name", "desc"]
 
 
+class TlpBoilerplateChoiceNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourceFormatName
+        fields = ["slug", "name", "desc"]
+
+
 @dataclass
 class SubmissionAuthor:
     id: int

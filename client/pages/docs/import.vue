@@ -32,10 +32,42 @@
           </div>
         </div>
 
+        <!-- TLP Boilerplate -->
+        <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div class="sm:col-span-4">
+            <HeadlessListbox as="div" v-model="state.submittedBoilerplateSlug">
+              <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">TLP Boilerplate</HeadlessListboxLabel>
+              <div class="relative mt-2">
+                <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+                  <span class="block truncate">{{ state.submittedBoilerplateSlug }}</span>
+                  <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                    <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
+                  </span>
+                </HeadlessListboxButton>
+
+                <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
+                  <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                    <HeadlessListboxOption as="template" v-for="bpChoice in boilerplateChoices" :key="bpChoice.slug" :value="bpChoice.slug" v-slot="{ active, selected }">
+                      <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
+                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ bpChoice.slug }}</span>
+                        <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ bpChoice.desc }}</p>
+
+                        <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
+                          <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
+                        </span>
+                      </li>
+                    </HeadlessListboxOption>
+                  </HeadlessListboxOptions>
+                </transition>
+              </div>
+            </HeadlessListbox>
+          </div>
+        </div>
+
         <!-- DEADLINE -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Deadline</label>
+            <label for="deadline" class="block text-sm font-medium leading-6 text-gray-900">Deadline</label>
             <div class="mt-2">
               <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600  sm:max-w-md">
                 <input type="date"
@@ -57,7 +89,7 @@
               <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
               <div class="flex">
                 <div v-for="lbl of state.labels" class="flex-shrink-0 p-1">
-                  <RpcLabel :label="labels.find(l => l.id === lbl)"/>
+                  <RpcLabel v-if="labels" :label="labels.find(l => l.id === lbl)"/>
                 </div>
               </div>
             </div>
@@ -91,7 +123,14 @@ const snackbar = useSnackbar()
 
 const today = DateTime.now().setZone('utc').startOf('day')
 
-const state = reactive({
+type State = {
+  submittedBoilerplateSlug: string,
+  deadline: string | null,
+  labels: number[]
+}
+
+const state = reactive<State>({
+  submittedBoilerplateSlug: 'trust200902',
   deadline: today.plus({ weeks: 6 }).toISODate(),
   labels: []
 })
@@ -183,5 +222,23 @@ const { data: submission } = await useAsyncData(
     }
   },
   { server: false }
+)
+
+const { data: boilerplateChoices } = await useAsyncData(
+  'boilerplates',
+  async () => {
+    try {
+      return await api.tlpBoilerplateChoiceNamesList()
+    } catch (e) {
+      snackbar.add({
+        type: 'error',
+        title: 'Data fetch not successful',
+        text: e
+      })
+    }
+  }, {
+    server: false,
+    default: () => ([])
+  }
 )
 </script>

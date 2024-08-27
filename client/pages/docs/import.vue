@@ -103,7 +103,7 @@ const timeToDeadline = computed(() => {
     if (state.deadline) {
       const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
       return humanizeDuration(
-        dt,
+        dt.toMillis(),
         { units: (dt.as('days') < 14) ? ['d'] : ['w', 'd'], round: true }
       )
     }
@@ -115,6 +115,9 @@ const timeToDeadline = computed(() => {
 // FUNCTIONS
 
 async function importSubmission () {
+  if (!submission?.value || !state.deadline) {
+    return
+  }
   let imported
   try {
     imported = await api.submissionsImport({

@@ -43,15 +43,15 @@ type Props = {
   /**
    * Available labels
    */
-  labels: Label[]
+  labels?: Label[]
   /**
    * Slugs of applied labels
    */
-  modelValue: number[]
+  modelValue?: number[]
   /**
    * Component UI label
    */
-  label: string
+  label?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

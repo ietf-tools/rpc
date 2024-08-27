@@ -45,6 +45,7 @@
 </template>
 
 <script setup lang="ts">
+import type { ResolvedDocument } from '~/components/AssignmentsTypes'
 import RefreshButton from '~/components/RefreshButton.vue'
 
 useHead({
@@ -71,7 +72,12 @@ const state = reactive({
 
 // METHODS
 
-const { data: clusters, pending, refresh } = await useFetch('/api/rpc/clusters/', {
+type Cluster = {
+  number: number
+  documents: ResolvedDocument[]
+}
+
+const { data: clusters, pending, refresh } = await useFetch<Cluster[]>('/api/rpc/clusters/', {
   baseURL: '/',
   server: false,
   onRequestError ({ error }) {

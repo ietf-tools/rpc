@@ -35,6 +35,7 @@ module.exports = {
     'no-undef': 'off',
     '@typescript-eslint/consistent-type-definitions': 'off',
     '@typescript-eslint/no-explicit-any': 'off', // Reenable after types improve
-    '@typescript-eslint/ban-ts-comment': 'off'
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/no-unused-vars': 'off'
   }
 }

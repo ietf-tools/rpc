@@ -140,7 +140,7 @@ const userStore = useUserStore()
 
 // FUNCTIONS
 
-function switchUser (rpcPersonId: string | null | number) {
+function switchUser (rpcPersonId: number | null) {
   userStore.pretendToBe(rpcPersonId)
 }
 // DATA

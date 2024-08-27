@@ -138,7 +138,7 @@ type Props = {
   submissions: Submission[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   isShown: false
 })
 

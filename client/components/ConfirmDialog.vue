@@ -39,11 +39,11 @@
 
 type Props = {
   isShown: boolean
-  title: string
-  caption: string
+  title?: string
+  caption?: string
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   title: 'Confirm',
   caption: 'Are you sure you want to continue?'
 })

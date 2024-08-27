@@ -56,7 +56,7 @@
               <h2 class="text-base font-semibold leading-6 text-gray-900">Labels</h2>
               <div class="flex">
                 <div v-for="lbl of state.labels" class="flex-shrink-0 p-1">
-                  <RpcLabel :label="labels.find(l => l.id === lbl)"/>
+                  <RpcLabel :label="labels?.find(l => l.id === lbl)"/>
                 </div>
               </div>
             </div>
@@ -90,7 +90,7 @@ const snackbar = useSnackbar()
 
 const today = DateTime.now().setZone('utc').startOf('day')
 
-const state = reactive({
+const state = reactive<{ deadline: string | null, labels: number[] }>({
   deadline: today.plus({ weeks: 6 }).toISODate(),
   labels: []
 })
@@ -117,7 +117,7 @@ const timeToDeadline = computed(() => {
     if (state.deadline) {
       const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
       return humanizeDuration(
-        dt,
+        dt.toMillis(),
         { units: (dt.as('days') < 14) ? ['d'] : ['w', 'd'], round: true }
       )
     }
@@ -130,6 +130,9 @@ const timeToDeadline = computed(() => {
 
 async function importSubmission () {
   let imported
+  if (!state.deadline) {
+    throw Error('state.deadline not available')
+  }
   try {
     imported = await api.submissionsImport({
       documentId: submission.value.datatrackerId,

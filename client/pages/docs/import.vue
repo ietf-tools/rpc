@@ -160,8 +160,12 @@ async function importSubmission () {
   let imported
   try {
     imported = await api.submissionsImport({
-      documentId: submission.value.datatrackerId,
-      rfcToBe: {
+      documentId: submission.value.id,
+      createRfcToBe: {
+        submittedFormat: "xml-v3",
+        submittedBoilerplate: state.submittedBoilerplateSlug,
+        submittedStdLevel: "ps",
+        submittedStream: "ietf",
         externalDeadline: DateTime.fromISO(state.deadline, { zone: 'utc' }).toJSDate(),
         labels: state.labels
       }

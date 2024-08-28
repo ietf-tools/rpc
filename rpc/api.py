@@ -28,6 +28,7 @@ from .models import (
 )
 from .serializers import (
     AssignmentSerializer,
+    CreateRfcToBeSerializer,
     LabelSerializer,
     QueueItemSerializer,
     RfcToBeSerializer,
@@ -168,7 +169,7 @@ def submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
 
 @extend_schema(
     operation_id="submissions_import",
-    request=RfcToBeSerializer,
+    request=CreateRfcToBeSerializer,
     responses=RfcToBeSerializer,
 )
 @api_view(["POST"])
@@ -194,34 +195,12 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
         )
 
     # Create the RfcToBe
-    # todo get rid of the factories!
-    # todo get more data from front end / think carefully about defaults
-    initial_data = request.data
-    initial_data.update(
-        dict(
-            draft=draft.pk,
-            disposition="in_progress",
-            intended_boilerplate=initial_data.submitted_boilerplate,
-            submitted_format="xml-v3",
-            submitted_std_level=StdLevelNameFactory(
-                slug="ps", name="Proposed Standard"
-            ).pk,
-            intended_std_level=StdLevelNameFactory(
-                slug="ps", name="Proposed Standard"
-            ).pk,
-            submitted_stream=StreamNameFactory(
-                slug=draft.stream, name=draft.stream.upper()
-            ).pk,
-            intended_stream=StreamNameFactory(
-                slug=draft.stream, name=draft.stream.upper()
-            ).pk,
-            internal_goal=initial_data["external_deadline"],
-        )
+    serializer = CreateRfcToBeSerializer(
+        data=request.data, context={"draft": draft}
     )
-    serializer = RfcToBeSerializer(data=initial_data)
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
+        rfctobe = serializer.save()
+        return Response(RfcToBeSerializer(rfctobe).data)
     else:
         return Response(serializer.errors, status=400)
 

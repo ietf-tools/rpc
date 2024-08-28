@@ -15,6 +15,7 @@ from .models import (
     ActionHolder,
     Assignment,
     Capability,
+    DispositionName,
     Label,
     RfcToBe,
     RpcPerson,
@@ -147,6 +148,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
             "intended_stream",
             "history",
         ]
+        read_only_fields = ["id", "draft"]
 
     def get_name(self, rfc_to_be) -> str:
         return (
@@ -208,6 +210,36 @@ class RfcToBeSerializer(serializers.ModelSerializer):
                 yield " and ".join(changes)
             else:
                 yield f'Changed {change.field} from "{change.old}" to "{change.new}"'
+
+
+class CreateRfcToBeSerializer(serializers.ModelSerializer):
+    """Serializer for RfcToBe fields that need to be specified explicitly on import"""
+    class Meta:
+        model = RfcToBe
+        fields = [
+            "submitted_format",
+            "submitted_boilerplate",
+            "submitted_std_level",
+            "submitted_stream",
+            "external_deadline",
+            "labels",
+        ]
+
+    def create(self, validated_data):
+        extra_data = {
+            "draft": self.context["draft"],
+            "disposition": DispositionName.objects.get(slug="in_progress"),
+            "intended_boilerplate": validated_data["submitted_boilerplate"],
+            "intended_std_level": validated_data["submitted_std_level"],
+            "intended_stream": validated_data["submitted_stream"],
+            "internal_goal": validated_data["external_deadline"],
+        }
+        # default to intended_* == submitted_*
+        for field_name in ["boilerplate", "std_level", "stream"]:
+            extra_data[f"intended_{field_name}"] = validated_data[f"submitted_{field_name}"]
+        inst = super().create(validated_data | extra_data)
+        update_change_reason(inst, "Added to the queue")
+        return inst
 
 
 class CapabilitySerializer(serializers.ModelSerializer):

@@ -147,6 +147,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Backend API for the RpcTracker",
     "VERSION": "0.1",
     "SCHEMA_PATH_PREFIX": "/api/rpc/",
+    "COMPONENT_NO_READ_ONLY_REQUIRED": True,
 }
 
 # Password validation

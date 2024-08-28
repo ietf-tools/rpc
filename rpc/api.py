@@ -15,7 +15,6 @@ import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
 from datatracker.models import Document
-from .factories import StdLevelNameFactory, StreamNameFactory
 from .models import (
     Assignment,
     Cluster,
@@ -24,6 +23,8 @@ from .models import (
     RpcPerson,
     RpcRole,
     SourceFormatName,
+    StdLevelName,
+    StreamName,
     TlpBoilerplateChoiceName,
 )
 from .serializers import (
@@ -38,6 +39,8 @@ from .serializers import (
     Submission,
     SubmissionSerializer,
     SourceFormatNameSerializer,
+    StdLevelNameSerializer,
+    StreamNameSerializer,
     TlpBoilerplateChoiceNameSerializer,
 )
 
@@ -330,6 +333,16 @@ class StatsLabels(views.APIView):
 class SourceFormatNameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SourceFormatName.objects.all()
     serializer_class = SourceFormatNameSerializer
+
+
+class StdLevelNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = StdLevelName.objects.all()
+    serializer_class = StdLevelNameSerializer
+
+
+class StreamNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = StreamName.objects.all()
+    serializer_class = StreamNameSerializer
 
 
 class TlpBoilerplateChoiceNameViewSet(viewsets.ReadOnlyModelViewSet):

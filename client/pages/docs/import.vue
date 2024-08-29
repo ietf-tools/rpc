@@ -87,11 +87,12 @@ import humanizeDuration from 'humanize-duration'
 const route = useRoute()
 const api = useApi()
 const snackbar = useSnackbar()
+const currentTime = useCurrentTime()
 
-const today = DateTime.now().setZone('utc').startOf('day')
+const today = computed(() => currentTime.value.startOf('day'))
 
 const state = reactive({
-  deadline: today.plus({ weeks: 6 }).toISODate(),
+  deadline: today.value.plus({ weeks: 6 }).toISODate(),
   labels: []
 })
 
@@ -115,7 +116,7 @@ const submission = computed(() => dtDraftData.value
 const timeToDeadline = computed(() => {
   try {
     if (state.deadline) {
-      const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
+      const dt = DateTime.fromISO(state.deadline).diff(today.value, 'days')
       return humanizeDuration(
         dt,
         { units: (dt.as('days') < 14) ? ['d'] : ['w', 'd'], round: true }

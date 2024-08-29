@@ -35,11 +35,11 @@
         <!-- Source Format -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.sourceFormat">
+            <HeadlessListbox as="div" v-model="state.sourceFormat" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Source Format</HeadlessListboxLabel>
               <div class="relative mt-2">
                 <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <span class="block truncate">{{ state.sourceFormat?.name }}</span>
+                  <span class="block truncate">{{ state.sourceFormat?.name || 'Select&hellip;' }}</span>
                   <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
                   </span>
@@ -47,7 +47,7 @@
 
                 <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
                   <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="fmtChoice in sourceFormatChoices" :key="fmtChoice.slug" :value="fmtChoice.slug" v-slot="{ active, selected }">
+                    <HeadlessListboxOption as="template" v-for="fmtChoice in sourceFormatChoices" :key="fmtChoice.slug" :value="fmtChoice" v-slot="{ active, selected }">
                       <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ fmtChoice.slug }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ fmtChoice.desc }}</p>
@@ -67,11 +67,11 @@
         <!-- Stream -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.streamSlug">
+            <HeadlessListbox as="div" v-model="state.stream" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Stream</HeadlessListboxLabel>
               <div class="relative mt-2">
                 <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <span class="block truncate">{{ state.streamSlug }}</span>
+                  <span class="block truncate">{{ state.stream?.name || 'Select&hellip;' }}</span>
                   <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
                   </span>
@@ -79,9 +79,9 @@
 
                 <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
                   <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="streamChoice in streamChoices" :key="streamChoice.slug" :value="streamChoice.slug" v-slot="{ active, selected }">
+                    <HeadlessListboxOption as="template" v-for="streamChoice in streamChoices" :key="streamChoice.slug" :value="streamChoice" v-slot="{ active, selected }">
                       <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
-                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ streamChoice.slug }}</span>
+                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ streamChoice.name }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ streamChoice.desc }}</p>
 
                         <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
@@ -99,11 +99,11 @@
         <!-- Standard Level -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.stdLevelSlug">
+            <HeadlessListbox as="div" v-model="state.stdLevel" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Standard Level</HeadlessListboxLabel>
               <div class="relative mt-2">
                 <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <span class="block truncate">{{ state.stdLevelSlug }}</span>
+                  <span class="block truncate">{{ state.stdLevel?.name || 'Select&hellip;' }}</span>
                   <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
                   </span>
@@ -111,9 +111,9 @@
 
                 <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
                   <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="stdLevChoice in stdLevelChoices" :key="stdLevChoice.slug" :value="stdLevChoice.slug" v-slot="{ active, selected }">
+                    <HeadlessListboxOption as="template" v-for="stdLevChoice in stdLevelChoices" :key="stdLevChoice.slug" :value="stdLevChoice" v-slot="{ active, selected }">
                       <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
-                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ stdLevChoice.slug }}</span>
+                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ stdLevChoice.name }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ stdLevChoice.desc }}</p>
 
                         <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
@@ -131,11 +131,11 @@
         <!-- TLP Boilerplate -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.submittedBoilerplateSlug">
+            <HeadlessListbox as="div" v-model="state.boilerplate" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">TLP Boilerplate</HeadlessListboxLabel>
               <div class="relative mt-2">
                 <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <span class="block truncate">{{ state.submittedBoilerplateSlug }}</span>
+                  <span class="block truncate">{{ state.boilerplate?.name || 'Select&hellip;'}}</span>
                   <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
                   </span>
@@ -143,9 +143,9 @@
 
                 <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100" leave-to-class="opacity-0">
                   <HeadlessListboxOptions class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="bpChoice in boilerplateChoices" :key="bpChoice.slug" :value="bpChoice.slug" v-slot="{ active, selected }">
+                    <HeadlessListboxOption as="template" v-for="bpChoice in boilerplateChoices" :key="bpChoice.slug" :value="bpChoice" v-slot="{ active, selected }">
                       <li :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
-                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ bpChoice.slug }}</span>
+                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{ bpChoice.name }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ bpChoice.desc }}</p>
 
                         <span v-if="selected" :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
@@ -212,7 +212,7 @@
 <script setup lang="ts">
 import { DateTime } from 'luxon'
 import humanizeDuration from 'humanize-duration'
-import type { SourceFormatName } from '~/rpctracker_client'
+import type { SourceFormatName, StdLevelName, StreamName, TlpBoilerplateChoiceName } from '~/rpctracker_client'
 
 const route = useRoute()
 const api = useApi()
@@ -221,19 +221,19 @@ const snackbar = useSnackbar()
 const today = DateTime.now().setZone('utc').startOf('day')
 
 type State = {
-  submittedBoilerplateSlug: string,
+  boilerplate: TlpBoilerplateChoiceName | null,
   sourceFormat: SourceFormatName | null,
-  stdLevelSlug: string,
-  streamSlug: string,
+  stdLevel: StdLevelName | null,
+  stream: StreamName | null,
   deadline: string | null,
   labels: number[]
 }
 
 const state = reactive<State>({
-  submittedBoilerplateSlug: 'trust200902',
+  boilerplate: null,
   sourceFormat: null,
-  stdLevelSlug: 'ps',
-  streamSlug: 'ietf',
+  stdLevel: null,
+  stream: null,
   deadline: today.plus({ weeks: 6 }).toISODate(),
   labels: []
 })
@@ -272,9 +272,9 @@ async function importSubmission () {
       documentId: submission.value.id,
       createRfcToBe: {
         submittedFormat: state.sourceFormat.slug,
-        submittedBoilerplate: state.submittedBoilerplateSlug,
-        submittedStdLevel: state.stdLevelSlug,
-        submittedStream: state.streamSlug,
+        submittedBoilerplate: state.boilerplate.slug,
+        submittedStdLevel: state.stdLevel.slug,
+        submittedStream: state.stream.slug,
         externalDeadline: DateTime.fromISO(state.deadline, { zone: 'utc' }).toJSDate(),
         labels: state.labels
       }
@@ -324,20 +324,23 @@ const { data: fetchedData, pending: backendPending } = await useAsyncData(
       if (!Number.isInteger(documentId)) {
         throw Error('Expected an integer value for documentId')
       }
-      // Retrieve the submission
+
+      // Retrieve the submission, first....
       const submission = await api.submissionsRetrieve({ documentId })
-      // Initialize the state to match
-      state.sourceFormat = submission.sourceFormat
-      state.streamSlug = submission.stream.slug
-      if (submission.stdLevel) {
-        state.stdLevelSlug = submission.stdLevel.slug
-      }
+      // ...then the various name choices, which ensures that the backend has created any that
+      // were new with this draft.
       const [boilerplateChoices, sourceFormatChoices, stdLevelChoices, streamChoices] = await Promise.all([
         api.tlpBoilerplateChoiceNamesList(),
         api.sourceFormatNamesList(),
         api.stdLevelNamesList(),
         api.streamNamesList()
       ])
+
+      // Initialize the state
+      // state.boilerplate = boilerplateChoices ? boilerplateChoices[0] : null
+      state.sourceFormat = submission.sourceFormat
+      state.stream = submission.stream
+      state.stdLevel = submission.stdLevel || stdLevelChoices ? stdLevelChoices[0] : null
       return {
         submission, boilerplateChoices, sourceFormatChoices, stdLevelChoices, streamChoices
       }

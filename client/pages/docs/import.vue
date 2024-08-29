@@ -1,10 +1,10 @@
 <template>
   <TitleBlock
     class="pb-3"
-    :title="`Add Document: ${submission?.name}`"
+    :title="`Add Document: ${submission?.name || '&hellip;'}`"
     summary="Pull the submission into the queue so the editing process can begin."/>
   <form>
-    <div class="space-y-12">
+    <div class="space-y-12" v-if="!backendPending">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-base font-semibold leading-7 text-gray-900">Document Info</h2>
 
@@ -26,7 +26,7 @@
               <li>Submitted pages: {{ submission?.pages }}</li>
               <li>Document shepherd: {{ submission?.shepherd }}</li>
               <li>Stream: {{ submission?.stream.name }}</li>
-              <li>Submitted standard level: {{ submission?.stdLevel.name }}</li>
+              <li>Submitted standard level: {{ submission?.stdLevel?.name }}</li>
               <li>Submitted format: {{ submission?.sourceFormat.name }}</li>
             </ul>
           </div>
@@ -35,11 +35,11 @@
         <!-- Source Format -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.sourceFormatSlug">
+            <HeadlessListbox as="div" v-model="state.sourceFormat">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Source Format</HeadlessListboxLabel>
               <div class="relative mt-2">
                 <HeadlessListboxButton class="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-                  <span class="block truncate">{{ state.sourceFormatSlug }}</span>
+                  <span class="block truncate">{{ state.sourceFormat?.name }}</span>
                   <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                     <Icon name="heroicons:chevron-up-down-solid" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
                   </span>
@@ -212,6 +212,7 @@
 <script setup lang="ts">
 import { DateTime } from 'luxon'
 import humanizeDuration from 'humanize-duration'
+import type { SourceFormatName } from '~/rpctracker_client'
 
 const route = useRoute()
 const api = useApi()
@@ -221,7 +222,7 @@ const today = DateTime.now().setZone('utc').startOf('day')
 
 type State = {
   submittedBoilerplateSlug: string,
-  sourceFormatSlug: string,
+  sourceFormat: SourceFormatName | null,
   stdLevelSlug: string,
   streamSlug: string,
   deadline: string | null,
@@ -230,7 +231,7 @@ type State = {
 
 const state = reactive<State>({
   submittedBoilerplateSlug: 'trust200902',
-  sourceFormatSlug: 'xml-v2',
+  sourceFormat: null,
   stdLevelSlug: 'ps',
   streamSlug: 'ietf',
   deadline: today.plus({ weeks: 6 }).toISODate(),
@@ -238,6 +239,12 @@ const state = reactive<State>({
 })
 
 // COMPUTED
+
+const submission = computed(() => fetchedData?.value?.submission)
+const boilerplateChoices = computed(() => fetchedData?.value?.boilerplateChoices)
+const sourceFormatChoices = computed(() => fetchedData?.value?.sourceFormatChoices)
+const stdLevelChoices = computed(() => fetchedData?.value?.stdLevelChoices)
+const streamChoices = computed(() => fetchedData?.value?.streamChoices)
 
 const timeToDeadline = computed(() => {
   try {
@@ -256,7 +263,7 @@ const timeToDeadline = computed(() => {
 // FUNCTIONS
 
 async function importSubmission () {
-  if (!submission?.value || !state.deadline) {
+  if (!(submission.value && state.sourceFormat && state.deadline)) {
     return
   }
   let imported
@@ -264,7 +271,7 @@ async function importSubmission () {
     imported = await api.submissionsImport({
       documentId: submission.value.id,
       createRfcToBe: {
-        submittedFormat: state.sourceFormatSlug,
+        submittedFormat: state.sourceFormat.slug,
         submittedBoilerplate: state.submittedBoilerplateSlug,
         submittedStdLevel: state.stdLevelSlug,
         submittedStream: state.streamSlug,
@@ -309,16 +316,31 @@ const { data: labels } = await useAsyncData(
   }
 )
 
-const { data: submission } = await useAsyncData(
-  'submission',
+const { data: fetchedData, pending: backendPending } = await useAsyncData(
+  'backendFetch',
   async () => {
     try {
-      const { documentId } = route.query
-      // This check fails and prevents the page from loading
-      // if (typeof documentId !== 'number') {
-      //   throw Error('Expected documentId')
-      // }
-      return await api.submissionsRetrieve({ documentId })
+      const documentId = Number(route.query.documentId)
+      if (!Number.isInteger(documentId)) {
+        throw Error('Expected an integer value for documentId')
+      }
+      // Retrieve the submission
+      const submission = await api.submissionsRetrieve({ documentId })
+      // Initialize the state to match
+      state.sourceFormat = submission.sourceFormat
+      state.streamSlug = submission.stream.slug
+      if (submission.stdLevel) {
+        state.stdLevelSlug = submission.stdLevel.slug
+      }
+      const [boilerplateChoices, sourceFormatChoices, stdLevelChoices, streamChoices] = await Promise.all([
+        api.tlpBoilerplateChoiceNamesList(),
+        api.sourceFormatNamesList(),
+        api.stdLevelNamesList(),
+        api.streamNamesList()
+      ])
+      return {
+        submission, boilerplateChoices, sourceFormatChoices, stdLevelChoices, streamChoices
+      }
     } catch (e) {
       snackbar.add({
         type: 'error',
@@ -328,77 +350,5 @@ const { data: submission } = await useAsyncData(
     }
   },
   { server: false }
-)
-
-const { data: boilerplateChoices } = await useAsyncData(
-  'boilerplateChoices',
-  async () => {
-    try {
-      return await api.tlpBoilerplateChoiceNamesList()
-    } catch (e) {
-      snackbar.add({
-        type: 'error',
-        title: 'Data fetch not successful',
-        text: e
-      })
-    }
-  }, {
-    server: false,
-    default: () => ([])
-  }
-)
-
-const { data: sourceFormatChoices } = await useAsyncData(
-  'sourceFormatChoices',
-  async () => {
-    try {
-      return await api.sourceFormatNamesList()
-    } catch (e) {
-      snackbar.add({
-        type: 'error',
-        title: 'Data fetch not successful',
-        text: e
-      })
-    }
-  }, {
-    server: false,
-    default: () => ([])
-  }
-)
-
-const { data: stdLevelChoices } = await useAsyncData(
-  'stdLevelChoices',
-  async () => {
-    try {
-      return await api.stdLevelNamesList()
-    } catch (e) {
-      snackbar.add({
-        type: 'error',
-        title: 'Data fetch not successful',
-        text: e
-      })
-    }
-  }, {
-    server: false,
-    default: () => ([])
-  }
-)
-
-const { data: streamChoices } = await useAsyncData(
-  'streamChoices',
-  async () => {
-    try {
-      return await api.streamNamesList()
-    } catch (e) {
-      snackbar.add({
-        type: 'error',
-        title: 'Data fetch not successful',
-        text: e
-      })
-    }
-  }, {
-    server: false,
-    default: () => ([])
-  }
 )
 </script>

@@ -23,7 +23,7 @@ type Props = {
   color?: ColorEnum
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   color: 'violet',
   label: ''
 })

@@ -12,6 +12,6 @@ type Props = {
   label?: Label
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 </script>

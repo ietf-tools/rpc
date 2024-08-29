@@ -43,7 +43,7 @@ type Props = {
   caption?: string
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   title: 'Confirm',
   caption: 'Are you sure you want to continue?'
 })

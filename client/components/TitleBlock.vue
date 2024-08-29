@@ -21,5 +21,5 @@ type Props = {
   summary?: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 </script>

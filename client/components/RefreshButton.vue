@@ -12,7 +12,7 @@ type Props = {
   pending?: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   pending: false
 })
 

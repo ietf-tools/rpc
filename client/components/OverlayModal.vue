@@ -30,7 +30,8 @@
 </template>
 
 <script setup lang="ts">
-import type { OverlayModal } from '../providers/providerKeys'
+import { type OverlayModal } from '../providers/providerKeys'
+import { overlayModalMethodsKey } from '../providers/providerKeys'
 // PROPS / EMITS
 
 type Props = {
@@ -38,7 +39,7 @@ type Props = {
   isShown: boolean
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   opts: () => ({}),
   isShown: false
 })

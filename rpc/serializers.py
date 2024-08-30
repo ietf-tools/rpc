@@ -214,6 +214,9 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
 class CreateRfcToBeSerializer(serializers.ModelSerializer):
     """Serializer for RfcToBe fields that need to be specified explicitly on import"""
+    # Need to explicitly specify labels as a PK because it uses a through model
+    labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
+
     class Meta:
         model = RfcToBe
         fields = [

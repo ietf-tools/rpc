@@ -56,7 +56,7 @@
                       <li
                         :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                            fmtChoice.slug
+                            fmtChoice.name
                           }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ fmtChoice.desc }}</p>
 
@@ -235,13 +235,8 @@
     </div>
 
     <div class="mt-6 flex items-center justify-end gap-x-6">
-      <button type="button" class="text-sm font-semibold leading-6 text-gray-900">Cancel</button>
-      <button type="button"
-              :disabled="!haveRequiredValues"
-              class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:text-gray-100 disabled:bg-indigo-200 disabled:cursor-not-allowed"
-              @click="importSubmission">
-        Save
-      </button>
+      <Button btn-type="cancel">Cancel</Button>
+      <Button btn-type="default" :disabled="!haveRequiredValues" @click="importSubmission">Save</Button>
     </div>
   </form>
 

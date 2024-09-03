@@ -3,22 +3,22 @@ import { DateTime } from 'luxon'
 
 const getNowUtc = () => DateTime.now().setZone('utc')
 const currentTime = ref(getNowUtc())
-let interval: number = 0
-let instanceCount: number = 0
+let interval: null | ReturnType<typeof setInterval> = null
+let instanceCount = 0
 
 export const useCurrentTime = () => {
   onBeforeMount(() => {
     instanceCount++
-    if (interval === 0) {
-      interval = window.setInterval(() => currentTime.value = getNowUtc(), 1000)
+    if (interval === null) {
+      interval = setInterval(() => currentTime.value = getNowUtc(), 1000)
     }
   })
   onUnmounted(() => {
     instanceCount--
     // only clear interval after last component using us is unmounted
-    if ((instanceCount <= 0) && (interval !== 0)) {
+    if ((instanceCount <= 0) && (interval !== null)) {
       window.clearInterval(interval)
-      interval = 0
+      interval = null
     }
   })
   return readonly(currentTime)

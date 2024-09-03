@@ -174,6 +174,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         if rfc_to_be.draft:
             cluster = rfc_to_be.draft.cluster_set.first()
             return None if cluster is None else cluster.number
+        return None  # RfcToBe without draft cannot be a cluster member
 
     def create(self, validated_data):
         inst = super().create(validated_data)

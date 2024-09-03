@@ -17,7 +17,7 @@ export const useCurrentTime = () => {
     instanceCount--
     // only clear interval after last component using us is unmounted
     if ((instanceCount <= 0) && (interval !== null)) {
-      window.clearInterval(interval)
+      clearInterval(interval)
       interval = null
     }
   })

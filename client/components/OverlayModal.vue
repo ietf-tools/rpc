@@ -30,8 +30,8 @@
 </template>
 
 <script setup lang="ts">
+import { type OverlayModal } from '../providers/providerKeys'
 import { overlayModalMethodsKey } from '../providers/providerKeys'
-import type { OverlayModal } from '../providers/providerKeys'
 // PROPS / EMITS
 
 type Props = {
@@ -69,6 +69,7 @@ function close () {
   emit('update:isShown', false)
   emit('closeCancel')
 }
+
 </script>
 
 <docs>
@@ -83,9 +84,10 @@ You must first create a component with the contents of the modal. In this exampl
 You must inject methods from `overlayModalMethods` to control the dialog:
 
 ```
-<script setup>
+<script setup lang="ts">
+import { overlayModalMethodsKey } from '../providers/providerKeys'
 
-const { ok, cancel } = inject('overlayModalMethods')
+const { ok, cancel } = inject(overlayModalMethodsKey)
 
 function save () {
   // do some logic
@@ -104,10 +106,11 @@ function close () {
 From the page you want to trigger the modal, import the component you just created and inject the methods from `overlayModal`
 
 ```
-<script setup>
+<script setup lang="ts">
+  import { overlayModalKey } from '../providers/providerKeys'
   import { UserEditModal } from '#components'
 
-  const { openOverlayModal } = inject('overlayModal')
+  const { openOverlayModal } = inject(overlayModalKey)
 
   function editUser (userId) {
     openOverlayModal({
@@ -125,10 +128,11 @@ In the above example, the property `component` refers to the component to displa
 You can also close the modal from the trigger context using the injected method `closeOverlayModal`, e.g.:
 
 ```
-<script setup>
+<script setup lang="ts">
+  import { overlayModalKey } from '../providers/providerKeys'
   import { UserEditModal } from '#components'
 
-  const { openOverlayModal, closeOverlayModal } = inject('overlayModal')
+  const { openOverlayModal, closeOverlayModal } = inject(overlayModalKey)
 
   function editUser (userId) {
     openOverlayModal({

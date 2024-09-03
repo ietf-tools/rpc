@@ -13,7 +13,7 @@
   <div class="mt-8 flow-root">
     <DocumentTable
       :columns="columns"
-      :data="myAssignments.map(a => a.rfcToBe)"
+      :data="myAssignments.map(a => ({ ...a.rfcToBe })).filter(row => !!row)"
       row-key="id"
       :loading="pending"
     />
@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { useAsyncData } from '#app'
-import type { Column } from '~/components/DocumentTableTypes';
+import type { Column } from '~/components/DocumentTableTypes'
 
 const api = useApi()
 const userStore = useUserStore()

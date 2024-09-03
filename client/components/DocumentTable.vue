@@ -78,7 +78,7 @@ const props = defineProps<{
    * Column definitions
    */
   columns: Column[]
-  data: Row[]
+  data: Record<string, unknown>[]
   /**
    * The property to use as the unique key for each row
    */

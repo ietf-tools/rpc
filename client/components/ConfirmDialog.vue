@@ -39,8 +39,8 @@
 
 type Props = {
   isShown: boolean
-  title: string
-  caption: string
+  title?: string
+  caption?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {

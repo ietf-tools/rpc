@@ -134,6 +134,9 @@ function compareEditors (a: RpcPerson, b: RpcPerson) {
   const comparisons = keys.map(attr => {
     const aval = a[attr]
     const bval = b[attr]
+    if (typeof aval !== 'number' || typeof bval !== 'number') {
+      return 0
+    }
     return (aval < bval) ? -1 : ((aval > bval) ? 1 : 0)
   })
   return comparisons.find(c => c !== 0) ?? 0

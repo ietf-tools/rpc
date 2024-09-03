@@ -169,7 +169,9 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_cluster(self, rfc_to_be) -> Optional[int]:
-        return rfc_to_be.cluster.number if rfc_to_be.cluster else None
+        if rfc_to_be.draft:
+            cluster = rfc_to_be.draft.cluster_set.first()
+            return None if cluster is None else cluster.number
 
     def create(self, validated_data):
         inst = super().create(validated_data)

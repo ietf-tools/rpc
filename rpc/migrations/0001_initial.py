@@ -971,16 +971,4 @@ class Migration(migrations.Migration):
                 violation_error_message="exactly one target field must be set",
             ),
         ),
-        migrations.AddConstraint(
-            model_name="rfctobe",
-            constraint=models.CheckConstraint(
-                condition=models.Q(
-                    ("draft__isnull", False),
-                    ("is_april_first_rfc", True),
-                    _connector="XOR",
-                ),
-                name="rfctobe_draft_not_null_xor_is_april_first_rfc",
-                violation_error_message="draft must be null if and only if is_april_first_rfc",
-            ),
-        ),
     ]

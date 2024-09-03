@@ -13,6 +13,8 @@ from .models import (
     ActionHolder,
     Assignment,
     Capability,
+    Cluster,
+    ClusterMember,
     Label,
     RfcToBe,
     RpcPerson,
@@ -311,3 +313,46 @@ class QueueItemSerializer(RfcToBeSerializer):
 
     def get_requested_approvals(self, rfc_to_be) -> list:
         return []  # todo return a value
+
+
+class ClusterMemberListSerializer(serializers.ListSerializer):
+    """ListSerializer for ClusterMembers to allow multiple updates"""
+    def create(self, validated_data):
+        raise NotImplementedError
+
+    def update(self, instance: list[ClusterMember], validated_data):
+        raise NotImplementedError
+
+
+class ClusterMemberSerializer(serializers.Serializer):
+    name = serializers.CharField(source="doc.name")
+    rfc_number = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClusterMember
+        list_serializer_class = ClusterMemberListSerializer
+
+
+    def get_rfc_number(self, clustermember: ClusterMember) -> int | None:
+        try:
+            rfctobe = RfcToBe.objects.get(draft=clustermember.doc)
+        except RfcToBe.DoesNotExist:
+            return None
+        return rfctobe.rfc_number
+
+
+class ClusterSerializer(serializers.ModelSerializer):
+    """Serialize a Cluster instance
+
+    Uses a nested representation for `documents` rather than the ModelSerializer's
+    handling of relations so we can work with the through model. Specifically, we
+    want to respect the `order_by` setting of the `ClusterMember` class.
+    """
+    documents = ClusterMemberSerializer(source="clustermember_set", many=True)
+
+    class Meta:
+        model = Cluster
+        fields = [
+            "number",
+            "documents",
+        ]

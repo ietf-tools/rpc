@@ -317,7 +317,18 @@ class QueueItemSerializer(RfcToBeSerializer):
 
 
 class ClusterMemberListSerializer(serializers.ListSerializer):
-    """ListSerializer for ClusterMembers to allow multiple updates"""
+    """ListSerializer for ClusterMembers to allow multiple updates
+
+    This is a place-holder for implementations of write operations in the Cluster
+    API. If we take the approach of create/update operations entirely setting and
+    replacing the set of ClusterMembers, then the methods here are the place to
+    implement those.
+
+    If we go in a different direction, we could do away with this and let the
+    ClusterMemberSerializer use the default `ListSerializer` class.
+
+    https://www.django-rest-framework.org/api-guide/serializers/#customizing-listserializer-behavior
+    """
     def create(self, validated_data):
         raise NotImplementedError
 

@@ -55,7 +55,7 @@ class RfcToBe(models.Model):
     is_april_first_rfc = models.BooleanField(default=False)
     draft = models.ForeignKey(
         "datatracker.Document", null=True, on_delete=models.PROTECT
-    )  # only null if is_april_first_rfc is True
+    )
     rfc_number = models.PositiveIntegerField(null=True)
 
     submitted_format = models.ForeignKey("SourceFormatName", on_delete=models.PROTECT)
@@ -89,15 +89,6 @@ class RfcToBe(models.Model):
     labels = models.ManyToManyField("Label", through=RfcToBeLabel)
 
     history = HistoricalRecords(m2m_fields=[labels])
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(draft__isnull=False) ^ models.Q(is_april_first_rfc=True),
-                name="rfctobe_draft_not_null_xor_is_april_first_rfc",
-                violation_error_message="draft must be null if and only if is_april_first_rfc",
-            ),
-        ]
 
     def __str__(self):
         return (
@@ -216,7 +207,7 @@ class ClusterMember(models.Model):
                 name="clustermember_unique_doc",
                 violation_error_message="A document may not appear in more than one cluster",
                 deferrable=models.Deferrable.DEFERRED,
-            )
+            ),
         ]
 
 

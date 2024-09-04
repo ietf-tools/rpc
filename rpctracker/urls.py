@@ -47,6 +47,7 @@ register_converter(RfcNumberConverter, "rfc-number")
 
 router = routers.DefaultRouter()
 router.register(r"assignments", rpc_api.AssignmentViewSet)
+router.register(r"clusters", rpc_api.ClusterViewSet)
 router.register(r"documents", rpc_api.RfcToBeViewSet)
 router.register(r"labels", rpc_api.LabelViewSet)
 router.register(r"queue", rpc_api.QueueViewSet, basename="queue")
@@ -56,8 +57,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("login/", views.index),
-    path("api/rpc/clusters/", rpc_api.clusters),
-    path("api/rpc/clusters/<int:number>", rpc_api.cluster),
     path("api/rpc/profile/", rpc_api.profile),
     path(
         "api/rpc/profile/<int:rpc_person_id>", rpc_api.profile_as_person

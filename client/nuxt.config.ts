@@ -44,6 +44,9 @@ export default defineNuxtConfig({
   tailwindcss: {
     viewer: false
   },
+  typescript: {
+    typeCheck: false
+  },
   vite: {
     plugins: [
       {

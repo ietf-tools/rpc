@@ -13,6 +13,8 @@ from .models import (
     ActionHolder,
     Assignment,
     Capability,
+    Cluster,
+    ClusterMember,
     Label,
     RfcToBe,
     RpcPerson,
@@ -169,7 +171,10 @@ class RfcToBeSerializer(serializers.ModelSerializer):
         )  # TODO: reconcile when we teach the app to handle Apr 1 RFCs
 
     def get_cluster(self, rfc_to_be) -> Optional[int]:
-        return rfc_to_be.cluster.number if rfc_to_be.cluster else None
+        if rfc_to_be.draft:
+            cluster = rfc_to_be.draft.cluster_set.first()
+            return None if cluster is None else cluster.number
+        return None  # RfcToBe without draft cannot be a cluster member
 
     def create(self, validated_data):
         inst = super().create(validated_data)
@@ -309,3 +314,57 @@ class QueueItemSerializer(RfcToBeSerializer):
 
     def get_requested_approvals(self, rfc_to_be) -> list:
         return []  # todo return a value
+
+
+class ClusterMemberListSerializer(serializers.ListSerializer):
+    """ListSerializer for ClusterMembers to allow multiple updates
+
+    This is a place-holder for implementations of write operations in the Cluster
+    API. If we take the approach of create/update operations entirely setting and
+    replacing the set of ClusterMembers, then the methods here are the place to
+    implement those.
+
+    If we go in a different direction, we could do away with this and let the
+    ClusterMemberSerializer use the default `ListSerializer` class.
+
+    https://www.django-rest-framework.org/api-guide/serializers/#customizing-listserializer-behavior
+    """
+    def create(self, validated_data):
+        raise NotImplementedError
+
+    def update(self, instance: list[ClusterMember], validated_data):
+        raise NotImplementedError
+
+
+class ClusterMemberSerializer(serializers.Serializer):
+    name = serializers.CharField(source="doc.name")
+    rfc_number = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ClusterMember
+        list_serializer_class = ClusterMemberListSerializer
+
+
+    def get_rfc_number(self, clustermember: ClusterMember) -> int | None:
+        try:
+            rfctobe = RfcToBe.objects.get(draft=clustermember.doc)
+        except RfcToBe.DoesNotExist:
+            return None
+        return rfctobe.rfc_number
+
+
+class ClusterSerializer(serializers.ModelSerializer):
+    """Serialize a Cluster instance
+
+    Uses a nested representation for `documents` rather than the ModelSerializer's
+    handling of relations so we can work with the through model. Specifically, we
+    want to respect the `order_by` setting of the `ClusterMember` class.
+    """
+    documents = ClusterMemberSerializer(source="clustermember_set", many=True)
+
+    class Meta:
+        model = Cluster
+        fields = [
+            "number",
+            "documents",
+        ]

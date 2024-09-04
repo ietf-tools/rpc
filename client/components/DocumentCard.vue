@@ -128,8 +128,8 @@ import type { ResolvedDocument, ResolvedPerson } from './AssignmentsTypes'
 type Props = {
   document: ResolvedDocument
   selected?: boolean
-  editors: ResolvedPerson[]
-  editorAssignedDocuments: Record<string, ResolvedDocument[] | undefined>
+  editors?: ResolvedPerson[]
+  editorAssignedDocuments?: Record<string, ResolvedDocument[] | undefined>
 }
 
 const props = defineProps<Props>()
@@ -167,7 +167,7 @@ function toggleEditor (editorIds: number[]) {
 const cookedDocument = computed(() => {
   const teamPagesPerHour = 1.0
   const assignmentsPersons = props.document?.assignments?.map(
-    assignment => props.editors.find(editor => editor.id === assignment.person?.id)
+    assignment => props?.editors?.find(editor => editor.id === assignment.person?.id)
   ).filter(editor => !!editor) ?? []
 
   return ({
@@ -176,10 +176,10 @@ const cookedDocument = computed(() => {
     assignments: props.document.assignments,
     assignmentsPersons,
     assignmentsPersonIds: assignmentsPersons?.map(editor => editor?.id),
-    editors: props.editors
-      .map(editor => ({
+    editors: props?.editors
+      ?.map(editor => ({
         ...editor,
-        assignedDocuments: props.editorAssignedDocuments[editor.id],
+        assignedDocuments: props?.editorAssignedDocuments?.[editor.id],
         completeBy: currentTime.value.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
       }))
       .sort((a, b) => a.completeBy.toMillis() - b.completeBy.toMillis())

@@ -1,7 +1,7 @@
 <template>
-  <Badge :color="label.color">
-    <Icon v-if="label.isException" class="mr-2" name="pajamas:warning"/>
-    {{ label.slug }}
+  <Badge :color="label?.color">
+    <Icon v-if="label?.isException" class="mr-2" name="pajamas:warning"/>
+    {{ label?.slug }}
   </Badge>
 </template>
 
@@ -9,7 +9,7 @@
 import type { Label } from '~/rpctracker_client'
 
 type Props = {
-  label: Label
+  label?: Label
 }
 
 const props = defineProps<Props>()

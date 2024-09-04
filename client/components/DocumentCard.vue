@@ -134,6 +134,8 @@ type Props = {
 
 const props = defineProps<Props>()
 
+const currentTime = useCurrentTime()
+
 const _assignEditor = inject(assignEditorKey)
 if (!_assignEditor) {
   throw Error('Required assignEditor injection')
@@ -163,7 +165,6 @@ function toggleEditor (editorIds: number[]) {
 }
 
 const cookedDocument = computed(() => {
-  const now = DateTime.now()
   const teamPagesPerHour = 1.0
   const assignmentsPersons = props.document?.assignments?.map(
     assignment => props?.editors?.find(editor => editor.id === assignment.person?.id)
@@ -179,7 +180,7 @@ const cookedDocument = computed(() => {
       ?.map(editor => ({
         ...editor,
         assignedDocuments: props?.editorAssignedDocuments?.[editor.id],
-        completeBy: now.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
+        completeBy: currentTime.value.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
       }))
       .sort((a, b) => a.completeBy.toMillis() - b.completeBy.toMillis())
   })

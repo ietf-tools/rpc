@@ -172,7 +172,7 @@ const cookedDocument = computed(() => {
 
   return ({
     ...props.document,
-    external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
+    external_deadline: props.document.externalDeadline && DateTime.fromJSDate(props.document.externalDeadline),
     assignments: props.document.assignments,
     assignmentsPersons,
     assignmentsPersonIds: assignmentsPersons?.map(editor => editor?.id),
@@ -180,7 +180,8 @@ const cookedDocument = computed(() => {
       ?.map(editor => ({
         ...editor,
         assignedDocuments: props?.editorAssignedDocuments?.[editor.id],
-        completeBy: currentTime.value.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
+        // @ts-expect-error - drf-spectacular incorrectly marks hoursPerWeek as possibly undefined in the API schema
+        completeBy: currentTime.value.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hoursPerWeek })
       }))
       .sort((a, b) => a.completeBy.toMillis() - b.completeBy.toMillis())
   })

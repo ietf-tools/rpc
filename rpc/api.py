@@ -200,9 +200,7 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
         )
 
     # Create the RfcToBe
-    serializer = CreateRfcToBeSerializer(
-        data=request.data, context={"draft": draft}
-    )
+    serializer = CreateRfcToBeSerializer(data=request.data, context={"draft": draft})
     if serializer.is_valid():
         rfctobe = serializer.save()
         return Response(RfcToBeSerializer(rfctobe).data)

@@ -219,6 +219,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
 
 class CreateRfcToBeSerializer(serializers.ModelSerializer):
     """Serializer for RfcToBe fields that need to be specified explicitly on import"""
+
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
 
@@ -244,7 +245,9 @@ class CreateRfcToBeSerializer(serializers.ModelSerializer):
         }
         # default to intended_* == submitted_*
         for field_name in ["boilerplate", "std_level", "stream"]:
-            extra_data[f"intended_{field_name}"] = validated_data[f"submitted_{field_name}"]
+            extra_data[f"intended_{field_name}"] = validated_data[
+                f"submitted_{field_name}"
+            ]
         inst = super().create(validated_data | extra_data)
         update_change_reason(inst, "Added to the queue")
         return inst
@@ -369,6 +372,7 @@ class ClusterMemberListSerializer(serializers.ListSerializer):
 
     https://www.django-rest-framework.org/api-guide/serializers/#customizing-listserializer-behavior
     """
+
     def create(self, validated_data):
         raise NotImplementedError
 
@@ -383,7 +387,6 @@ class ClusterMemberSerializer(serializers.Serializer):
     class Meta:
         model = ClusterMember
         list_serializer_class = ClusterMemberListSerializer
-
 
     def get_rfc_number(self, clustermember: ClusterMember) -> int | None:
         try:
@@ -400,6 +403,7 @@ class ClusterSerializer(serializers.ModelSerializer):
     handling of relations so we can work with the through model. Specifically, we
     want to respect the `order_by` setting of the `ClusterMember` class.
     """
+
     documents = ClusterMemberSerializer(source="clustermember_set", many=True)
 
     class Meta:
@@ -468,10 +472,16 @@ class Submission:
             title=draft.title,
             pages=draft.pages,
             source_format=SourceFormatName.objects.get(slug=draft.source_format),
-            authors=[SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors],
+            authors=[
+                SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors
+            ],
             shepherd=draft.shepherd,
-            std_level=StdLevelName.objects.from_slug(draft.intended_std_level) if draft.intended_std_level else None,
-            datatracker_url=urljoin(settings.DATATRACKER_BASE, f"/doc/{draft.name}-{draft.rev}")
+            std_level=StdLevelName.objects.from_slug(draft.intended_std_level)
+            if draft.intended_std_level
+            else None,
+            datatracker_url=urljoin(
+                settings.DATATRACKER_BASE, f"/doc/{draft.name}-{draft.rev}"
+            ),
         )
 
 
@@ -482,6 +492,7 @@ class SubmissionAuthorSerializer(serializers.Serializer):
 
 class SubmissionSerializer(serializers.Serializer):
     """Serialize a submission"""
+
     id = serializers.IntegerField()
     name = serializers.CharField()
     rev = serializers.CharField()
@@ -500,6 +511,7 @@ class SubmissionListItemSerializer(serializers.Serializer):
 
     Only includes a subset of the SubmissionSerializer fields
     """
+
     id = serializers.IntegerField()
     name = serializers.CharField()
     stream = serializers.CharField()

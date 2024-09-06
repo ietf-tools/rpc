@@ -20,10 +20,10 @@ export default [
   ...compat.extends(
     'plugin:nuxt/recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/stylistic',
+    'plugin:@typescript-eslint/stylistic'
   ), {
     plugins: {
-      vue,
+      vue
     },
 
     languageOptions: {
@@ -32,7 +32,7 @@ export default [
         ...globals.jquery,
         ...globals.node,
         ...vue.environments['setup-compiler-macros']['setup-compiler-macros'],
-        d3: true,
+        d3: true
       },
 
       parser: parser,
@@ -40,8 +40,8 @@ export default [
       sourceType: 'module',
 
       parserOptions: {
-        parser: '@typescript-eslint/parser',
-      },
+        parser: '@typescript-eslint/parser'
+      }
     },
 
     rules: {
@@ -53,8 +53,8 @@ export default [
       '@typescript-eslint/consistent-type-definitions': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/ban-ts-comment': 'off',
-      '@typescript-eslint/no-unused-vars': 'off',
-    },
+      '@typescript-eslint/no-unused-vars': 'off'
+    }
   }, {
     ignores: [
       '.nuxt/',

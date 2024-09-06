@@ -15,16 +15,34 @@ import rpcapi_client
 from datatracker.rpcapi import with_rpcapi
 
 from datatracker.models import Document
-from .factories import StdLevelNameFactory, StreamNameFactory
-from .models import Assignment, Cluster, Label, RfcToBe, RpcPerson, RpcRole
+from .models import (
+    Assignment,
+    Cluster,
+    Label,
+    RfcToBe,
+    RpcPerson,
+    RpcRole,
+    SourceFormatName,
+    StdLevelName,
+    StreamName,
+    TlpBoilerplateChoiceName,
+)
 from .serializers import (
     AssignmentSerializer,
     ClusterSerializer,
+    CreateRfcToBeSerializer,
     LabelSerializer,
     QueueItemSerializer,
     RfcToBeSerializer,
     RpcPersonSerializer,
     RpcRoleSerializer,
+    SubmissionListItemSerializer,
+    Submission,
+    SubmissionSerializer,
+    SourceFormatNameSerializer,
+    StdLevelNameSerializer,
+    StreamNameSerializer,
+    TlpBoilerplateChoiceNameSerializer,
 )
 
 
@@ -95,24 +113,22 @@ def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
 
 
 @extend_schema(
-    operation_id="submissions_list", responses=OpenApiTypes.OBJECT
-)  # not very specific...
+    operation_id="submissions_list", responses=SubmissionListItemSerializer(many=True)
+)
 @api_view(["GET"])
 @with_rpcapi
 def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     """Return documents in datatracker that have been submitted to the RPC but are not yet in the queue
 
-    {
-        "submitted": [
-            {
-                "pk": 123456,
-                "name": "draft-foo-bar",
-                "stream": "ietf",
-                "submitted" : "2023-09-19"
-            }
-            ...
-        ]
-    }
+    [
+        {
+            "id": 123456,
+            "name": "draft-foo-bar",
+            "stream": "ietf",
+            "submitted" : "2023-09-19"
+        }
+        ...
+    ]
 
     Fed by doing a server->server API query that returns essentially the union of:
     >> Document.objects.filter(states__type_id="draft-iesg",states__slug__in=["approved","ann"])
@@ -133,29 +149,31 @@ def submissions(request, *, rpcapi: rpcapi_client.DefaultApi):
     Those queries overreturn - there may be things, particularly not from the IETF stream that are already in the queue.
     This api will filter those out.
     """
-    submitted = []
     # Get submissions list from Datatracker
     response = rpcapi.submitted_to_rpc()
-    submitted.extend(response.to_dict()["submitted_to_rpc"])
+    submitted = response.submitted_to_rpc
     # Filter out I-Ds that already have an RfcToBe
     already_in_queue = RfcToBe.objects.filter(
-        draft__datatracker_id__in=[s["pk"] for s in submitted]
+        draft__datatracker_id__in=[s.id for s in submitted]
     ).values_list("draft__datatracker_id", flat=True)
-    submitted = [s for s in submitted if s["pk"] not in already_in_queue]
-    return JsonResponse({"submitted": submitted}, safe=False)
+    submitted = [s for s in submitted if s.id not in already_in_queue]
+    return Response(SubmissionListItemSerializer(submitted, many=True).data)
 
 
-@extend_schema(operation_id="submissions_retrieve", responses=OpenApiTypes.OBJECT)
+@extend_schema(operation_id="submissions_retrieve", responses=SubmissionSerializer)
 @api_view(["GET"])
 @with_rpcapi
 def submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
+    # Create a Document to which the RfcToBe can refer. If it already exists, update
+    # its values with whatever the datatracker currently says.
     draft = rpcapi.get_draft_by_id(document_id)
-    return Response(draft.to_dict())
+    subm = Submission.from_rpcapi_draft(draft)
+    return Response(SubmissionSerializer(subm).data)
 
 
 @extend_schema(
     operation_id="submissions_import",
-    request=RfcToBeSerializer,
+    request=CreateRfcToBeSerializer,
     responses=RfcToBeSerializer,
 )
 @api_view(["POST"])
@@ -177,39 +195,15 @@ def import_submission(request, document_id, rpcapi: rpcapi_client.DefaultApi):
                 "title": draft_info.title,
                 "stream": draft_info.stream,
                 "pages": draft_info.pages,
+                "intended_std_level": draft_info.intended_std_level,
             },
         )
 
     # Create the RfcToBe
-    # todo get rid of the factories!
-    # todo get more data from front end / think carefully about defaults
-    initial_data = request.data
-    initial_data.update(
-        dict(
-            draft=draft.pk,
-            disposition="in_progress",
-            submitted_boilerplate="trust200902",
-            intended_boilerplate="trust200902",
-            submitted_format="xml-v3",
-            submitted_std_level=StdLevelNameFactory(
-                slug="ps", name="Proposed Standard"
-            ).pk,
-            intended_std_level=StdLevelNameFactory(
-                slug="ps", name="Proposed Standard"
-            ).pk,
-            submitted_stream=StreamNameFactory(
-                slug=draft.stream, name=draft.stream.upper()
-            ).pk,
-            intended_stream=StreamNameFactory(
-                slug=draft.stream, name=draft.stream.upper()
-            ).pk,
-            internal_goal=initial_data["external_deadline"],
-        )
-    )
-    serializer = RfcToBeSerializer(data=initial_data)
+    serializer = CreateRfcToBeSerializer(data=request.data, context={"draft": draft})
     if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
+        rfctobe = serializer.save()
+        return Response(RfcToBeSerializer(rfctobe).data)
     else:
         return Response(serializer.errors, status=400)
 
@@ -298,3 +292,23 @@ class StatsLabels(views.APIView):
                         }
                     )
         return Response({"label_stats": results})
+
+
+class SourceFormatNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = SourceFormatName.objects.all()
+    serializer_class = SourceFormatNameSerializer
+
+
+class StdLevelNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = StdLevelName.objects.all()
+    serializer_class = StdLevelNameSerializer
+
+
+class StreamNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = StreamName.objects.all()
+    serializer_class = StreamNameSerializer
+
+
+class TlpBoilerplateChoiceNameViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = TlpBoilerplateChoiceName.objects.all()
+    serializer_class = TlpBoilerplateChoiceNameSerializer

@@ -52,6 +52,7 @@ class Document(models.Model):
     title = models.CharField(max_length=255, help_text="Title of draft")
     stream = models.CharField(max_length=32, help_text="Stream of draft")
     pages = models.PositiveSmallIntegerField(help_text="Number of pages")
+    intended_std_level = models.CharField(max_length=32, blank=True)
 
     # Labels applied to this instance. To track history, see
     # https://django-simple-history.readthedocs.io/en/latest/historical_model.html#tracking-many-to-many-relationships

@@ -84,8 +84,8 @@ const tabs: Tab[] = [
 const deadlineCol = {
   key: 'deadline',
   label: 'Deadline',
-  field: 'deadline',
-  format: (val: any) => val ? DateTime.fromISO(val).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+  field: 'externalDeadline',
+  format: (val: any) => val ? DateTime.fromJSDate(val as Date).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
   classes: 'text-xs'
 }
 
@@ -101,7 +101,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: (row) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.pk}` : `/docs/${row.name}`
+      link: (row) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.id}` : `/docs/${row.name}`
     },
     {
       key: 'labels',
@@ -115,7 +115,7 @@ const columns = computed(() => {
       key: 'submitted',
       label: 'Submitted',
       field: 'submitted',
-      format: (val) => val ? DateTime.fromISO(val.toString()).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
+      format: (val) => val ? DateTime.fromJSDate(val as Date).toLocaleString(DateTime.DATE_MED_WITH_WEEKDAY) : '',
       classes: 'text-xs'
     })
   }
@@ -303,10 +303,7 @@ const { data: documents, pending, refresh } = await useAsyncData(
   {
     server: false,
     lazy: true,
-    default: () => ([]),
-    transform: (resp) => {
-      return currentTab.value === 'submissions' ? (resp && 'submitted' in resp ? resp.submitted : []) : resp
-    }
+    default: () => ([])
   })
 
 onMounted(() => {

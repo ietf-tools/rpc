@@ -10,7 +10,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -233,6 +232,7 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
+            options={"ordering": ["order"]},
         ),
         migrations.AddField(
             model_name="cluster",
@@ -425,6 +425,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         blank=True,
                         db_constraint=False,
+                        help_text="TLP IPR boilerplate option intended to apply upon publication as RFC",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         related_name="+",
@@ -436,6 +437,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         blank=True,
                         db_constraint=False,
+                        help_text='TLP IPR boilerplate option applicable when document entered the queue',
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         related_name="+",
@@ -903,6 +905,7 @@ class Migration(migrations.Migration):
             model_name="rfctobe",
             name="intended_boilerplate",
             field=models.ForeignKey(
+                help_text='TLP IPR boilerplate option intended to apply upon publication as RFC',
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name="+",
                 to="rpc.tlpboilerplatechoicename",
@@ -912,6 +915,7 @@ class Migration(migrations.Migration):
             model_name="rfctobe",
             name="submitted_boilerplate",
             field=models.ForeignKey(
+                help_text='TLP IPR boilerplate option applicable when document entered the queue',
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name="+",
                 to="rpc.tlpboilerplatechoicename",

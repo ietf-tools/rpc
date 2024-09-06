@@ -3,11 +3,13 @@
 import datetime
 
 from dataclasses import dataclass
+from django.conf import settings
 from itertools import pairwise
 from rest_framework import serializers
 from simple_history.models import ModelDelta
 from simple_history.utils import update_change_reason
 from typing import Optional
+from urllib.parse import urljoin
 
 from .models import (
     ActionHolder,
@@ -15,10 +17,14 @@ from .models import (
     Capability,
     Cluster,
     ClusterMember,
+    DispositionName,
     Label,
     RfcToBe,
     RpcPerson,
     RpcRole,
+    SourceFormatName,
+    StdLevelName,
+    StreamName,
 )
 
 
@@ -144,6 +150,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
             "intended_stream",
             "history",
         ]
+        read_only_fields = ["id", "draft"]
 
     def get_name(self, rfc_to_be) -> str:
         return (
@@ -208,6 +215,42 @@ class RfcToBeSerializer(serializers.ModelSerializer):
                 yield " and ".join(changes)
             else:
                 yield f'Changed {change.field} from "{change.old}" to "{change.new}"'
+
+
+class CreateRfcToBeSerializer(serializers.ModelSerializer):
+    """Serializer for RfcToBe fields that need to be specified explicitly on import"""
+
+    # Need to explicitly specify labels as a PK because it uses a through model
+    labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
+
+    class Meta:
+        model = RfcToBe
+        fields = [
+            "submitted_format",
+            "submitted_boilerplate",
+            "submitted_std_level",
+            "submitted_stream",
+            "external_deadline",
+            "labels",
+        ]
+
+    def create(self, validated_data):
+        extra_data = {
+            "draft": self.context["draft"],
+            "disposition": DispositionName.objects.get(slug="in_progress"),
+            "intended_boilerplate": validated_data["submitted_boilerplate"],
+            "intended_std_level": validated_data["submitted_std_level"],
+            "intended_stream": validated_data["submitted_stream"],
+            "internal_goal": validated_data["external_deadline"],
+        }
+        # default to intended_* == submitted_*
+        for field_name in ["boilerplate", "std_level", "stream"]:
+            extra_data[f"intended_{field_name}"] = validated_data[
+                f"submitted_{field_name}"
+            ]
+        inst = super().create(validated_data | extra_data)
+        update_change_reason(inst, "Added to the queue")
+        return inst
 
 
 class CapabilitySerializer(serializers.ModelSerializer):
@@ -329,6 +372,7 @@ class ClusterMemberListSerializer(serializers.ListSerializer):
 
     https://www.django-rest-framework.org/api-guide/serializers/#customizing-listserializer-behavior
     """
+
     def create(self, validated_data):
         raise NotImplementedError
 
@@ -343,7 +387,6 @@ class ClusterMemberSerializer(serializers.Serializer):
     class Meta:
         model = ClusterMember
         list_serializer_class = ClusterMemberListSerializer
-
 
     def get_rfc_number(self, clustermember: ClusterMember) -> int | None:
         try:
@@ -360,6 +403,7 @@ class ClusterSerializer(serializers.ModelSerializer):
     handling of relations so we can work with the through model. Specifically, we
     want to respect the `order_by` setting of the `ClusterMember` class.
     """
+
     documents = ClusterMemberSerializer(source="clustermember_set", many=True)
 
     class Meta:
@@ -368,3 +412,107 @@ class ClusterSerializer(serializers.ModelSerializer):
             "number",
             "documents",
         ]
+
+
+class SourceFormatNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourceFormatName
+        fields = ["slug", "name", "desc"]
+
+
+class StdLevelNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StdLevelName
+        fields = ["slug", "name", "desc"]
+
+
+class StreamNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StreamName
+        fields = ["slug", "name", "desc"]
+
+
+class TlpBoilerplateChoiceNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SourceFormatName
+        fields = ["slug", "name", "desc"]
+
+
+@dataclass
+class SubmissionAuthor:
+    id: int
+    plain_name: str
+
+    @classmethod
+    def from_rpcapi_draft_author(cls, author):
+        return cls(id=author.id, plain_name=author.plain_name)
+
+
+@dataclass
+class Submission:
+    id: int
+    name: str
+    rev: str
+    stream: StreamName
+    title: str
+    pages: int
+    source_format: SourceFormatName
+    authors: list[SubmissionAuthor]
+    shepherd: str
+    std_level: StdLevelName | None
+    datatracker_url: str
+
+    @classmethod
+    def from_rpcapi_draft(cls, draft):
+        return cls(
+            id=draft.id,
+            name=draft.name,
+            rev=draft.rev,
+            stream=StreamName.objects.from_slug(draft.stream),
+            title=draft.title,
+            pages=draft.pages,
+            source_format=SourceFormatName.objects.get(slug=draft.source_format),
+            authors=[
+                SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors
+            ],
+            shepherd=draft.shepherd,
+            std_level=StdLevelName.objects.from_slug(draft.intended_std_level)
+            if draft.intended_std_level
+            else None,
+            datatracker_url=urljoin(
+                settings.DATATRACKER_BASE, f"/doc/{draft.name}-{draft.rev}"
+            ),
+        )
+
+
+class SubmissionAuthorSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    plain_name = serializers.CharField()
+
+
+class SubmissionSerializer(serializers.Serializer):
+    """Serialize a submission"""
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    rev = serializers.CharField()
+    stream = StreamNameSerializer()
+    title = serializers.CharField()
+    pages = serializers.IntegerField()
+    source_format = SourceFormatNameSerializer()
+    authors = SubmissionAuthorSerializer(many=True)
+    shepherd = serializers.EmailField()
+    std_level = StdLevelNameSerializer(required=False)
+    datatracker_url = serializers.URLField()
+
+
+class SubmissionListItemSerializer(serializers.Serializer):
+    """Serialize a submission list item
+
+    Only includes a subset of the SubmissionSerializer fields
+    """
+
+    id = serializers.IntegerField()
+    name = serializers.CharField()
+    stream = serializers.CharField()
+    submitted = serializers.DateTimeField()

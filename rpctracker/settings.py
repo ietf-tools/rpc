@@ -147,6 +147,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Backend API for the RpcTracker",
     "VERSION": "0.1",
     "SCHEMA_PATH_PREFIX": "/api/rpc/",
+    "COMPONENT_NO_READ_ONLY_REQUIRED": True,
 }
 
 # Password validation
@@ -193,3 +194,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DATATRACKER_RPC_API_BASE = "http://host.docker.internal:8000/api/rpc"
 DATATRACKER_RPC_API_TOKEN = os.environ["RPC_API_TOKEN"]
 DATATRACKER_API_V1_BASE = "http://host.docker.internal:8000/api/v1"
+
+DATATRACKER_BASE = "http://localhost:8000"

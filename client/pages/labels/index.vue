@@ -90,7 +90,9 @@ async function addLabel () {
     title: 'Success',
     text: 'Created new label'
   })
-  refresh && await refresh()
+  if (refresh) {
+    await refresh()
+  }
 }
 
 async function editLabel (label: Label) {
@@ -115,7 +117,9 @@ async function editLabel (label: Label) {
     title: 'Success',
     text: 'Label updated'
   })
-  refresh && await refresh()
+  if (refresh) {
+    await refresh()
+  }
 }
 
 </script>

@@ -10,7 +10,7 @@ export const useCurrentTime = () => {
   onBeforeMount(() => {
     instanceCount++
     if (interval === null) {
-      interval = setInterval(() => currentTime.value = getNowUtc(), 1000)
+      interval = setInterval(() => { currentTime.value = getNowUtc() }, 1000)
     }
   })
   onUnmounted(() => {

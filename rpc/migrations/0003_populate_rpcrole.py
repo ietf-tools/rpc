@@ -6,6 +6,9 @@ from django.db import migrations
 def forward(apps, schema_editor):
     RpcRole = apps.get_model("rpc", "RpcRole")
     RpcRole.objects.create(
+        slug="enqueuer", name="Enqueuer", desc="Submission enqueuer"
+    )
+    RpcRole.objects.create(
         slug="formatting", name="Formatting", desc="RFCXML formatter"
     )
     RpcRole.objects.create(

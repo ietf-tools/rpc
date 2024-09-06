@@ -41,25 +41,8 @@ class DatatrackerPerson(models.Model):
         return None if person is None else person.plain_name
 
 
-class DocumentManager(models.Manager):
-    def update_or_create_from_rpcapi_draft(self, draft):
-        """update_or_create from an rpcapi Draft response instance"""
-        return self.update_or_create(
-            datatracker_id=draft.id,
-            defaults={
-                "name": draft.name,
-                "rev": draft.rev,
-                "title": draft.title,
-                "stream": draft.stream,
-                "pages": draft.pages,
-                "source_format": draft.source_format,
-            },
-        )
-
-
 class Document(models.Model):
     """Document known to the datatracker"""
-    objects = DocumentManager()
 
     # datatracker uses AutoField for this, which is only an IntegerField, but might as well go big
     datatracker_id = models.BigIntegerField(unique=True)
@@ -69,8 +52,6 @@ class Document(models.Model):
     title = models.CharField(max_length=255, help_text="Title of draft")
     stream = models.CharField(max_length=32, help_text="Stream of draft")
     pages = models.PositiveSmallIntegerField(help_text="Number of pages")
-    source_format = models.CharField(max_length=16, help_text="Draft source file format")
-    shepherd = models.EmailField(max_length=254, blank=True)
     intended_std_level = models.CharField(max_length=32, blank=True)
 
     # Labels applied to this instance. To track history, see

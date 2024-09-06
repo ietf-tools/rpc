@@ -27,10 +27,8 @@ export default defineNuxtConfig({
     'nuxt-svgo'
   ],
   robots: {
-    rules: [
-      { UserAgent: '*' },
-      { Disallow: '/' }
-    ]
+    credits: false,
+    disallow: ['/']
   },
   snackbar: {
     top: true,

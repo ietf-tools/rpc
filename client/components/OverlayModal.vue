@@ -46,8 +46,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:isShown': [isShown: boolean]
-  'closeOk': [value?: string]
-  'closeCancel': [reason?: any]
+  closeOk: [value?: string]
+  closeCancel: [reason?: any]
 }>()
 
 // PROVIDE

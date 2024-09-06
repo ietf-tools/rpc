@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div align="center">
 
 <img src="https://raw.githubusercontent.com/ietf-tools/common/main/assets/logos/rpc.svg" alt="RPC" height="125" />
 

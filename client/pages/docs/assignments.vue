@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes';
+import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes'
 import type { Assignment, RfcToBe, RpcPerson } from '~/rpctracker_client'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })

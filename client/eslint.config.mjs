@@ -35,7 +35,7 @@ export default [
         d3: true
       },
 
-      parser: parser,
+      parser,
       ecmaVersion: 'latest',
       sourceType: 'module',
 

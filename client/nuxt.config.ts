@@ -1,5 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2024-09-06', // today's date, nothing special otherwise
   colorMode: {
     preference: 'light',
     classSuffix: '',

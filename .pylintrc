@@ -46,8 +46,7 @@ fail-under=10
 #from-stdin=
 
 # Files or directories to be skipped. They should be base names, not paths.
-ignore=CVS,
-       migrations
+ignore=CVS
 
 # Add files or directories matching the regular expressions patterns to the
 # ignore-list. The regex matches against paths and can be in Posix or Windows
@@ -58,7 +57,7 @@ ignore-paths=
 # Files or directories matching the regular expression patterns are skipped.
 # The regex matches against base names, not paths. The default value ignores
 # Emacs file locks
-ignore-patterns=
+ignore-patterns=^\.#
 
 # List of module names for which member attributes should not be checked and
 # will not be imported (useful for modules/projects where namespaces are
@@ -83,8 +82,7 @@ limit-inference-results=100
 
 # List of plugins (as comma separated values of python module names) to load,
 # usually to register additional checkers.
-load-plugins=pylint_django,
-             pylint_common
+load-plugins=
 
 # Pickle collected data for later comparisons.
 persistent=yes
@@ -126,7 +124,7 @@ argument-naming-style=snake_case
 # Regular expression matching correct argument names. Overrides argument-
 # naming-style. If left empty, argument names will be checked with the set
 # naming style.
-argument-rgx=[a-z_][a-z0-9_]{2,30}$
+#argument-rgx=
 
 # Naming style matching correct attribute names.
 attr-naming-style=snake_case
@@ -134,7 +132,7 @@ attr-naming-style=snake_case
 # Regular expression matching correct attribute names. Overrides attr-naming-
 # style. If left empty, attribute names will be checked with the set naming
 # style.
-attr-rgx=[a-z_][a-z0-9_]{2,30}$
+#attr-rgx=
 
 # Bad variable names which should always be refused, separated by a comma.
 bad-names=foo,
@@ -154,7 +152,7 @@ class-attribute-naming-style=any
 # Regular expression matching correct class attribute names. Overrides class-
 # attribute-naming-style. If left empty, class attribute names will be checked
 # with the set naming style.
-class-attribute-rgx=([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$
+#class-attribute-rgx=
 
 # Naming style matching correct class constant names.
 class-const-naming-style=UPPER_CASE
@@ -169,7 +167,7 @@ class-naming-style=PascalCase
 
 # Regular expression matching correct class names. Overrides class-naming-
 # style. If left empty, class names will be checked with the set naming style.
-class-rgx=[A-Z_][a-zA-Z0-9]+$
+#class-rgx=
 
 # Naming style matching correct constant names.
 const-naming-style=UPPER_CASE
@@ -177,7 +175,7 @@ const-naming-style=UPPER_CASE
 # Regular expression matching correct constant names. Overrides const-naming-
 # style. If left empty, constant names will be checked with the set naming
 # style.
-const-rgx=(([A-Z_][A-Z0-9_]*)|(__.*__))$
+#const-rgx=
 
 # Minimum line length for functions/classes that require docstrings, shorter
 # ones are exempt.
@@ -189,7 +187,7 @@ function-naming-style=snake_case
 # Regular expression matching correct function names. Overrides function-
 # naming-style. If left empty, function names will be checked with the set
 # naming style.
-function-rgx=[a-z_][a-z0-9_]{2,30}$
+#function-rgx=
 
 # Good variable names which should always be accepted, separated by a comma.
 good-names=i,
@@ -212,21 +210,21 @@ inlinevar-naming-style=any
 # Regular expression matching correct inline iteration names. Overrides
 # inlinevar-naming-style. If left empty, inline iteration names will be checked
 # with the set naming style.
-inlinevar-rgx=[A-Za-z_][A-Za-z0-9_]*$
+#inlinevar-rgx=
 
 # Naming style matching correct method names.
 method-naming-style=snake_case
 
 # Regular expression matching correct method names. Overrides method-naming-
 # style. If left empty, method names will be checked with the set naming style.
-method-rgx=[a-z_][a-z0-9_]{2,30}$
+#method-rgx=
 
 # Naming style matching correct module names.
 module-naming-style=snake_case
 
 # Regular expression matching correct module names. Overrides module-naming-
 # style. If left empty, module names will be checked with the set naming style.
-module-rgx=(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$
+#module-rgx=
 
 # Colon-delimited sets of names that determine each other's naming style when
 # the name regexes allow several styles.
@@ -255,7 +253,7 @@ variable-naming-style=snake_case
 # Regular expression matching correct variable names. Overrides variable-
 # naming-style. If left empty, variable names will be checked with the set
 # naming style.
-variable-rgx=[a-z_][a-z0-9_]{2,30}$
+#variable-rgx=
 
 
 [CLASSES]
@@ -266,15 +264,13 @@ check-protected-access-in-special-methods=no
 # List of method names used to declare (i.e. assign) instance attributes.
 defining-attr-methods=__init__,
                       __new__,
-                      setUp
+                      setUp,
+                      asyncSetUp,
+                      __post_init__
 
 # List of member names, which should be excluded from the protected access
 # warning.
-exclude-protected=_asdict,
-                  _fields,
-                  _replace,
-                  _source,
-                  _make
+exclude-protected=_asdict,_fields,_replace,_source,_make,os._exit
 
 # List of valid names for the first argument in a class method.
 valid-classmethod-first-arg=cls
@@ -324,16 +320,10 @@ max-statements=50
 min-public-methods=2
 
 
-[DJANGO FOREIGN KEYS REFERENCED BY STRINGS]
-
-# A module containing Django settings to be used while linting.
-#django-settings-module=
-
-
 [EXCEPTIONS]
 
 # Exceptions that will emit a warning when caught.
-overgeneral-exceptions=builtins.Exception
+overgeneral-exceptions=builtins.BaseException,builtins.Exception
 
 
 [FORMAT]
@@ -379,10 +369,7 @@ allow-reexport-from-package=no
 allow-wildcard-with-all=no
 
 # Deprecated modules which should not be used, separated by a comma.
-deprecated-modules=regsub,
-                   TERMIOS,
-                   Bastion,
-                   rexec
+deprecated-modules=
 
 # Output a graph (.gv or any supported image format) of external dependencies
 # to the given file (report RP0402 must not be disabled).
@@ -448,252 +435,7 @@ disable=raw-checker-failed,
         deprecated-pragma,
         use-symbolic-message-instead,
         use-implicit-booleaness-not-comparison-to-string,
-        use-implicit-booleaness-not-comparison-to-zero,
-        unknown-option-value,
-        fixme,
-        useless-with-lock,
-        logging-not-lazy,
-        logging-format-interpolation,
-        logging-fstring-interpolation,
-        bad-format-string-key,
-        unused-format-string-key,
-        bad-format-string,
-        missing-format-argument-key,
-        unused-format-string-argument,
-        format-combined-specification,
-        missing-format-attribute,
-        invalid-format-index,
-        duplicate-string-formatting-argument,
-        f-string-without-interpolation,
-        format-string-without-interpolation,
-        anomalous-backslash-in-string,
-        anomalous-unicode-escape-in-string,
-        implicit-str-concat,
-        inconsistent-quotes,
-        redundant-u-string-prefix,
-        global-variable-undefined,
-        global-variable-not-assigned,
-        global-statement,
-        global-at-module-level,
-        unused-import,
-        unused-variable,
-        unused-argument,
-        unused-wildcard-import,
-        redefined-outer-name,
-        redefined-builtin,
-        undefined-loop-variable,
-        unbalanced-tuple-unpacking,
-        cell-var-from-loop,
-        possibly-unused-variable,
-        self-cls-assignment,
-        unbalanced-dict-unpacking,
-        modified-iterating-list,
-        attribute-defined-outside-init,
-        bad-staticmethod-argument,
-        protected-access,
-        implicit-flag-alias,
-        arguments-differ,
-        signature-differs,
-        abstract-method,
-        super-init-not-called,
-        non-parent-init-called,
-        invalid-overridden-method,
-        arguments-renamed,
-        unused-private-member,
-        overridden-final-method,
-        subclassed-final-class,
-        redefined-slots-in-subclass,
-        super-without-brackets,
-        useless-parent-delegation,
-        bad-open-mode,
-        boolean-datetime,
-        redundant-unittest-assert,
-        bad-thread-instantiation,
-        shallow-copy-environ,
-        invalid-envvar-default,
-        subprocess-popen-preexec-fn,
-        subprocess-run-check,
-        unspecified-encoding,
-        forgotten-debug-statement,
-        method-cache-max-size-none,
-        deprecated-method,
-        deprecated-argument,
-        deprecated-class,
-        deprecated-decorator,
-        deprecated-attribute,
-        non-ascii-file-name,
-        useless-else-on-loop,
-        unreachable,
-        dangerous-default-value,
-        pointless-statement,
-        pointless-string-statement,
-        expression-not-assigned,
-        unnecessary-lambda,
-        duplicate-key,
-        exec-used,
-        eval-used,
-        confusing-with-statement,
-        using-constant-test,
-        missing-parentheses-for-call-in-test,
-        self-assigning-variable,
-        redeclared-assigned-name,
-        assert-on-string-literal,
-        duplicate-value,
-        named-expr-without-context,
-        pointless-exception-statement,
-        return-in-finally,
-        lost-exception,
-        assert-on-tuple,
-        unnecessary-pass,
-        comparison-with-callable,
-        nan-comparison,
-        contextmanager-generator-missing-cleanup,
-        bad-chained-comparison,
-        unnecessary-semicolon,
-        bad-indentation,
-        nested-min-max,
-        bare-except,
-        duplicate-except,
-        try-except-raise,
-        raise-missing-from,
-        binary-op-exception,
-        raising-format-tuple,
-        wrong-exception-operation,
-        broad-exception-caught,
-        broad-exception-raised,
-        unnecessary-ellipsis,
-        using-f-string-in-unsupported-version,
-        using-final-decorator-in-unsupported-version,
-        wildcard-import,
-        reimported,
-        import-self,
-        preferred-module,
-        misplaced-future,
-        shadowed-import,
-        deprecated-module,
-        missing-timeout,
-        keyword-arg-before-vararg,
-        arguments-out-of-order,
-        non-str-assignment-to-dunder-name,
-        isinstance-second-argument-not-valid-type,
-        kwarg-superseded-by-positional-arg,
-        model-missing-unicode,
-        model-has-unicode,
-        model-no-explicit-unicode,
-        django-not-available-placeholder,
-        modelform-uses-exclude,
-        wrong-spelling-in-comment,
-        wrong-spelling-in-docstring,
-        invalid-characters-in-docstring,
-        bad-file-encoding,
-        bad-classmethod-argument,
-        bad-mcs-method-argument,
-        bad-mcs-classmethod-argument,
-        single-string-used-for-slots,
-        non-ascii-name,
-        non-ascii-module-import,
-        invalid-name,
-        disallowed-name,
-        typevar-name-incorrect-variance,
-        typevar-double-variance,
-        typevar-name-mismatch,
-        empty-docstring,
-        missing-module-docstring,
-        missing-class-docstring,
-        missing-function-docstring,
-        singleton-comparison,
-        unidiomatic-typecheck,
-        unnecessary-lambda-assignment,
-        unnecessary-direct-lambda-call,
-        line-too-long,
-        too-many-lines,
-        trailing-whitespace,
-        missing-final-newline,
-        trailing-newlines,
-        multiple-statements,
-        superfluous-parens,
-        mixed-line-endings,
-        unexpected-line-ending-format,
-        unnecessary-dunder-call,
-        unnecessary-negation,
-        consider-using-enumerate,
-        consider-iterating-dictionary,
-        consider-using-dict-items,
-        use-maxsplit-arg,
-        use-sequence-for-iteration,
-        consider-using-f-string,
-        use-implicit-booleaness-not-len,
-        use-implicit-booleaness-not-comparison,
-        multiple-imports,
-        wrong-import-order,
-        ungrouped-imports,
-        wrong-import-position,
-        useless-import-alias,
-        import-outside-toplevel,
-        useless-option-value,
-        no-classmethod-decorator,
-        no-staticmethod-decorator,
-        useless-object-inheritance,
-        property-with-parameters,
-        literal-comparison,
-        comparison-with-itself,
-        comparison-of-constants,
-        too-many-ancestors,
-        too-many-instance-attributes,
-        too-few-public-methods,
-        too-many-public-methods,
-        too-many-return-statements,
-        too-many-branches,
-        too-many-arguments,
-        too-many-locals,
-        too-many-statements,
-        too-many-boolean-expressions,
-        too-many-positional,
-        consider-merging-isinstance,
-        too-many-nested-blocks,
-        simplifiable-if-statement,
-        redefined-argument-from-local,
-        no-else-return,
-        consider-using-ternary,
-        trailing-comma-tuple,
-        stop-iteration-return,
-        simplify-boolean-expression,
-        inconsistent-return-statements,
-        useless-return,
-        consider-swap-variables,
-        consider-using-join,
-        consider-using-in,
-        consider-using-get,
-        chained-comparison,
-        consider-using-dict-comprehension,
-        consider-using-set-comprehension,
-        simplifiable-if-expression,
-        no-else-raise,
-        unnecessary-comprehension,
-        consider-using-sys-exit,
-        no-else-break,
-        no-else-continue,
-        super-with-arguments,
-        simplifiable-condition,
-        condition-evals-to-constant,
-        consider-using-generator,
-        use-a-generator,
-        consider-using-min-builtin,
-        consider-using-max-builtin,
-        consider-using-with,
-        unnecessary-dict-index-lookup,
-        use-list-literal,
-        use-dict-literal,
-        unnecessary-list-index-lookup,
-        use-yield-from,
-        duplicate-code,
-        cyclic-import,
-        consider-using-from-import,
-        http-response-with-json-dumps,
-        http-response-with-content-type-json,
-        redundant-content-type-for-json-response,
-        c-extension-no-member,
-        no-member
+        use-implicit-booleaness-not-comparison-to-zero
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -744,7 +486,7 @@ suggest-join-with-non-empty-separator=yes
 # 'convention', and 'info' which contain the number of messages in each
 # category, as well as 'statement' which is the total number of statements
 # analyzed. This score is used by the global evaluation report (RP0004).
-evaluation=10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10)
+evaluation=max(0, 0 if fatal else 10.0 - ((float(5 * error + warning + refactor + convention) / statement) * 10))
 
 # Template used to display messages. This is a python new-style format string
 # used to format the message information. See doc for all details.
@@ -772,7 +514,7 @@ ignore-comments=yes
 ignore-docstrings=yes
 
 # Imports are removed from the similarity computation
-ignore-imports=no
+ignore-imports=yes
 
 # Signatures are removed from the similarity computation
 ignore-signatures=yes
@@ -849,7 +591,7 @@ ignored-checks-for-mixins=no-member,
 # List of class names for which member attributes should not be checked (useful
 # for classes with dynamically set attributes). This supports the use of
 # qualified names.
-ignored-classes=optparse.Values,thread._local,_thread._local
+ignored-classes=optparse.Values,thread._local,_thread._local,argparse.Namespace
 
 # Show a hint with possible names when a member name was not found. The aspect
 # of finding the hint is based on edit distance.
@@ -889,14 +631,14 @@ callbacks=cb_,
 
 # A regular expression matching the name of dummy variables (i.e. expected to
 # not be used).
-dummy-variables-rgx=(_+[a-zA-Z0-9]*?$)|dummy
+dummy-variables-rgx=_+$|(_[a-zA-Z0-9_]*[a-zA-Z0-9]+?$)|dummy|^ignored_|^unused_
 
 # Argument names that match this expression will be ignored.
-ignored-argument-names=_.*
+ignored-argument-names=_.*|^ignored_|^unused_
 
 # Tells whether we should check for unused import in __init__ files.
 init-import=no
 
 # List of qualified module names which can have objects that can redefine
 # builtins.
-redefining-builtins-modules=six.moves,future.builtins
+redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io

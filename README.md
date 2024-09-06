@@ -1,4 +1,4 @@
-<div style="text-align: center">
+<div align="center">
 
 <img src="https://raw.githubusercontent.com/ietf-tools/common/main/assets/logos/rpc.svg" alt="RPC" height="125" />
 
@@ -79,7 +79,7 @@
 
 To create demo data, open an app container shell and run the management command
 ```sh
-./manage.py create_demo_data
+./manage.py create_rpc_demo
 ```
 This requires that the Datatracker dev server be running.
 
@@ -87,7 +87,7 @@ To remove all data and start afresh, you can run
 ```sh
 ./manage.py purge --yes-im-sure
 ```
-and all data in the RPC tool's database will be reset. The Datatracker _will not_ be reset, but running `create_demo_data` again will work as intended.
+and all data in the RPC tool's database will be reset. The Datatracker _will not_ be reset, but running `create_rpc_demo` again will work as intended.
 
 ## APIs
 

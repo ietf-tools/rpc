@@ -17,7 +17,7 @@
       <div class="flex items-center gap-x-4 lg:gap-x-6">
         <!-- Site Theme Switcher -->
         <HeadlessMenu as="div" class="relative inline-block mr-2">
-          <HeadlessMenuButton class="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">
+          <HeadlessMenuButton :id="buttonId" class="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">
             <span class="sr-only">Site Theme</span>
             <ColorScheme placeholder="..." tag="span">
               <Icon v-if="$colorMode.value === 'dark'" name="solar:moon-bold-duotone" class="text-gray-500 dark:text-neutral-400 hover:text-violet-400 dark:hover:text-violet-400" size="1.25em" aria-hidden="true" />
@@ -127,6 +127,7 @@ import { useUserStore } from '@/stores/user'
 
 const api = useApi()
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
+const buttonId = useId() // avoid a hydration error - see https://github.com/nuxt/ui/issues/1171
 
 async function logout () {
   await $fetch('/oidc/logout/', { method: 'POST', headers: { 'X-CSRFToken': csrf.value! } })
@@ -140,7 +141,7 @@ const userStore = useUserStore()
 
 // FUNCTIONS
 
-function switchUser (rpcPersonId: string | null | number) {
+function switchUser (rpcPersonId: number | null) {
   userStore.pretendToBe(rpcPersonId)
 }
 // DATA

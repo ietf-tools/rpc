@@ -1,9 +1,11 @@
+import formsPlugin from '@tailwindcss/forms'
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [],
   darkMode: 'class',
   plugins: [
-    require('@tailwindcss/forms')
+    formsPlugin
   ],
   theme: {
     extend: {}

@@ -250,8 +250,9 @@ import type { SourceFormatName, StdLevelName, StreamName, TlpBoilerplateChoiceNa
 const route = useRoute()
 const api = useApi()
 const snackbar = useSnackbar()
+const currentTime = useCurrentTime()
 
-const today = DateTime.now().setZone('utc').startOf('day')
+const today = computed(() => currentTime.value.startOf('day'))
 
 type State = {
   boilerplate: TlpBoilerplateChoiceName | null,
@@ -267,7 +268,7 @@ const state = reactive<State>({
   sourceFormat: null,
   stdLevel: null,
   stream: null,
-  deadline: today.plus({ weeks: 6 }).toISODate(),
+  deadline: today.value.plus({ weeks: 6 }).toISODate(),
   labels: []
 })
 
@@ -282,7 +283,7 @@ const streamChoices = computed(() => fetchedData?.value?.streamChoices)
 const timeToDeadline = computed(() => {
   try {
     if (state.deadline) {
-      const dt = DateTime.fromISO(state.deadline).diff(today, 'days')
+      const dt = DateTime.fromISO(state.deadline).diff(today.value, 'days')
       return humanizeDuration(
         dt.toMillis(),
         { units: (dt.as('days') < 14) ? ['d'] : ['w', 'd'], round: true }
@@ -310,6 +311,9 @@ async function importSubmission () {
     return
   }
   let imported
+  if (!state.deadline) {
+    throw Error('state.deadline not available')
+  }
   try {
     imported = await api.submissionsImport({
       documentId: submission.value.id,

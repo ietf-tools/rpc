@@ -15,8 +15,11 @@
 </template>
 
 <script setup lang="ts">
-defineProps({
-  title: { type: String, required: true },
-  summary: { type: String }
-})
+
+type Props = {
+  title: string
+  summary?: string
+}
+
+const props = defineProps<Props>()
 </script>

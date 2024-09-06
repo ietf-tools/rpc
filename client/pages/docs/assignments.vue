@@ -59,8 +59,9 @@
 </template>
 
 <script setup lang="ts">
-import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes';
+import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes'
 import type { Assignment, RfcToBe, RpcPerson } from '~/rpctracker_client'
+import { DateTime } from 'luxon'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 const api = useApi()
@@ -83,12 +84,12 @@ const cookedAssignments = computed(() => assignments.value?.map(a => ({
 const documents = computed(
   () => rfcsToBe.value?.map((rtb) => {
     // Add some fake properties for demonstration purposes
-    const assignments = cookedAssignments.value?.filter(a => a.rfc_to_be === rtb.id)
+    const assignments = cookedAssignments.value?.filter(a => a.rfcToBe === rtb.id)
     const needsAssignment = assignments?.length ? null : roles.value?.toSorted(() => Math.random() - 0.5)[0]
     const resolvedDocument: ResolvedDocument = { ...rtb, assignments, needsAssignment }
     return resolvedDocument
   })
-    .sort(rtb => rtb.external_deadline)
+    .sort(rtb => rtb.externalDeadline ? DateTime.fromJSDate(rtb.externalDeadline).toSeconds() : 0)
 )
 
 const filteredDocuments = computed(
@@ -134,6 +135,9 @@ function compareEditors (a: RpcPerson, b: RpcPerson) {
   const comparisons = keys.map(attr => {
     const aval = a[attr]
     const bval = b[attr]
+    if (typeof aval !== 'number' || typeof bval !== 'number') {
+      return 0
+    }
     return (aval < bval) ? -1 : ((aval > bval) ? 1 : 0)
   })
   return comparisons.find(c => c !== 0) ?? 0
@@ -149,9 +153,15 @@ async function deleteAssignment (assignment: Assignment) {
 
 async function refresh () {
   const promises = []
-  refreshPeople && promises.push(refreshPeople())
-  refreshDocs && promises.push(refreshDocs())
-  refreshAssignments && promises.push(refreshAssignments())
+  if (refreshPeople) {
+    promises.push(refreshPeople())
+  }
+  if (refreshDocs) {
+    promises.push(refreshDocs())
+  }
+  if (refreshAssignments) {
+    promises.push(refreshAssignments())
+  }
   await Promise.allSettled(promises)
 }
 

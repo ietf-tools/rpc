@@ -128,11 +128,13 @@ import type { ResolvedDocument, ResolvedPerson } from './AssignmentsTypes'
 type Props = {
   document: ResolvedDocument
   selected?: boolean
-  editors: ResolvedPerson[]
-  editorAssignedDocuments: Record<string, ResolvedDocument[] | undefined>
+  editors?: ResolvedPerson[]
+  editorAssignedDocuments?: Record<string, ResolvedDocument[] | undefined>
 }
 
 const props = defineProps<Props>()
+
+const currentTime = useCurrentTime()
 
 const _assignEditor = inject(assignEditorKey)
 if (!_assignEditor) {
@@ -163,23 +165,23 @@ function toggleEditor (editorIds: number[]) {
 }
 
 const cookedDocument = computed(() => {
-  const now = DateTime.now()
   const teamPagesPerHour = 1.0
   const assignmentsPersons = props.document?.assignments?.map(
-    assignment => props.editors.find(editor => editor.id === assignment.person?.id)
+    assignment => props?.editors?.find(editor => editor.id === assignment.person?.id)
   ).filter(editor => !!editor) ?? []
 
   return ({
     ...props.document,
-    external_deadline: props.document.external_deadline && DateTime.fromISO(props.document.external_deadline),
+    external_deadline: props.document.externalDeadline && DateTime.fromJSDate(props.document.externalDeadline),
     assignments: props.document.assignments,
     assignmentsPersons,
     assignmentsPersonIds: assignmentsPersons?.map(editor => editor?.id),
-    editors: props.editors
-      .map(editor => ({
+    editors: props?.editors
+      ?.map(editor => ({
         ...editor,
-        assignedDocuments: props.editorAssignedDocuments[editor.id],
-        completeBy: now.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hours_per_week })
+        assignedDocuments: props?.editorAssignedDocuments?.[editor.id],
+        // @ts-expect-error - drf-spectacular incorrectly marks hoursPerWeek as possibly undefined in the API schema
+        completeBy: currentTime.value.plus({ days: 7 * props.document.pages / teamPagesPerHour / editor.hoursPerWeek })
       }))
       .sort((a, b) => a.completeBy.toMillis() - b.completeBy.toMillis())
   })

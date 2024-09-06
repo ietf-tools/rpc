@@ -29,6 +29,7 @@ from .models import (
 )
 from .serializers import (
     AssignmentSerializer,
+    ClusterSerializer,
     CreateRfcToBeSerializer,
     LabelSerializer,
     QueueItemSerializer,
@@ -218,47 +219,11 @@ class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = QueueItemSerializer
 
 
-@api_view(["GET"])
-def clusters(request):
-    """Return cluster index"""
-    return JsonResponse(
-        [
-            {
-                "number": cluster.number,
-                "documents": [
-                    {
-                        "name": rfctobe.draft.name if rfctobe.draft else None,
-                        "rfc_number": rfctobe.rfc_number,
-                    }
-                    for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
-                ],
-            }
-            for cluster in Cluster.objects.all()
-        ],
-        safe=False,
-    )
-
-
-@api_view(["GET"])
-def cluster(request, number):
-    """Return data for a specific cluster"""
-    try:
-        cluster = Cluster.objects.get(number=number)
-    except (Cluster.DoesNotExist, Cluster.MultipleObjectsReturned):
-        return JsonResponse({"error": "Not found"}, status=404)
-
-    return JsonResponse(
-        {
-            "number": cluster.number,
-            "documents": [
-                {
-                    "name": rfctobe.draft.name if rfctobe.draft else None,
-                    "rfc_number": rfctobe.rfc_number,
-                }
-                for rfctobe in cluster.rfctobe_set.order_by("order_in_cluster")
-            ],
-        }
-    )
+class ClusterViewSet(viewsets.ReadOnlyModelViewSet):
+    # todo: handle create/update operations and change to viewsets.ModelViewSet
+    queryset = Cluster.objects.all()
+    serializer_class = ClusterSerializer
+    lookup_field = "number"
 
 
 class AssignmentViewSet(viewsets.ModelViewSet):

@@ -2,11 +2,13 @@
 Based on https://tailwindui.com/components/application-ui/lists/grid-lists#component-2beafc928684743ff886c0b164edb126
 -->
 <template>
-  <li :key="cookedDocument.id"
-      :class="[props.selected ? 'border-violet-700' : 'border-gray-200', 'rounded-xl border']">
+  <li
+    :key="cookedDocument.id"
+    :class="[props.selected ? 'border-violet-700' : 'border-gray-200', 'rounded-xl border']">
     <div class="flex items-center gap-x-4 border-b border-gray-900/5 bg-gray-50 p-6">
-      <Icon name="solar:document-text-line-duotone"
-            class="h-8 w-8 flex-none"/>
+      <Icon
+        name="solar:document-text-line-duotone"
+        class="h-8 w-8 flex-none"/>
       <div class="text-sm font-medium leading-6 text-gray-900">{{ cookedDocument.name }}</div>
       <Badge v-if="cookedDocument.needsAssignment" :label="`Needs ${cookedDocument.needsAssignment.name}`"/>
       <HeadlessMenu as="div" class="relative ml-auto">
@@ -14,10 +16,11 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
           <span class="sr-only">Open options</span>
           <Icon name="heroicons:ellipsis-horizontal-20-solid" class="h-5 w-5" aria-hidden="true"/>
         </HeadlessMenuButton>
-        <transition enter-active-class="transition ease-out duration-100"
-                    enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
-                    leave-active-class="transition ease-in duration-75"
-                    leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
+        <transition
+          enter-active-class="transition ease-out duration-100"
+          enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+          leave-active-class="transition ease-in duration-75"
+          leave-from-class="transform opacity-100 scale-100" leave-to-class="transform opacity-0 scale-95">
           <HeadlessMenuItems
             class="absolute right-0 z-10 mt-0.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
             <HeadlessMenuItem v-slot="{ active }">
@@ -49,9 +52,9 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
         <dd class="grow flex items-start gap-x-2">
 
           <HeadlessListbox
-            :modelValue="cookedDocument.assignmentsPersonIds"
-            @update:modelValue="toggleEditor"
+            :model-value="cookedDocument.assignmentsPersonIds"
             multiple
+            @update:model-value="toggleEditor"
           >
             <div class="relative w-full">
               <HeadlessListboxButton

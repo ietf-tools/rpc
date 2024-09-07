@@ -2,8 +2,9 @@
   <header class="relative isolate">
     <div class="absolute inset-0 -z-10 overflow-hidden" aria-hidden="true">
       <div class="absolute left-16 top-full -mt-16 transform-gpu opacity-50 blur-3xl xl:left-1/2 xl:-ml-80">
-        <div class="aspect-[1154/678] w-[72.125rem] bg-gradient-to-br from-[#FF80B5] to-[#9089FC]"
-             style="clip-path: polygon(100% 38.5%, 82.6% 100%, 60.2% 37.7%, 52.4% 32.1%, 47.5% 41.8%, 45.2% 65.6%, 27.5% 23.4%, 0.1% 35.3%, 17.9% 0%, 27.7% 23.4%, 76.2% 2.5%, 74.2% 56%, 100% 38.5%)"/>
+        <div
+          class="aspect-[1154/678] w-[72.125rem] bg-gradient-to-br from-[#FF80B5] to-[#9089FC]"
+          style="clip-path: polygon(100% 38.5%, 82.6% 100%, 60.2% 37.7%, 52.4% 32.1%, 47.5% 41.8%, 45.2% 65.6%, 27.5% 23.4%, 0.1% 35.3%, 17.9% 0%, 27.7% 23.4%, 76.2% 2.5%, 74.2% 56%, 100% 38.5%)"/>
       </div>
       <div class="absolute inset-x-0 bottom-0 h-px bg-gray-900/5"/>
     </div>
@@ -37,8 +38,9 @@
                 None
               </div>
               <dl v-else>
-                <div v-for="assignment of draftAssignments"
-                     class="py-1 grid grid-cols-2">
+                <div
+                  v-for="assignment of draftAssignments"
+                  class="py-1 grid grid-cols-2">
                   <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
                   <dd class="relative">
                     <Badge class="absolute right-0" :label="assignment.role"/>
@@ -172,8 +174,9 @@
                 <RpcLabel :label="lbl"/>
               </div>
             </div>
-            <RpcLabelPicker :labels="labels" :model-value="draft?.labels" @update:model-value="saveLabels"
-                            item-label="slug"/>
+            <RpcLabelPicker
+              :labels="labels" :model-value="draft?.labels" item-label="slug"
+              @update:model-value="saveLabels"/>
           </div>
         </div>
       </div>
@@ -201,9 +204,10 @@
                       </time>
                     </td>
                     <td class="whitespace-nowrap px-3 py-4 text-sm">
-                      <NuxtLink v-if="entry.by?.personId"
-                                :to="`/team/${entry.by.personId}`"
-                                class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
+                      <NuxtLink
+                        v-if="entry.by?.personId"
+                        :to="`/team/${entry.by.personId}`"
+                        class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
                         {{ entry.by.name }}
                       </NuxtLink>
                       <span v-else>

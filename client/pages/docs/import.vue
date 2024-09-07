@@ -4,7 +4,7 @@
     :title="`Add Document: ${submission?.name || '&hellip;'}`"
     summary="Pull the submission into the queue so the editing process can begin."/>
   <form>
-    <div class="space-y-12" v-if="!backendPending">
+    <div v-if="!backendPending" class="space-y-12">
       <div class="border-b border-gray-900/10 pb-12">
         <h2 class="text-base font-semibold leading-7 text-gray-900">Document Info</h2>
 
@@ -13,9 +13,10 @@
           <div class="px-4 py-5 sm:p-2">
             <ul class="px-2">
               <li>
-                <NuxtLink v-if="submission?.datatrackerUrl"
-                          :to="submission.datatrackerUrl"
-                          class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
+                <NuxtLink
+                  v-if="submission?.datatrackerUrl"
+                  :to="submission.datatrackerUrl"
+                  class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
                   {{ submission?.name }}-{{ submission?.rev }}
                 </NuxtLink>
                 <span v-else>
@@ -35,7 +36,7 @@
         <!-- Source Format -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.sourceFormat" by="slug">
+            <HeadlessListbox v-model="state.sourceFormat" as="div" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Source Format
               </HeadlessListboxLabel>
               <div class="relative mt-2">
@@ -47,12 +48,14 @@
                   </span>
                 </HeadlessListboxButton>
 
-                <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-                            leave-to-class="opacity-0">
+                <transition
+                  leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+                  leave-to-class="opacity-0">
                   <HeadlessListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="fmtChoice in sourceFormatChoices" :key="fmtChoice.slug"
-                                           :value="fmtChoice" v-slot="{ active, selected }">
+                    <HeadlessListboxOption
+                      v-for="fmtChoice in sourceFormatChoices" :key="fmtChoice.slug" v-slot="{ active, selected }"
+                      as="template" :value="fmtChoice">
                       <li
                         :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -60,8 +63,9 @@
                           }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ fmtChoice.desc }}</p>
 
-                        <span v-if="selected"
-                              :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
+                        <span
+                          v-if="selected"
+                          :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
                           <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
                         </span>
                       </li>
@@ -76,7 +80,7 @@
         <!-- Stream -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.stream" by="slug">
+            <HeadlessListbox v-model="state.stream" as="div" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Stream
               </HeadlessListboxLabel>
               <div class="relative mt-2">
@@ -88,12 +92,14 @@
                   </span>
                 </HeadlessListboxButton>
 
-                <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-                            leave-to-class="opacity-0">
+                <transition
+                  leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+                  leave-to-class="opacity-0">
                   <HeadlessListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="streamChoice in streamChoices" :key="streamChoice.slug"
-                                           :value="streamChoice" v-slot="{ active, selected }">
+                    <HeadlessListboxOption
+                      v-for="streamChoice in streamChoices" :key="streamChoice.slug" v-slot="{ active, selected }"
+                      as="template" :value="streamChoice">
                       <li
                         :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -101,8 +107,9 @@
                           }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ streamChoice.desc }}</p>
 
-                        <span v-if="selected"
-                              :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
+                        <span
+                          v-if="selected"
+                          :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
                           <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
                         </span>
                       </li>
@@ -117,7 +124,7 @@
         <!-- Standard Level -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.stdLevel" by="slug">
+            <HeadlessListbox v-model="state.stdLevel" as="div" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Standard Level
               </HeadlessListboxLabel>
               <div class="relative mt-2">
@@ -129,12 +136,14 @@
                   </span>
                 </HeadlessListboxButton>
 
-                <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-                            leave-to-class="opacity-0">
+                <transition
+                  leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+                  leave-to-class="opacity-0">
                   <HeadlessListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="stdLevChoice in stdLevelChoices"
-                                           :key="stdLevChoice.slug" :value="stdLevChoice" v-slot="{ active, selected }">
+                    <HeadlessListboxOption
+                      v-for="stdLevChoice in stdLevelChoices" :key="stdLevChoice.slug"
+                      v-slot="{ active, selected }" as="template" :value="stdLevChoice">
                       <li
                         :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -142,8 +151,9 @@
                           }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ stdLevChoice.desc }}</p>
 
-                        <span v-if="selected"
-                              :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
+                        <span
+                          v-if="selected"
+                          :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
                           <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
                         </span>
                       </li>
@@ -158,7 +168,7 @@
         <!-- TLP Boilerplate -->
         <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
           <div class="sm:col-span-4">
-            <HeadlessListbox as="div" v-model="state.boilerplate" by="slug">
+            <HeadlessListbox v-model="state.boilerplate" as="div" by="slug">
               <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">TLP Boilerplate
               </HeadlessListboxLabel>
               <div class="relative mt-2">
@@ -170,12 +180,14 @@
                   </span>
                 </HeadlessListboxButton>
 
-                <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-                            leave-to-class="opacity-0">
+                <transition
+                  leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+                  leave-to-class="opacity-0">
                   <HeadlessListboxOptions
                     class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                    <HeadlessListboxOption as="template" v-for="bpChoice in boilerplateChoices" :key="bpChoice.slug"
-                                           :value="bpChoice" v-slot="{ active, selected }">
+                    <HeadlessListboxOption
+                      v-for="bpChoice in boilerplateChoices" :key="bpChoice.slug" v-slot="{ active, selected }"
+                      as="template" :value="bpChoice">
                       <li
                         :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-8 pr-4']">
                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
@@ -183,8 +195,9 @@
                           }}</span>
                         <p :class="[active ? 'text-indigo-200' : 'text-gray-500', 'ml-2']">{{ bpChoice.desc }}</p>
 
-                        <span v-if="selected"
-                              :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
+                        <span
+                          v-if="selected"
+                          :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 left-1 flex items-center pr-1.5']">
                           <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
                         </span>
                       </li>
@@ -203,12 +216,13 @@
             <div class="mt-2">
               <div
                 class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600  sm:max-w-md">
-                <input type="date"
-                       name="deadline"
-                       id="deadline"
-                       v-model="state.deadline"
-                       class="block flex-1 rounded-md border-0 ring-1 ring-inset ring-gray-300 bg-white py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                       placeholder="Deadline"/>
+                <input
+                  id="deadline"
+                  v-model="state.deadline"
+                  type="date"
+                  name="deadline"
+                  class="block flex-1 rounded-md border-0 ring-1 ring-inset ring-gray-300 bg-white py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  placeholder="Deadline">
               </div>
               <span v-if="timeToDeadline" class="text-sm leading-6 text-gray-500">{{ timeToDeadline }} from today</span>
             </div>
@@ -227,7 +241,7 @@
               </div>
             </div>
             <div class="max-w-xl">
-              <RpcLabelPicker :labels="labels" v-model="state.labels" item-label="slug"/>
+              <RpcLabelPicker v-model="state.labels" :labels="labels" item-label="slug"/>
             </div>
           </div>
         </div>
@@ -301,12 +315,12 @@ const haveRequiredValues = computed(() => Boolean(
 // FUNCTIONS
 
 async function importSubmission () {
-  if (!(submission.value
-    && state.boilerplate
-    && state.sourceFormat
-    && state.stdLevel
-    && state.stream
-    && state.deadline
+  if (!(submission.value &&
+    state.boilerplate &&
+    state.sourceFormat &&
+    state.stdLevel &&
+    state.stream &&
+    state.deadline
   )) {
     return
   }

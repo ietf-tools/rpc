@@ -10,7 +10,7 @@
     <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <div class="mx-auto flex max-w-2xl items-center justify-between gap-x-8 lg:mx-0 lg:max-w-none">
         <div class="flex items-center gap-x-6">
-          <img src="https://i.pravatar.cc/150?img=5" alt="" class="h-16 w-16 flex-none rounded-full ring-1 ring-gray-900/10" />
+          <img src="https://i.pravatar.cc/150?img=5" alt="" class="h-16 w-16 flex-none rounded-full ring-1 ring-gray-900/10">
           <h1>
             <div class="mt-1 text-xl font-semibold leading-6 text-gray-900 dark:text-white">Ada Lovelace</div>
             <div class="text-sm leading-6 text-gray-500 dark:text-neutral-400">ada.lovelace@ietf.org</div>
@@ -113,10 +113,10 @@
         </dl>
         <table class="mt-16 w-full whitespace-nowrap text-left text-sm leading-6">
           <colgroup>
-            <col class="w-full" />
-            <col />
-            <col />
-            <col />
+            <col class="w-full" >
+            <col>
+            <col>
+            <col>
           </colgroup>
           <thead class="border-b border-gray-200 text-gray-900">
             <tr>
@@ -138,7 +138,7 @@
               <div class="w-px bg-gray-200" />
             </div>
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-grey-50">
-              <Icon name="uil:times" v-if="activityItem.type === 'paid'" class="h-6 w-6 text-indigo-600" aria-hidden="true" />
+              <Icon v-if="activityItem.type === 'paid'" name="uil:times" class="h-6 w-6 text-indigo-600" aria-hidden="true" />
               <div v-else class="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-500">

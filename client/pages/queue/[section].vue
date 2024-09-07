@@ -1,6 +1,7 @@
 <template>
-  <TitleBlock title="Queue"
-              summary="Where the magic happens.">
+  <TitleBlock
+    title="Queue"
+    summary="Where the magic happens.">
     <template #right>
       <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
         <div class="text-sm">Backlog <strong class="text-rose-700">larger
@@ -17,11 +18,12 @@
 
   <div class="flex justify-center items-center">
     <TabNav :tabs="tabs" :selected="currentTab" />
-    <RefreshButton :pending="pending" @refresh="refresh" class="ml-3"/>
-    <button type="button" @click="" class="btn-secondary ml-3">
+    <RefreshButton :pending="pending" class="ml-3" @refresh="refresh"/>
+    <button type="button" class="btn-secondary ml-3" @click="">
       <span class="sr-only">Filter</span>
-      <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
-            aria-hidden="true"/>
+      <Icon
+        name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
+        aria-hidden="true"/>
     </button>
   </div>
 

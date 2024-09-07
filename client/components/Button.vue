@@ -1,6 +1,7 @@
 <template>
-  <button type="button"
-          :class="classForBtnType[props.btnType]">
+  <button
+    type="button"
+    :class="classForBtnType[props.btnType]">
     <slot />
   </button>
 </template>

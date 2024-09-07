@@ -6,7 +6,7 @@
   </TitleBlock>
 
   <div>
-    <HeadlessListbox as="div" v-model="state.roleFilter">
+    <HeadlessListbox v-model="state.roleFilter" as="div">
       <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Filter</HeadlessListboxLabel>
       <div class="relative mt-2">
         <HeadlessListboxButton
@@ -17,30 +17,35 @@
         </span>
         </HeadlessListboxButton>
 
-        <transition leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-                    leave-to-class="opacity-0">
+        <transition
+          leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+          leave-to-class="opacity-0">
           <HeadlessListboxOptions
             class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-            <HeadlessListboxOption as="template" :value="null"
-                           v-slot="{ active, selected }">
+            <HeadlessListboxOption
+              v-slot="{ active, selected }" as="template"
+              :value="null">
               <li
                 :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
                 <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">Show all documents</span>
-                <span v-if="selected"
-                      :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
-                <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
-              </span>
+                <span
+                  v-if="selected"
+                  :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                  <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
+                </span>
               </li>
             </HeadlessListboxOption>
-            <HeadlessListboxOption as="template" v-for="role in roles" :key="role.slug" :value="role.slug"
-                           v-slot="{ active, selected }">
+            <HeadlessListboxOption
+              v-for="role in roles" :key="role.slug" v-slot="{ active, selected }" as="template"
+              :value="role.slug">
               <li
                 :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
                 <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">Show documents needing {{ role.name }}</span>
-                <span v-if="selected"
-                      :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
-                <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
-              </span>
+                <span
+                  v-if="selected"
+                  :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                  <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
+                </span>
               </li>
             </HeadlessListboxOption>
           </HeadlessListboxOptions>
@@ -50,11 +55,12 @@
   </div>
   <div class="mt-8 flow-root">
     <h2>Documents for assignment</h2>
-    <DocumentCards :documents="filteredDocuments"
-                   @assign-editor-to-document="(dId: number, edId: number) => saveAssignment({rfcToBe: dId, person: edId})"
-                   @delete-assignment="deleteAssignment"
-                   :editors="editors?.toSorted(compareEditors)"
-                   />
+    <DocumentCards
+      :documents="filteredDocuments"
+      :editors="editors?.toSorted(compareEditors)"
+      @assign-editor-to-document="(dId: number, edId: number) => saveAssignment({rfcToBe: dId, person: edId})"
+      @delete-assignment="deleteAssignment"
+    />
   </div>
 </template>
 

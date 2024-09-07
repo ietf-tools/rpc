@@ -13,10 +13,9 @@
           >
             <button
               v-if="col.sortable !== false"
-              @click.prevent="sortBy(col.field)"
               class="bg-transparent border-none"
               :aria-pressed="state.sortField === col.field"
-            >
+              @click.prevent="sortBy(col.field)">
               <span>{{ col.label }}</span>
               <template v-if="state.sortField === col.field">
                 <Icon v-if="state.sortDirection === 'asc'" name="uil:arrow-up" class="text-lg -mt-0.5" />

@@ -1,17 +1,18 @@
 <template>
-    <TitleBlock title="Final Reviews"
-              summary="Where the magic mercifully stops happening.">
-  </TitleBlock>
+  <TitleBlock
+    title="Final Reviews"
+    summary="Where the magic mercifully stops happening."/>
 
   <!-- TABS -->
 
   <div class="flex justify-center items-center">
     <TabNav :tabs="tabs" :selected="currentTab.toString()" />
-    <RefreshButton :pending="pending" @refresh="refresh" class="ml-3"/>
-    <button type="button" @click="" class="btn-secondary ml-3">
+    <RefreshButton :pending="pending" class="ml-3" @refresh="refresh"/>
+    <button type="button" class="btn-secondary ml-3" @click="">
       <span class="sr-only">Filter</span>
-      <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
-            aria-hidden="true"/>
+      <Icon
+        name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
+        aria-hidden="true"/>
     </button>
   </div>
 

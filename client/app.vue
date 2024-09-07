@@ -8,10 +8,10 @@
       </NuxtLayout>
     </main>
     <OverlayModal
-      v-model:isShown="overlayModalState.isShown"
+      v-model:is-shown="overlayModalState.isShown"
       :opts="overlayModalState.opts"
-      @closeOk="overlayModalState.promiseResolve"
-      @closeCancel="overlayModalState.promiseReject"
+      @close-ok="overlayModalState.promiseResolve"
+      @close-cancel="overlayModalState.promiseReject"
     />
     <NuxtSnackbar />
   </div>

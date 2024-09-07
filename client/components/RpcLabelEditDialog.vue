@@ -34,9 +34,10 @@
           <div class="mt-2 sm:col-span-2 sm:mt-0">
             <div
               class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-              <input v-model="label.slug" type="text" name="slug" id="slug"
-                     class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                     placeholder="happy tree"/>
+              <input
+                id="slug" v-model="label.slug" type="text" name="slug"
+                class="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                placeholder="happy tree">
             </div>
           </div>
         </div>
@@ -45,8 +46,9 @@
           <label for="is-exception" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Is
             Exception</label>
           <div class="mt-2 sm:col-span-2 sm:mt-0">
-            <input v-model="label.isException" id="is-exception" name="is-exception" type="checkbox"
-                   class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"/>
+            <input
+              id="is-exception" v-model="label.isException" name="is-exception" type="checkbox"
+              class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
             <p class="text-gray-500">This label indicates an exception.</p>
           </div>
         </div>
@@ -54,8 +56,9 @@
         <div class="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
           <label for="color" class="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">Color</label>
           <div class="mt-2 sm:col-span-2 sm:mt-0">
-            <select v-model="label.color" id="color" name="color"
-                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
+            <select
+              id="color" v-model="label.color" name="color"
+              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6">
               <option v-for="color of ColorEnum">{{ color }}</option>
             </select>
           </div>

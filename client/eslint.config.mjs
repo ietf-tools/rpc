@@ -29,7 +29,6 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jquery,
         ...globals.node,
         ...vue.environments['setup-compiler-macros']['setup-compiler-macros'],
         d3: true

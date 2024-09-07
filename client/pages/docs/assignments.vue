@@ -1,66 +1,68 @@
 <template>
-  <TitleBlock title="Manage Assignments">
-    <template #right>
-      <RefreshButton :pending="pending" @refresh="refresh"/>
-    </template>
-  </TitleBlock>
-
   <div>
-    <HeadlessListbox v-model="state.roleFilter" as="div">
-      <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Filter</HeadlessListboxLabel>
-      <div class="relative mt-2">
-        <HeadlessListboxButton
-          class="relative cursor-default w-full max-w-md rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-          <span class="block truncate">{{ currentFilterDesc }}</span>
-          <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-          <Icon name="heroicons:chevron-up-down" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
-        </span>
-        </HeadlessListboxButton>
+    <TitleBlock title="Manage Assignments">
+      <template #right>
+        <RefreshButton :pending="pending" @refresh="refresh"/>
+      </template>
+    </TitleBlock>
 
-        <transition
-          leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
-          leave-to-class="opacity-0">
-          <HeadlessListboxOptions
-            class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-            <HeadlessListboxOption
-              v-slot="{ active, selected }" as="template"
-              :value="null">
-              <li
-                :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
-                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">Show all documents</span>
-                <span
-                  v-if="selected"
-                  :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
-                  <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
-                </span>
-              </li>
-            </HeadlessListboxOption>
-            <HeadlessListboxOption
-              v-for="role in roles" :key="role.slug" v-slot="{ active, selected }" as="template"
-              :value="role.slug">
-              <li
-                :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
-                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">Show documents needing {{ role.name }}</span>
-                <span
-                  v-if="selected"
-                  :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
-                  <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
-                </span>
-              </li>
-            </HeadlessListboxOption>
-          </HeadlessListboxOptions>
-        </transition>
-      </div>
-    </HeadlessListbox>
-  </div>
-  <div class="mt-8 flow-root">
-    <h2>Documents for assignment</h2>
-    <DocumentCards
-      :documents="filteredDocuments"
-      :editors="editors?.toSorted(compareEditors)"
-      @assign-editor-to-document="(dId: number, edId: number) => saveAssignment({rfcToBe: dId, person: edId})"
-      @delete-assignment="deleteAssignment"
-    />
+    <div>
+      <HeadlessListbox v-model="state.roleFilter" as="div">
+        <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">Filter</HeadlessListboxLabel>
+        <div class="relative mt-2">
+          <HeadlessListboxButton
+            class="relative cursor-default w-full max-w-md rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <span class="block truncate">{{ currentFilterDesc }}</span>
+            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+              <Icon name="heroicons:chevron-up-down" class="h-5 w-5 text-gray-400" aria-hidden="true"/>
+            </span>
+          </HeadlessListboxButton>
+
+          <transition
+            leave-active-class="transition ease-in duration-100" leave-from-class="opacity-100"
+            leave-to-class="opacity-0">
+            <HeadlessListboxOptions
+              class="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <HeadlessListboxOption
+                v-slot="{ active, selected }" as="template"
+                :value="null">
+                <li
+                  :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                  <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">Show all documents</span>
+                  <span
+                    v-if="selected"
+                    :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                    <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
+                  </span>
+                </li>
+              </HeadlessListboxOption>
+              <HeadlessListboxOption
+                v-for="role in roles" :key="role.slug" v-slot="{ active, selected }" as="template"
+                :value="role.slug">
+                <li
+                  :class="[active ? 'bg-indigo-600 text-white' : 'text-gray-900', 'relative cursor-default select-none py-2 pl-3 pr-9']">
+                  <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">Show documents needing {{ role.name }}</span>
+                  <span
+                    v-if="selected"
+                    :class="[active ? 'text-white' : 'text-indigo-600', 'absolute inset-y-0 right-0 flex items-center pr-4']">
+                    <Icon name="heroicons:check" class="h-5 w-5" aria-hidden="true"/>
+                  </span>
+                </li>
+              </HeadlessListboxOption>
+            </HeadlessListboxOptions>
+          </transition>
+        </div>
+      </HeadlessListbox>
+    </div>
+    <div class="mt-8 flow-root">
+      <h2>Documents for assignment</h2>
+      <DocumentCards
+        :documents="filteredDocuments"
+        :editors="editors?.toSorted(compareEditors)"
+        @assign-editor-to-document="(dId: number, edId: number) => saveAssignment({rfcToBe: dId, person: edId})"
+        @delete-assignment="deleteAssignment"
+      />
+    </div>
   </div>
 </template>
 

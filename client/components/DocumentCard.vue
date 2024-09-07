@@ -78,7 +78,7 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                 >
                   <HeadlessListboxOption
                     v-for="editor in cookedDocument.editors"
-                    v-slot="{ active, selected }"
+                    v-slot="{ active, isSelected }"
                     :key="editor.id"
                     :value="editor.id"
                     as="template"
@@ -93,15 +93,15 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                         <span
                           class="w-8 pl-1"
                         >
-                          <Icon v-if="selected" name="heroicons:check-16-solid" class="h-5 w-5" aria-hidden="true"/>
+                          <Icon v-if="isSelected" name="heroicons:check-16-solid" class="h-5 w-5" aria-hidden="true"/>
                         </span>
                         <div class="flex-1">
                           {{ editor.name }}
                           <p class="text-gray-500">
                             <template v-if="editor.assignedDocuments">
                               Currently assigned
-                              <span v-for="document in editor.assignedDocuments">
-                                {{ document.name }}, {{ document.pages }} pages
+                              <span v-for="doc in editor.assignedDocuments" :key="doc.id">
+                                {{ doc.name }}, {{ doc.pages }} pages
                               </span>
                             </template>
                             <template v-else>

@@ -34,7 +34,7 @@
         </tr>
       </thead>
       <tbody v-if="!loading" class="text-sm divide-y divide-gray-200 dark:divide-neutral-700 bg-white dark:bg-neutral-900">
-        <tr v-for="row of rows">
+        <tr v-for="row of rows" :key="row.key">
           <td class="pl-3">
             <Icon name="uil:file-alt" size="1.25em" class="text-gray-400 dark:text-neutral-500" />
           </td>
@@ -100,10 +100,11 @@ const state = reactive<{
 
 const rows = computed(() => {
   if (!props.data) { return [] }
+  const dataWithKey = props.data.map((row) => ({ ...row, key: row[props.rowKey] }))
   if (state.sortField) {
-    return orderBy(props.data, [state.sortField], [state.sortDirection])
+    return orderBy(dataWithKey, [state.sortField], [state.sortDirection])
   } else {
-    return props.data
+    return dataWithKey
   }
 })
 

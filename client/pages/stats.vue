@@ -8,7 +8,7 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="stat of labelStats.labelStats">
+    <tr v-for="stat of labelStats.labelStats" :key="`${stat.documentId}-${stat.labelId}`">
       <td>
         <RpcLabel
           v-if="labelById.hasOwnProperty(stat.labelId)"

@@ -1,30 +1,32 @@
 <template>
-  <TitleBlock
-    title="Final Reviews"
-    summary="Where the magic mercifully stops happening."/>
+  <div>
+    <TitleBlock
+      title="Final Reviews"
+      summary="Where the magic mercifully stops happening."/>
 
-  <!-- TABS -->
+    <!-- TABS -->
 
-  <div class="flex justify-center items-center">
-    <TabNav :tabs="tabs" :selected="currentTab.toString()" />
-    <RefreshButton :pending="pending" class="ml-3" @refresh="refresh"/>
-    <button type="button" class="btn-secondary ml-3" @click="">
-      <span class="sr-only">Filter</span>
-      <Icon
-        name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
-        aria-hidden="true"/>
-    </button>
+    <div class="flex justify-center items-center">
+      <TabNav :tabs="tabs" :selected="currentTab.toString()" />
+      <RefreshButton :pending="pending" class="ml-3" @refresh="refresh"/>
+      <button type="button" class="btn-secondary ml-3" @click.stop>
+        <span class="sr-only">Filter</span>
+        <Icon
+          name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
+          aria-hidden="true"/>
+      </button>
+    </div>
+
+    <div class="mt-8 flow-root">
+      <DocumentTable
+        :columns="columns"
+        :data="docs"
+        row-key="id"
+      />
+    </div>
+
+    <p class="pt-5 text-center text-gray-500">(data are mocked)</p>
   </div>
-
-  <div class="mt-8 flow-root">
-    <DocumentTable
-      :columns="columns"
-      :data="docs"
-      row-key="id"
-    />
-  </div>
-
-  <p class="pt-5 text-center text-gray-500">(data are mocked)</p>
 </template>
 
 <script setup lang="ts">

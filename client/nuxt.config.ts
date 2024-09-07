@@ -18,6 +18,7 @@ export default defineNuxtConfig({
   },
   modules: [
     '@nuxt/devtools',
+    '@nuxt/eslint',
     '@nuxtjs/color-mode',
     '@nuxtjs/tailwindcss',
     '@nuxtjs/robots',

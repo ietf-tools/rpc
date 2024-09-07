@@ -17,7 +17,7 @@ from ...factories import (
     RfcToBeActionHolderFactory,
     RpcPersonFactory,
 )
-from ...models import RfcToBe, RpcPerson, Label
+from ...models import ClusterMember, RfcToBe, RpcPerson, Label
 
 
 class Command(BaseCommand):
@@ -242,21 +242,27 @@ class Command(BaseCommand):
 
         # submission, in cluster, pending assignment
         cluster783 = ClusterFactory(number=783)
-        self._demo_rfctobe_factory(
+        draft_foo_bar = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
             name="draft-ietf-foo-bar",
             rev="03",
             states=[("draft-iesg", "rfcqueue")],
-            cluster=cluster783,
-            order_in_cluster=1,
         )
-        self._demo_rfctobe_factory(
+        draft_foo_basbis = self._demo_rfctobe_factory(
             rpcapi=rpcapi,
             name="draft-ietf-foo-basbis",
             rev="19",
             states=[("draft-iesg", "rfcqueue")],
+        )
+        ClusterMember.objects.create(
             cluster=cluster783,
-            order_in_cluster=2,
+            doc=draft_foo_bar.draft,
+            order=1,
+        )
+        ClusterMember.objects.create(
+            cluster=cluster783,
+            doc=draft_foo_basbis.draft,
+            order=2,
         )
 
         # Exceptions:

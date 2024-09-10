@@ -1,27 +1,16 @@
 import vue from 'eslint-plugin-vue'
 import globals from 'globals'
 import parser from 'vue-eslint-parser'
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-import js from '@eslint/js'
-import { FlatCompat } from '@eslint/eslintrc'
+import eslint from '@eslint/js'
+import tseslint from 'typescript-eslint'
 import neostandard from 'neostandard'
+import withNuxt from './.nuxt/eslint.config.mjs'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-  recommendedConfig: js.configs.recommended,
-  allConfig: js.configs.all
-})
-
-export default [
+export default withNuxt(
   ...neostandard(),
-  ...compat.extends(
-    'plugin:nuxt/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/stylistic'
-  ), {
+  eslint.configs.recommended,
+  ...tseslint.configs.recommended,
+  ...tseslint.configs.stylistic, {
     plugins: {
       vue
     },
@@ -29,7 +18,6 @@ export default [
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jquery,
         ...globals.node,
         ...vue.environments['setup-compiler-macros']['setup-compiler-macros'],
         d3: true
@@ -62,4 +50,4 @@ export default [
       'rpctracker_client/'
     ]
   }
-]
+)

@@ -5,10 +5,11 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
   <ul role="list" class="grid grid-cols-1 gap-x-6 gap-y-8 lg:grid-cols-3 xl:gap-x-8">
     <DocumentCard
       v-for="doc of props.documents"
+      :key="doc.id"
       :document="doc"
       :editors="props.editors"
       :selected="state.selectedDoc?.id === doc.id"
-      :editorAssignedDocuments="editorAssignedDocuments"
+      :editor-assigned-documents="editorAssignedDocuments"
     />
   </ul>
 </template>

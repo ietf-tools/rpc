@@ -1,6 +1,6 @@
 <template>
   <HeadlessTransitionRoot as="template" :show="isShown">
-    <HeadlessDialog as="div" class="relative z-50" :initialFocus="nameIpt" @close="close">
+    <HeadlessDialog as="div" class="relative z-50" :initial-focus="nameIpt" @close="close">
       <HeadlessTransitionChild as="template" enter="ease-in-out duration-500" enter-from="opacity-0" enter-to="opacity-100" leave="ease-in-out duration-500" leave-from="opacity-100" leave-to="opacity-0">
         <div class="fixed inset-0 bg-gray-500 dark:bg-black bg-opacity-75 dark:bg-opacity-50 transition-opacity" />
       </HeadlessTransitionChild>
@@ -9,7 +9,7 @@
           <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
             <HeadlessTransitionChild as="template" enter="transform transition ease-in-out duration-500 sm:duration-700" enter-from="translate-x-full" enter-to="translate-x-0" leave="transform transition ease-in-out duration-500 sm:duration-700" leave-from="translate-x-0" leave-to="translate-x-full">
               <HeadlessDialogPanel class="pointer-events-auto w-screen max-w-2xl">
-                <form @submit.prevent="createUser" class="flex h-full flex-col divide-y divide-gray-200 bg-white dark:bg-neutral-800 shadow-xl">
+                <form class="flex h-full flex-col divide-y divide-gray-200 bg-white dark:bg-neutral-800 shadow-xl" @submit.prevent="createUser">
                   <div class="h-0 flex-1 overflow-y-auto">
 
                     <!-- Header -->
@@ -37,7 +37,7 @@
                           <label for="document" class="block text-sm font-medium leading-6 text-gray-900 dark:text-neutral-200 sm:mt-1.5">Draft</label>
                         </div>
                         <div class="sm:col-span-2">
-                          <select id="document" name="document" v-model="state.documentId" class="form-select">
+                          <select id="document" v-model="state.documentId" name="document" class="form-select">
                             <option v-for="submission of submissions" :key="submission.id">{{ submission.name }}</option>
                           </select>
                         </div>
@@ -57,14 +57,14 @@
                           <div class="space-y-5">
                             <div v-for="label of labels" :key="label.value" class="relative flex items-start">
                               <div class="flex h-6 items-center">
-                                <input :id="`role-${label.value}`"
+                                <input
+                                  :id="`role-${label.value}`"
+                                  v-model="state.labelsApplied"
                                   :aria-describedby="`role-${label.value}-description`"
                                   :name="`role-${label.value}`"
                                   type="checkbox"
                                   :value="label.value"
-                                  v-model="state.labelsApplied"
-                                  :class="[label.caution ? 'border-rose-300 dark:border-rose-500 text-rose-700 dark:text-rose-700 hover:border-rose-400 focus:ring-rose-600' : 'border-gray-300 dark:border-neutral-500 text-violet-600 dark:text-violet-500 hover:border-violet-400 dark:hover:border-violet-500 focus:ring-violet-600 dark:focus:ring-violet-500', 'h-4 w-4 bg-white dark:bg-neutral-900 rounded border-2']"
-                                  />
+                                  :class="[label.caution ? 'border-rose-300 dark:border-rose-500 text-rose-700 dark:text-rose-700 hover:border-rose-400 focus:ring-rose-600' : 'border-gray-300 dark:border-neutral-500 text-violet-600 dark:text-violet-500 hover:border-violet-400 dark:hover:border-violet-500 focus:ring-violet-600 dark:focus:ring-violet-500', 'h-4 w-4 bg-white dark:bg-neutral-900 rounded border-2']">
                               </div>
                               <div class="ml-3 text-sm leading-6">
                                 <label :for="`role-${label.value}`" :class="[label.caution ? 'text-rose-800 dark:text-rose-400' : 'text-gray-900 dark:text-neutral-200', 'font-medium']">{{ label.label }}</label>
@@ -89,14 +89,14 @@
                           <div class="space-y-5">
                             <div v-for="cap of capabilities" :key="cap.value" class="relative flex items-start">
                               <div class="flex h-6 items-center">
-                                <input :id="`role-${cap.value}`"
+                                <input
+                                  :id="`role-${cap.value}`"
+                                  v-model="state.capabilitiesNeeded"
                                   :aria-describedby="`role-${cap.value}-description`"
                                   :name="`role-${cap.value}`"
                                   type="checkbox"
                                   :value="cap.value"
-                                  v-model="state.capabilitiesNeeded"
-                                  :class="[cap.caution ? 'border-rose-300 dark:border-rose-500 text-rose-700 dark:text-rose-700 hover:border-rose-400 focus:ring-rose-600' : 'border-gray-300 dark:border-neutral-500 text-violet-600 dark:text-violet-500 hover:border-violet-400 dark:hover:border-violet-500 focus:ring-violet-600 dark:focus:ring-violet-500', 'h-4 w-4 bg-white dark:bg-neutral-900 rounded border-2']"
-                                  />
+                                  :class="[cap.caution ? 'border-rose-300 dark:border-rose-500 text-rose-700 dark:text-rose-700 hover:border-rose-400 focus:ring-rose-600' : 'border-gray-300 dark:border-neutral-500 text-violet-600 dark:text-violet-500 hover:border-violet-400 dark:hover:border-violet-500 focus:ring-violet-600 dark:focus:ring-violet-500', 'h-4 w-4 bg-white dark:bg-neutral-900 rounded border-2']">
                               </div>
                               <div class="ml-3 text-sm leading-6">
                                 <label :for="`role-${cap.value}`" :class="[cap.caution ? 'text-rose-800 dark:text-rose-400' : 'text-gray-900 dark:text-neutral-200', 'font-medium']">{{ cap.label }}</label>
@@ -122,7 +122,7 @@
       </div>
     </HeadlessDialog>
   </HeadlessTransitionRoot>
-  <ConfirmDialog v-model:isShown="state.confirmShown" title="Manager Role Selected" caption="Are you sure you want to create a new team member with the Manager role?" />
+  <ConfirmDialog v-model:is-shown="state.confirmShown" title="Manager Role Selected" caption="Are you sure you want to create a new team member with the Manager role?" />
 </template>
 
 <script setup lang="ts">
@@ -163,7 +163,7 @@ const state = reactive<State>({
   documentId: 0,
   email: '',
   datatracker: '',
-  timezone: process.client ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/New_York',
+  timezone: import.meta.client ? Intl.DateTimeFormat().resolvedOptions().timeZone : 'America/New_York',
   hours: 20,
   manager: '',
   roles: [],

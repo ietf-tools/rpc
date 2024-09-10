@@ -8,18 +8,20 @@
     </tr>
     </thead>
     <tbody>
-    <tr v-for="stat of labelStats.labelStats">
+    <tr v-for="stat of labelStats.labelStats" :key="`${stat.documentId}-${stat.labelId}`">
       <td>
-        <RpcLabel v-if="labelById.hasOwnProperty(stat.labelId)"
-                  :label="labelById[stat.labelId]"/>
+        <RpcLabel
+          v-if="labelById.hasOwnProperty(stat.labelId)"
+          :label="labelById[stat.labelId]"/>
         <span v-else>?</span>
       </td>
       <td>{{ documentById[stat.documentId]?.name }}</td>
       <td>
-        {{ humanizeDuration(
+        {{
+          humanizeDuration(
             Duration.fromObject({ second: stat.seconds }).milliseconds,
-            { largest: 1, round: true}
-          ) }}
+            { largest: 1, round: true})
+        }}
       </td>
     </tr>
     </tbody>

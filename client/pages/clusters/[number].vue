@@ -2,7 +2,7 @@
   <div v-if="cluster">
     Cluster {{ cluster.number }}
     <ol>
-      <li v-for="document in cluster.documents">
+      <li v-for="document in cluster.documents" :key="document.id">
         {{ document.name }}
       </li>
     </ol>

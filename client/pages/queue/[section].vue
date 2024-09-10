@@ -1,42 +1,46 @@
 <template>
-  <TitleBlock title="Queue"
-              summary="Where the magic happens.">
-    <template #right>
-      <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
-        <div class="text-sm">Backlog <strong class="text-rose-700">larger
-          <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>
-        </strong> than a week ago
+  <div>
+    <TitleBlock
+      title="Queue"
+      summary="Where the magic happens.">
+      <template #right>
+        <div class="mt-2 text-right text-gray-700 dark:text-neutral-400 sm:ml-16 sm:mt-0">
+          <div class="text-sm">Backlog <strong class="text-rose-700">larger
+            <Icon name="uil:angle-double-up" class="text-lg -mt-0.5"/>
+          </strong> than a week ago
+          </div>
+          <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week
+            ago)</em></div>
         </div>
-        <div class="text-xs"><strong>2 weeks</strong> to drain the queue <em>(was <strong>3 days</strong> a week
-          ago)</em></div>
-      </div>
-    </template>
-  </TitleBlock>
+      </template>
+    </TitleBlock>
 
-  <!-- TABS -->
+    <!-- TABS -->
 
-  <div class="flex justify-center items-center">
-    <TabNav :tabs="tabs" :selected="currentTab" />
-    <RefreshButton :pending="pending" @refresh="refresh" class="ml-3"/>
-    <button type="button" @click="" class="btn-secondary ml-3">
-      <span class="sr-only">Filter</span>
-      <Icon name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
-            aria-hidden="true"/>
-    </button>
-  </div>
+    <div class="flex justify-center items-center">
+      <TabNav :tabs="tabs" :selected="currentTab" />
+      <RefreshButton :pending="pending" class="ml-3" @refresh="refresh"/>
+      <button type="button" class="btn-secondary ml-3" @click.stop>
+        <span class="sr-only">Filter</span>
+        <Icon
+          name="solar:filter-line-duotone" size="1.5em" class="text-gray-500 dark:text-neutral-300"
+          aria-hidden="true"/>
+      </button>
+    </div>
 
-  <!-- DATA TABLE -->
+    <!-- DATA TABLE -->
 
-  <div class="mt-2 flow-root">
-    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
-          <DocumentTable
-            :columns="columns"
-            :data="filteredDocuments"
-            row-key="id"
-            :loading="pending"
-          />
+    <div class="mt-2 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <DocumentTable
+              :columns="columns"
+              :data="filteredDocuments"
+              row-key="id"
+              :loading="pending"
+            />
+          </div>
         </div>
       </div>
     </div>

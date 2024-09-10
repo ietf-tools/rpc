@@ -39,4 +39,4 @@ RUN groupmod --gid $USER_GID $USERNAME \
 USER dev:dev
 
 # Install pylint dependencies
-RUN pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location pylint pylint-common pylint-django
+RUN pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location pylint pylint-django

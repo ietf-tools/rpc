@@ -12,7 +12,7 @@
             :aria-sort="state.sortField === col.field ? state.sortDirection === 'asc' ? 'ascending' : 'descending' : undefined"
           >
             <button
-              v-if="col.sortable !== false"
+              v-if="col.sortable !== false && col.field"
               class="bg-transparent border-none"
               :aria-pressed="state.sortField === col.field"
               @click.prevent="sortBy(col.field)">
@@ -43,7 +43,7 @@
             :key="col.key"
             :class="[
               'px-3 py-4 text-gray-500 dark:text-neutral-400',
-              col.classes && isFunction(col.classes) ? col.classes(row[col.field]) : col.classes
+              col.classes && isFunction(col.classes) ? col.classes(col.field ? row[col.field] : row) : col.classes
             ]"
           >
             <component :is="buildCell(col, row)" />
@@ -123,7 +123,7 @@ function sortBy (fieldName: string) {
  * Build cell node
  */
 function buildCell (col: Column, row: Row) {
-  const value = row[col.field]
+  const value = col.field ? row[col.field] : null
   const values = isArray(value) ? value : [value]
   const formattedValues = col.format
     ? col.formatType === 'all'

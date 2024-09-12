@@ -109,7 +109,6 @@ const columns = computed(() => {
     },
     {
       key: 'labels',
-      field: 'labels',
       label: 'Labels',
       labels: (row) => (row.labels || []) as string[]
     }

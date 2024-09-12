@@ -10,7 +10,7 @@ export interface Column {
   label: string
   labels?: (row: Row) => string[]
   labelDefaultColor?: ColorEnum
-  field: string
+  field?: string
   classes?: string | ((val: Value) => string)
   sortable?: boolean
   link?: string | ((row: Row, val: Value) => string)

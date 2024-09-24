@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes'
-import type { Assignment, RfcToBe, RpcPerson } from '~/rpctracker_client'
+import type { Assignment, RfcToBe, RpcPerson, RpcRole } from '~/rpctracker_client'
 import { DateTime } from 'luxon'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
@@ -187,7 +187,7 @@ const {
   pending: pendingAssignments,
   refresh: refreshAssignments
 } = await useFetch<Assignment[]>('/api/rpc/assignments/', { baseURL: '/', server: false })
-const { data: roles } = await useAsyncData(
+const { data: roles } = await useAsyncData<RpcRole[]>(
   'roles',
   async () => {
     try {
@@ -198,6 +198,7 @@ const { data: roles } = await useAsyncData(
         title: 'Unable to list roles',
         text: e
       })
+      return []
     }
   },
   { default: () => ([]) }

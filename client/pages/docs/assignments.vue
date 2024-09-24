@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes'
-import type { Assignment, RfcToBe, RpcPerson } from '~/rpctracker_client'
+import type { Assignment, RfcToBe, RpcPerson, RpcRole } from '~/rpctracker_client'
 import { DateTime } from 'luxon'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })
@@ -175,7 +175,11 @@ async function refresh () {
 
 // DATA RETRIEVAL
 
-const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useFetch<RpcPerson[]>('/api/rpc/rpc_person/', { baseURL: '/', server: false })
+const { data: people, pending: pendingPeople, refresh: refreshPeople } = await useAsyncData<RpcPerson[]>(
+  'rpcPersons',
+  () => api.rpcPersonList(),
+  { server: false, default: () => ([]) }
+)
 
 const { data: rfcsToBe, pending: pendingDocs, refresh: refreshDocs } = await useAsyncData<RfcToBe[]>(
   'rfcsToBe',
@@ -187,7 +191,7 @@ const {
   pending: pendingAssignments,
   refresh: refreshAssignments
 } = await useFetch<Assignment[]>('/api/rpc/assignments/', { baseURL: '/', server: false })
-const { data: roles } = await useAsyncData(
+const { data: roles } = await useAsyncData<RpcRole[]>(
   'roles',
   async () => {
     try {
@@ -198,6 +202,7 @@ const { data: roles } = await useAsyncData(
         title: 'Unable to list roles',
         text: e
       })
+      return []
     }
   },
   { default: () => ([]) }

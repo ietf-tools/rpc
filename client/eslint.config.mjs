@@ -2,15 +2,12 @@ import vue from 'eslint-plugin-vue'
 import globals from 'globals'
 import parser from 'vue-eslint-parser'
 import eslint from '@eslint/js'
-import tseslint from 'typescript-eslint'
 import neostandard from 'neostandard'
 import withNuxt from './.nuxt/eslint.config.mjs'
 
 export default withNuxt(
   ...neostandard(),
-  eslint.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...tseslint.configs.stylistic, {
+  eslint.configs.recommended, {
     plugins: {
       vue
     },

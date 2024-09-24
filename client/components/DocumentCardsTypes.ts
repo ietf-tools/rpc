@@ -1,7 +1,7 @@
 export interface DocumentCardType {
   id: string
   name: string
-  external_deadline: string
+  externalDeadline: string
   needsAssignment?: {
     name: string
   }

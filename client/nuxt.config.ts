@@ -48,6 +48,13 @@ export default defineNuxtConfig({
     typeCheck: false
   },
   vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          api: 'modern-compiler'
+        }
+      }
+    },
     plugins: [
       {
         name: 'vue-docs',

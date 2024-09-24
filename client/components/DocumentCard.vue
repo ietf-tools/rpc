@@ -41,7 +41,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
       <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Deadline</dt>
         <dd class="grow flex items-start gap-x-2">
-          {{ cookedDocument.external_deadline?.toLocaleString(DateTime.DATE_FULL) || '-' }}</dd>
+          {{ cookedDocument.externalDeadline?.toLocaleString(DateTime.DATE_FULL) || '-' }}
+        </dd>
       </div>
       <div class="flex justify-between gap-x-4 py-3">
         <dt class="text-gray-500">Pages</dt>
@@ -61,7 +62,8 @@ Based on https://tailwindui.com/components/application-ui/lists/grid-lists#compo
                 class="flex flex-row gap-1 items-center relative w-full cursor-default rounded-lg bg-white py-2 pl-3 pr-1 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm"
               >
                 <div class="flex-auto ">
-                  <div v-for="person in uniqBy(cookedDocument.assignmentsPersons, person => person?.id)" :key="person?.id">
+                  <div v-for="person in uniqBy(cookedDocument.assignmentsPersons, person => person?.id)"
+                       :key="person?.id">
                     {{ person.name }}
                   </div>
                 </div>
@@ -175,7 +177,7 @@ const cookedDocument = computed(() => {
 
   return ({
     ...props.document,
-    external_deadline: props.document.externalDeadline && DateTime.fromJSDate(props.document.externalDeadline),
+    externalDeadline: props.document.externalDeadline && DateTime.fromJSDate(props.document.externalDeadline),
     assignments: props.document.assignments,
     assignmentsPersons,
     assignmentsPersonIds: assignmentsPersons?.map(editor => editor?.id),

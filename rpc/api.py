@@ -213,7 +213,7 @@ class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     # lists its contents. Normally we'd expect the List action to list queues and
     # the Retrieve action to retrieve a single queue. That does not apply to our
     # concept of a singular queue, so I'm using this because it works.
-    queryset = RfcToBe.objects.filter(disposition__slug="in_progress")
+    queryset = RfcToBe.objects.filter(disposition__slug__in=("created", "in_progress"))
     serializer_class = QueueItemSerializer
 
 

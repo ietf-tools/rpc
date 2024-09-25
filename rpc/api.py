@@ -4,7 +4,8 @@ import datetime
 
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -227,6 +228,20 @@ class ClusterViewSet(viewsets.ReadOnlyModelViewSet):
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
+
+
+class RpcPersonAssignmentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """Assignments for a specific RPC Person
+
+    URL router must provide the `person_id` kwarg
+
+    TODO: permissions
+    """
+    queryset = Assignment.objects.all()
+    serializer_class = AssignmentSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(person_id=self.kwargs["person_id"])
 
 
 class RfcToBeViewSet(viewsets.ModelViewSet):

@@ -62,7 +62,7 @@ const columns: Column[] = [
 
 const { data: allAssignments, pending: assignmentsPending } = await useAsyncData(
   'allAssignments',
-  () => api.assignmentsList(),
+  () => api.rpcPersonAssignmentsList({ personId: userStore.rpcPersonId }),
   { server: false, default: () => ([]) }
 )
 

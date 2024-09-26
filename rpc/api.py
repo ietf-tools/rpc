@@ -96,21 +96,22 @@ def profile_as_person(request, rpc_person_id):
     )
 
 
-@extend_schema(responses=RpcPersonSerializer(many=True))
-@api_view(["GET"])
-@with_rpcapi
-def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
-    # use bulk endpoint to get names
-    name_map = rpcapi.get_persons(
-        list(
-            RpcPerson.objects.values_list(
-                "datatracker_person__datatracker_id", flat=True
+class RpcPersonViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
+    serializer_class = RpcPersonSerializer
+    queryset = RpcPerson.objects.all()
+
+    @with_rpcapi
+    def get_serializer_context(self, rpcapi: rpcapi_client.DefaultApi):
+        """Add context to the serializer"""
+        # use bulk endpoint to get names
+        name_map = rpcapi.get_persons(
+            list(
+                RpcPerson.objects.values_list(
+                    "datatracker_person__datatracker_id", flat=True
+                )
             )
         )
-    )
-    return Response(
-        RpcPersonSerializer(RpcPerson.objects.all(), many=True, name_map=name_map).data
-    )
+        return super().get_serializer_context() | {"name_map": name_map}
 
 
 @extend_schema(

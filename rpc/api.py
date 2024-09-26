@@ -114,6 +114,20 @@ class RpcPersonViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
         return super().get_serializer_context() | {"name_map": name_map}
 
 
+class RpcPersonAssignmentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """Assignments for a specific RPC Person
+
+    URL router must provide the `person_id` kwarg
+
+    TODO: permissions
+    """
+    queryset = Assignment.objects.exclude(state="done")
+    serializer_class = AssignmentSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(person_id=self.kwargs["person_id"])
+
+
 @extend_schema(
     operation_id="submissions_list", responses=SubmissionListItemSerializer(many=True)
 )
@@ -229,20 +243,6 @@ class ClusterViewSet(viewsets.ReadOnlyModelViewSet):
 class AssignmentViewSet(viewsets.ModelViewSet):
     queryset = Assignment.objects.all()
     serializer_class = AssignmentSerializer
-
-
-class RpcPersonAssignmentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """Assignments for a specific RPC Person
-
-    URL router must provide the `person_id` kwarg
-
-    TODO: permissions
-    """
-    queryset = Assignment.objects.all()
-    serializer_class = AssignmentSerializer
-
-    def get_queryset(self):
-        return self.queryset.filter(person_id=self.kwargs["person_id"])
 
 
 class RfcToBeViewSet(viewsets.ModelViewSet):

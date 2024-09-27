@@ -11,6 +11,7 @@
       <DocInfoCard :draft="rfcToBe"/>
       <div class="border-b border-gray-900/10 pb-12 flex">
         <DocComplexityCard :capabilities="capabilities"/>
+        <DocExceptionsCard :labels="labels"/>
       </div>
     </div>
   </Card>
@@ -18,7 +19,7 @@
 
 <script setup lang="ts">
 
-import type { Capability, RfcToBe } from '~/rpctracker_client'
+import type { Capability, Label, RfcToBe } from '~/rpctracker_client'
 
 const route = useRoute()
 const api = useApi()
@@ -32,6 +33,12 @@ const { data: rfcToBe } = await useAsyncData<RfcToBe>(
 const { data: capabilities } = await useAsyncData<Capability[]>(
   'capabilities',
   () => api.capabilitiesList(),
+  { default: () => ([]), server: false }
+)
+
+const { data: labels } = await useAsyncData<Label[]>(
+  'labels',
+  () => api.labelsList(),
   { default: () => ([]), server: false }
 )
 </script>

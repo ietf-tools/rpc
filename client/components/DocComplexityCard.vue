@@ -17,11 +17,10 @@
 
 <script setup lang="ts">
 
-import type { Capability, RfcToBe } from '~/rpctracker_client'
+import type { Capability } from '~/rpctracker_client'
 
 type Props = {
   capabilities: Capability[]
-  rfcToBe: RfcToBe
 }
 
 defineProps<Props>()

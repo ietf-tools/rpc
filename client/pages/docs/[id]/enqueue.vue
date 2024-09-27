@@ -7,9 +7,10 @@
         summary="Ready the incoming document for the editing queue."/>
     </template>
 
-    <div v-if="rfcToBe" class="space-y-12">
+    <div class="space-y-12">
+      <DocInfoCard :draft="rfcToBe"/>
       <div class="border-b border-gray-900/10 pb-12 flex">
-        <DocComplexityCard :capabilities="capabilities" :rfc-to-be="rfcToBe"/>
+        <DocComplexityCard :capabilities="capabilities"/>
       </div>
     </div>
   </Card>

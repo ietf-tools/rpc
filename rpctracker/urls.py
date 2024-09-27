@@ -47,6 +47,7 @@ register_converter(RfcNumberConverter, "rfc-number")
 
 router = routers.DefaultRouter()
 router.register(r"assignments", rpc_api.AssignmentViewSet)
+router.register(r"capabilities", rpc_api.CapabilityViewSet)
 router.register(r"clusters", rpc_api.ClusterViewSet)
 router.register(r"documents", rpc_api.RfcToBeViewSet)
 router.register(r"labels", rpc_api.LabelViewSet)

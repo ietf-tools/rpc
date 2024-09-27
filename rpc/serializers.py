@@ -256,7 +256,7 @@ class CreateRfcToBeSerializer(serializers.ModelSerializer):
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Capability
-        fields = ["slug", "name"]
+        fields = ["slug", "name", "desc"]
 
 
 class RpcRoleSerializer(serializers.ModelSerializer):

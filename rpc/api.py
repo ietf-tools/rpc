@@ -18,6 +18,7 @@ from datatracker.rpcapi import with_rpcapi
 from datatracker.models import Document
 from .models import (
     Assignment,
+    Capability,
     Cluster,
     Label,
     RfcToBe,
@@ -30,6 +31,7 @@ from .models import (
 )
 from .serializers import (
     AssignmentSerializer,
+    CapabilitySerializer,
     ClusterSerializer,
     CreateRfcToBeSerializer,
     LabelSerializer,
@@ -231,6 +233,11 @@ class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     # concept of a singular queue, so I'm using this because it works.
     queryset = RfcToBe.objects.filter(disposition__slug__in=("created", "in_progress"))
     serializer_class = QueueItemSerializer
+
+
+class CapabilityViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Capability.objects.all()
+    serializer_class = CapabilitySerializer
 
 
 class ClusterViewSet(viewsets.ReadOnlyModelViewSet):

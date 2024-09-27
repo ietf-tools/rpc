@@ -1,7 +1,7 @@
 <template>
   <div class="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
     <div class="sm:col-span-4">
-      <HeadlessListbox v-model="model" as="div" :by="by">
+      <HeadlessListbox v-model="model" v-bind="$attrs" as="div">
         <HeadlessListboxLabel class="block text-sm font-medium leading-6 text-gray-900">
           {{ label }}
         </HeadlessListboxLabel>
@@ -29,13 +29,15 @@
 
 <script setup lang="ts">
 
+// Fallthrough attributes are applied to an internal element via v-bind="$attrs"
+defineOptions({ inheritAttrs: false })
+
 type Model = null | ({ name: string } & Record<PropertyKey, unknown>)
 
 const model = defineModel<Model>()
 
 type Props = {
-  label: string,
-  by?: string
+  label: string
 }
 defineProps<Props>()
 

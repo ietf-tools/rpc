@@ -150,24 +150,26 @@ function buildCell (col: Column<RowT>, row: RowT) {
       cssClasses.push('flex items-center')
     }
 
-    if (isFunction(col.link)) {
-      children.push(h(NuxtLink, {
-        class: [
-          ...cssClasses,
-          'text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100'
-        ],
-        to: col.link(row, val)
-      }, () => contents))
-    } else {
-      children.push(h('span', {
-        class: cssClasses
-      }, contents.map(val => {
-        return val
-      })))
-    }
+    if (!isFunction(col.labels)) {
+      if (isFunction(col.link)) {
+        children.push(h(NuxtLink, {
+          class: [
+            ...cssClasses,
+            'text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100'
+          ],
+          to: col.link(row, val)
+        }, () => contents))
+      } else {
+        children.push(h('span', {
+          class: cssClasses
+        }, contents.map(val => {
+          return val
+        })))
+      }
 
-    if (idx < formattedValuesArray.length - 1) {
-      children.push(h('span', ', '))
+      if (idx < formattedValuesArray.length - 1) {
+        children.push(h('span', ', '))
+      }
     }
   }
 

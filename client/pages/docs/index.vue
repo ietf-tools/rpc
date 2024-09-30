@@ -14,7 +14,7 @@
     <div class="mt-8 flow-root">
       <DocumentTable
         :columns="columns"
-        :data="myAssignments.map(a => ({ ...a.rfcToBe })).filter(row => !!row)"
+        :data="tableRows"
         row-key="id"
         :loading="pending"
       />
@@ -37,11 +37,17 @@ const myAssignments = computed(() => allAssignments.value?.filter(
   (a) => ({ ...a, rfcToBe: allDocuments.value?.find(d => d.id === a.rfcToBe) })
 ))
 
+const tableRows = computed(() => myAssignments.value.map(a => ({ ...a.rfcToBe })).filter(row => !!row))
+
 const pending = computed(() => assignmentsPending.value || documentsPending.value)
 
 // DATA
 
-const columns: Column[] = [
+function findLabel (labelId: number) {
+  return labels.value.find((lbl) => lbl.id === labelId) ?? ''
+}
+
+const columns: Column<typeof tableRows.value[number]>[] = [
   {
     key: 'name',
     label: 'Document',
@@ -54,8 +60,10 @@ const columns: Column[] = [
     key: 'labels',
     label: 'Labels',
     labels: row => {
-      // @ts-ignore
-      return row.labels.map(lblId => labels.value.find(lbl => lbl.id === lblId)) || []
+      if (row.labels) {
+        return row.labels.map(findLabel)
+      }
+      return []
     }
   }
 ]

@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <BaseCard>
     <template #header>
       <h3 class="text-base font-semibold">Complexity Checks</h3>
     </template>
@@ -11,7 +11,7 @@
         :label="capability.name"
         :desc="capability.desc"/>
     </fieldset>
-  </Card>
+  </BaseCard>
 
 </template>
 

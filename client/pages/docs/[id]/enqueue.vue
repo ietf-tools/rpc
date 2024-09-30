@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <BaseCard>
     <template #header>
       <TitleBlock
         class="pb-3"
@@ -13,7 +13,7 @@
         <DocComplexityCard :capabilities="capabilities"/>
         <DocExceptionsCard :labels="labels"/>
       </div>
-      <Card>
+      <BaseCard>
         <template #header>
           <h3 class="text-base font-semibold">
             Document Dependencies
@@ -23,22 +23,22 @@
           :columns="columns"
           :data="relatedDocuments"
           row-key="name"/>
-        <Button btn-type="default">Add Dependency</Button>
-      </Card>
-      <Card>
+        <BaseButton btn-type="default">Add Dependency</BaseButton>
+      </BaseCard>
+      <BaseCard>
         <template #header>
           <h3 class="text-base font-semibold">
             Comments
           </h3>
         </template>
         <RpcTextarea/>
-      </Card>
+      </BaseCard>
     </div>
     <template #footer>
-      <Button btn-type="default">Document has exceptions&mdash;escalate</Button>
-      <Button btn-type="default">Add to queue</Button>
+      <BaseButton btn-type="default">Document has exceptions&mdash;escalate</BaseButton>
+      <BaseButton btn-type="default">Add to queue</BaseButton>
     </template>
-  </Card>
+  </BaseCard>
 </template>
 
 <script setup lang="ts">

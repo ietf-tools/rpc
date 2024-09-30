@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <BaseCard>
     <template #header>
       <h3 class="text-base font-semibold">Exceptions</h3>
     </template>
@@ -10,7 +10,7 @@
         :key="exception.id"
         :label="exception.slug"/>
     </fieldset>
-  </Card>
+  </BaseCard>
 </template>
 
 <script setup lang="ts">

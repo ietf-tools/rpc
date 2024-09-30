@@ -1,8 +1,8 @@
 <template>
-  <Badge :color="label?.color">
+  <BaseBadge :color="label?.color">
     <Icon v-if="label?.isException" class="mr-2" name="pajamas:warning"/>
     {{ label?.slug }}
-  </Badge>
+  </BaseBadge>
 </template>
 
 <script setup lang="ts">

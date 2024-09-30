@@ -29,7 +29,7 @@
         class="mx-auto grid max-w-2xl grid-cols-1 grid-rows-1 place-items-stretch gap-x-8 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 
         <!-- Status summary -->
-        <Card class="lg:col-start-3 lg:row-start-1 lg:row-span-1 grid place-items-stretch">
+        <BaseCard class="lg:col-start-3 lg:row-start-1 lg:row-span-1 grid place-items-stretch">
           <h2 class="sr-only">Status Summary</h2>
           <div class="px-4 pt-6 sm:px-6">
             <h3 class="text-base font-semibold leading-7">Current Assignments</h3>
@@ -44,7 +44,7 @@
                   class="py-1 grid grid-cols-2">
                   <dt>{{ people.find(p => p.id === assignment.person)?.name }}</dt>
                   <dd class="relative">
-                    <Badge class="absolute right-0" :label="assignment.role"/>
+                    <BaseBadge class="absolute right-0" :label="assignment.role"/>
                   </dd>
                 </div>
               </dl>
@@ -72,19 +72,19 @@
                   <dt>Est. Completion</dt>
                   <dd>
                     <time datetime="2024-07-30">Jul 30, 2024</time>
-                    <Badge label="Overdue" color="red"/>
+                    <BaseBadge label="Overdue" color="red"/>
                   </dd>
                 </div>
               </dl>
             </div>
           </div>
-        </Card>
+        </BaseCard>
 
         <!-- Document Info -->
         <DocInfoCard :draft="draft"/>
 
         <!-- Labels -->
-        <Card class="lg:col-start-3 lg:row-start-2 lg:row-span-1 grid place-items-stretch">
+        <BaseCard class="lg:col-start-3 lg:row-start-2 lg:row-span-1 grid place-items-stretch">
           <h3 class="text-base font-semibold leading-7">Labels</h3>
           <div class="flex">
             <div v-for="lbl of appliedLabels" :key="lbl.id" class="flex-shrink-0 p-1">
@@ -94,10 +94,10 @@
           <RpcLabelPicker
             :labels="labels" :model-value="draft?.labels" item-label="slug"
             @update:model-value="saveLabels"/>
-        </Card>
+        </BaseCard>
 
         <!-- History -->
-        <Card class="lg:col-span-full grid place-items-stretch">
+        <BaseCard class="lg:col-span-full grid place-items-stretch">
           <h3 class="text-base font-semibold leading-7">History</h3>
           <div class="flex">
             <table class="min-w-full divide-y divide-gray-300">
@@ -131,7 +131,7 @@
               </tbody>
             </table>
           </div>
-        </Card>
+        </BaseCard>
       </div>
     </div>
   </div>

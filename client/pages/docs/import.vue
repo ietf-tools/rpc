@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <BaseCard>
     <template #header>
       <TitleBlock
         class="pb-3"
@@ -123,11 +123,11 @@
       </div>
 
       <div class="mt-6 flex items-center justify-end gap-x-6">
-        <Button btn-type="cancel">Cancel</Button>
-        <Button btn-type="default" :disabled="!haveRequiredValues" @click="importSubmission">Save</Button>
+        <BaseButton btn-type="cancel">Cancel</BaseButton>
+        <BaseButton btn-type="default" :disabled="!haveRequiredValues" @click="importSubmission">Save</BaseButton>
       </div>
     </form>
-  </Card>
+  </BaseCard>
 </template>
 
 <script setup lang="ts">

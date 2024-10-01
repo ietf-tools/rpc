@@ -3,7 +3,18 @@
 from django.core.management.base import BaseCommand, CommandError, CommandParser
 
 from datatracker.models import DatatrackerPerson, Document
-from ...models import ActionHolder, Assignment, Cluster, Label, RfcToBe, RpcPerson
+from ...models import (
+    ActionHolder,
+    Assignment,
+    Cluster,
+    HistoricalLabel,  # type: ignore (managed by django-simple-history)
+    HistoricalRfcToBe,  # type: ignore (managed by django-simple-history)
+    HistoricalRfcToBeLabel,  # type: ignore (managed by django-simple-history)
+    Label,
+    RfcToBe,
+    RpcDocumentComment,
+    RpcPerson,
+)
 
 
 class Command(BaseCommand):
@@ -28,6 +39,10 @@ class Command(BaseCommand):
 
         Assignment.objects.all().delete()
         ActionHolder.objects.all().delete()
+        HistoricalRfcToBeLabel.objects.all().delete()
+        HistoricalRfcToBe.objects.all().delete()
+        HistoricalLabel.objects.all().delete()
+        RpcDocumentComment.objects.all().delete()
         RfcToBe.objects.all().delete()
         RpcPerson.objects.all().delete()
         DatatrackerPerson.objects.all().delete()

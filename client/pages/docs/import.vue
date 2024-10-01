@@ -1,46 +1,49 @@
 <template>
-  <BaseCard>
-    <template #header>
-      <TitleBlock
-        class="pb-3"
-        :title="`Add Document: ${submission?.name || '&hellip;'}`"
-        summary="Pull the submission into the RPC tracker so the editing process can begin."/>
-    </template>
+  <div>
+    <TitleBlock
+      class="pb-3"
+      :title="`Ingest Document: ${submission?.name || '&hellip;'}`"
+      summary="Pull the submission into the RPC tracker so the editing process can begin."/>
 
-    <form>
-      <div v-if="!backendPending" class="space-y-12">
-        <div class="border-b border-gray-900/10 pb-12">
-          <h2 class="text-base font-semibold leading-7 text-gray-900">Document Info</h2>
-
-          <!-- DRAFT INFO SUMMARY -->
-          <div class="overflow-hidden max-w-xl rounded-lg bg-white shadow">
-            <div class="px-4 py-5 sm:p-2">
-              <ul class="px-2">
-                <li>
-                  <NuxtLink
-                    v-if="submission?.datatrackerUrl"
-                    :to="submission.datatrackerUrl"
-                    class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
-                    {{ submission?.name }}-{{ submission?.rev }}
-                  </NuxtLink>
-                  <span v-else>
+    <div v-if="!backendPending" class="space-y-4">
+      <BaseCard>
+        <template #header>
+          <CardHeader title="Document Info"/>
+        </template>
+        <!-- DRAFT INFO SUMMARY -->
+        <div class="px-4 py-5 sm:p-2">
+          <ul class="px-2">
+            <li>
+              <NuxtLink
+                v-if="submission?.datatrackerUrl"
+                :to="submission.datatrackerUrl"
+                class="text-violet-900 hover:text-violet-500 dark:text-violet-300 hover:dark:text-violet-100">
+                {{ submission?.name }}-{{ submission?.rev }}
+              </NuxtLink>
+              <span v-else>
                     {{ submission?.name }}-{{ submission?.rev }}
                   </span>
-                </li>
-                <li>
+            </li>
+            <li>
                   <span v-for="auth of submission?.authors" :key="auth.id" class="pr-2">
                     {{ auth.plainName }}
                   </span>
-                </li>
-                <li>Submitted pages: {{ submission?.pages }}</li>
-                <li>Document shepherd: {{ submission?.shepherd }}</li>
-                <li>Stream: {{ submission?.stream.name }}</li>
-                <li>Submitted standard level: {{ submission?.stdLevel?.name }}</li>
-                <li>Submitted format: {{ submission?.sourceFormat.name }}</li>
-              </ul>
-            </div>
-          </div>
+            </li>
+            <li>Submitted pages: {{ submission?.pages }}</li>
+            <li>Document shepherd: {{ submission?.shepherd }}</li>
+            <li>Stream: {{ submission?.stream.name }}</li>
+            <li>Submitted standard level: {{ submission?.stdLevel?.name }}</li>
+            <li>Submitted format: {{ submission?.sourceFormat.name }}</li>
+          </ul>
+        </div>
+      </BaseCard>
 
+      <BaseCard>
+        <template #header>
+          <CardHeader title="Document Details"/>
+        </template>
+
+        <form class="space-y-4">
           <!-- Source Format -->
           <RpcListbox v-model="state.sourceFormat" by="slug" label="Source Format">
             <RpcListboxOption
@@ -119,15 +122,15 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        </form>
+      </BaseCard>
+    </div>
 
-      <div class="mt-6 flex items-center justify-end gap-x-6">
-        <BaseButton btn-type="cancel">Cancel</BaseButton>
-        <BaseButton btn-type="default" :disabled="!haveRequiredValues" @click="importSubmission">Save</BaseButton>
-      </div>
-    </form>
-  </BaseCard>
+    <div class="mt-6 flex items-center justify-end gap-x-6">
+      <BaseButton btn-type="cancel">Cancel</BaseButton>
+      <BaseButton btn-type="default" :disabled="!haveRequiredValues" @click="importSubmission">Save</BaseButton>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">

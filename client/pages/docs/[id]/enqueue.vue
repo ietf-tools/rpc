@@ -25,7 +25,10 @@
         <template #header>
           <CardHeader title="Comments"/>
         </template>
-        <RpcTextarea/>
+        <div class="flex flex-col items-center space-y-4">
+          <RpcTextarea class="w-4/5 min-w-100"/>
+          <HistoryFeed class="w-3/5 min-w-100"/>
+        </div>
       </BaseCard>
 
       <div class="justify-end flex space-x-4">

@@ -1,23 +1,19 @@
 <template>
-  <BaseCard>
-    <template #header>
-      <TitleBlock
-        class="pb-3"
-        :title="`Prep for Queue: ${rfcToBe?.name || '&hellip;'}`"
-        summary="Ready the incoming document for the editing queue."/>
-    </template>
+  <div>
+    <TitleBlock
+      class="pb-3"
+      :title="`Prep for Queue: ${rfcToBe?.name || '&hellip;'}`"
+      summary="Ready the incoming document for the editing queue."/>
 
-    <div class="space-y-12">
-      <DocInfoCard :draft="rfcToBe"/>
-      <div class="border-b border-gray-900/10 pb-12 flex">
+    <div class="space-y-4">
+      <div class="flex space-x-4">
+        <DocInfoCard :draft="rfcToBe"/>
         <DocComplexityCard :capabilities="capabilities"/>
         <DocExceptionsCard :labels="labels"/>
       </div>
       <BaseCard>
         <template #header>
-          <h3 class="text-base font-semibold">
-            Document Dependencies
-          </h3>
+          <CardHeader title="Document Dependencies"/>
         </template>
         <DocumentTable
           :columns="columns"
@@ -27,18 +23,17 @@
       </BaseCard>
       <BaseCard>
         <template #header>
-          <h3 class="text-base font-semibold">
-            Comments
-          </h3>
+          <CardHeader title="Comments"/>
         </template>
         <RpcTextarea/>
       </BaseCard>
+
+      <div class="justify-end flex space-x-4">
+        <BaseButton btn-type="default">Document has exceptions&mdash;escalate</BaseButton>
+        <BaseButton btn-type="default">Add to queue</BaseButton>
+      </div>
     </div>
-    <template #footer>
-      <BaseButton btn-type="default">Document has exceptions&mdash;escalate</BaseButton>
-      <BaseButton btn-type="default">Add to queue</BaseButton>
-    </template>
-  </BaseCard>
+  </div>
 </template>
 
 <script setup lang="ts">

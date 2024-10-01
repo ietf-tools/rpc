@@ -1,7 +1,7 @@
 <template>
   <BaseCard>
     <template #header>
-      <h3 class="text-base font-semibold">Exceptions</h3>
+      <CardHeader title="Exceptions"/>
     </template>
 
     <fieldset>

@@ -1,9 +1,8 @@
 <template>
   <BaseCard>
     <template #header>
-      <h3 class="text-base font-semibold">Complexity Checks</h3>
+      <CardHeader title="Complexity Checks"/>
     </template>
-
     <fieldset>
       <RpcCheckbox
         v-for="capability in capabilities"
@@ -12,7 +11,6 @@
         :desc="capability.desc"/>
     </fieldset>
   </BaseCard>
-
 </template>
 
 <script setup lang="ts">

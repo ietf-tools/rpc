@@ -1,7 +1,7 @@
 <template>
   <BaseCard>
     <template #header>
-      <h3 class="text-base font-semibold">Document Info</h3>
+      <CardHeader title="Document Info"/>
     </template>
     <div class="lg:col-span-2 lg:row-span-2 lg:row-start-1 grid place-items-stretch">
       <div v-if="draft">

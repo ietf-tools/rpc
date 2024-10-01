@@ -13,13 +13,16 @@
       </div>
       <BaseCard>
         <template #header>
-          <CardHeader title="Document Dependencies"/>
+          <CardHeader title="Document Dependencies">
+            <template #actions>
+              <BaseButton btn-type="default">Add Dependency</BaseButton>
+            </template>
+          </CardHeader>
         </template>
         <DocumentTable
           :columns="columns"
           :data="relatedDocuments"
           row-key="name"/>
-        <BaseButton btn-type="default">Add Dependency</BaseButton>
       </BaseCard>
       <BaseCard>
         <template #header>

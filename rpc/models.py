@@ -279,8 +279,17 @@ class Assignment(models.Model):
 
 
 class RfcAuthor(models.Model):
+
+    # The abbreviated name that appears on the first page of the RFC is
+    # captured for search and metadata purposes. (The datatracker name
+    # for the person may be different that what appeared on an older RFC
+    # as people's names change over time).
+    titlepage_name = models.CharField(max_length=128)
+    is_editor = models.BooleanField(default=False)
+    # For some older RFCs we don't have a datatracker person to link to, and
+    # in some cases the listed author wasn't a _person_.
     datatracker_person = models.ForeignKey(
-        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT, null=True
     )
     rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
     auth48_approved = models.DateTimeField(null=True)
@@ -289,10 +298,19 @@ class RfcAuthor(models.Model):
         return f"{self.datatracker_person} as author of {self.rfc_to_be}"
 
 
+class AdditionalEmail(models.Model):
+    email = models.EmailField()
+    rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+
+    def __str__(self):
+        return f"{self.email} associated with {self.rfc_to_be}"
+
+
 class FinalApproval(models.Model):
     rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    body = models.CharField(max_length=64, null=True)
     approver = models.ForeignKey(
-        "datatracker.DatatrackerPerson", on_delete=models.PROTECT
+        "datatracker.DatatrackerPerson", on_delete=models.PROTECT, null=True
     )
     requested = models.DateTimeField(default=timezone.now)
     approved = models.DateTimeField(null=True)
@@ -302,6 +320,25 @@ class FinalApproval(models.Model):
             return f"final approval from {self.approver}"
         else:
             return f"request for final approval from {self.approver}"
+
+
+class IanaAction(models.Model):
+    rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    requested = models.DateTimeField(default=timezone.now)
+    completed = models.DateTimeField(null=True)
+    iana_person = models.ForeignKey(
+        "datatracker.DatatrackerPerson", null=True, on_delete=models.PROTECT
+    )
+
+    def __str__(self):
+        if self.completed:
+            answer = f"IANA action completed {self.completed}"
+        else:
+            answer = f"IANA action requested {self.requested}"
+        if self.iana_person:
+            answer += " by " if self.completed else " of "
+            answer += self.iana_person.name
+        return answer
 
 
 class ActionHolder(models.Model):

@@ -47,10 +47,17 @@ register_converter(RfcNumberConverter, "rfc-number")
 
 router = routers.DefaultRouter()
 router.register(r"assignments", rpc_api.AssignmentViewSet)
+router.register(r"capabilities", rpc_api.CapabilityViewSet)
 router.register(r"clusters", rpc_api.ClusterViewSet)
 router.register(r"documents", rpc_api.RfcToBeViewSet)
 router.register(r"labels", rpc_api.LabelViewSet)
 router.register(r"queue", rpc_api.QueueViewSet, basename="queue")
+router.register(r"rpc_person", rpc_api.RpcPersonViewSet)
+router.register(
+    r"rpc_person/(?P<person_id>[^/.]+)/assignments",
+    rpc_api.RpcPersonAssignmentViewSet,
+    basename="rpcperson-assignment",
+)
 router.register(r"rpc_roles", rpc_api.RpcRoleViewSet)
 router.register(r"source_format_names", rpc_api.SourceFormatNameViewSet)
 router.register(r"std_level_names", rpc_api.StdLevelNameViewSet)
@@ -67,7 +74,6 @@ urlpatterns = [
     path(
         "api/rpc/profile/<int:rpc_person_id>", rpc_api.profile_as_person
     ),  # for demo only
-    path("api/rpc/rpc_person/", rpc_api.rpc_person),
     path("api/rpc/stats/label/", rpc_api.StatsLabels.as_view()),
     path("api/rpc/submissions/", rpc_api.submissions),
     path("api/rpc/submissions/<int:document_id>/", rpc_api.submission),

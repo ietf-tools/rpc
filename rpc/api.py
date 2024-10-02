@@ -4,7 +4,8 @@ import datetime
 
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework import serializers
@@ -17,6 +18,7 @@ from datatracker.rpcapi import with_rpcapi
 from datatracker.models import Document
 from .models import (
     Assignment,
+    Capability,
     Cluster,
     Label,
     RfcToBe,
@@ -29,6 +31,7 @@ from .models import (
 )
 from .serializers import (
     AssignmentSerializer,
+    CapabilitySerializer,
     ClusterSerializer,
     CreateRfcToBeSerializer,
     LabelSerializer,
@@ -95,21 +98,36 @@ def profile_as_person(request, rpc_person_id):
     )
 
 
-@extend_schema(responses=RpcPersonSerializer(many=True))
-@api_view(["GET"])
-@with_rpcapi
-def rpc_person(request, *, rpcapi: rpcapi_client.DefaultApi):
-    # use bulk endpoint to get names
-    name_map = rpcapi.get_persons(
-        list(
-            RpcPerson.objects.values_list(
-                "datatracker_person__datatracker_id", flat=True
+class RpcPersonViewSet(viewsets.ReadOnlyModelViewSet, viewsets.GenericViewSet):
+    serializer_class = RpcPersonSerializer
+    queryset = RpcPerson.objects.all()
+
+    @with_rpcapi
+    def get_serializer_context(self, rpcapi: rpcapi_client.DefaultApi):
+        """Add context to the serializer"""
+        # use bulk endpoint to get names
+        name_map = rpcapi.get_persons(
+            list(
+                RpcPerson.objects.values_list(
+                    "datatracker_person__datatracker_id", flat=True
+                )
             )
         )
-    )
-    return Response(
-        RpcPersonSerializer(RpcPerson.objects.all(), many=True, name_map=name_map).data
-    )
+        return super().get_serializer_context() | {"name_map": name_map}
+
+
+class RpcPersonAssignmentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """Assignments for a specific RPC Person
+
+    URL router must provide the `person_id` kwarg
+
+    TODO: permissions
+    """
+    queryset = Assignment.objects.exclude(state="done")
+    serializer_class = AssignmentSerializer
+
+    def get_queryset(self):
+        return super().get_queryset().filter(person_id=self.kwargs["person_id"])
 
 
 @extend_schema(
@@ -213,8 +231,13 @@ class QueueViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     # lists its contents. Normally we'd expect the List action to list queues and
     # the Retrieve action to retrieve a single queue. That does not apply to our
     # concept of a singular queue, so I'm using this because it works.
-    queryset = RfcToBe.objects.filter(disposition__slug="in_progress")
+    queryset = RfcToBe.objects.filter(disposition__slug__in=("created", "in_progress"))
     serializer_class = QueueItemSerializer
+
+
+class CapabilityViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Capability.objects.all()
+    serializer_class = CapabilitySerializer
 
 
 class ClusterViewSet(viewsets.ReadOnlyModelViewSet):

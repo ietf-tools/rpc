@@ -237,7 +237,7 @@ class CreateRfcToBeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         extra_data = {
             "draft": self.context["draft"],
-            "disposition": DispositionName.objects.get(slug="in_progress"),
+            "disposition": DispositionName.objects.get(slug="created"),
             "intended_boilerplate": validated_data["submitted_boilerplate"],
             "intended_std_level": validated_data["submitted_std_level"],
             "intended_stream": validated_data["submitted_stream"],
@@ -256,7 +256,7 @@ class CreateRfcToBeSerializer(serializers.ModelSerializer):
 class CapabilitySerializer(serializers.ModelSerializer):
     class Meta:
         model = Capability
-        fields = ["slug", "name"]
+        fields = ["slug", "name", "desc"]
 
 
 class RpcRoleSerializer(serializers.ModelSerializer):

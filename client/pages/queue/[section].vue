@@ -52,8 +52,8 @@ import { DateTime } from 'luxon'
 import Fuse from 'fuse.js/basic'
 import { groupBy } from 'lodash-es'
 import { useSiteStore } from '@/stores/site'
-import Badge from '../../components/Badge.vue'
-import type { Column } from '~/components/DocumentTableTypes'
+import Badge from '../../components/BaseBadge.vue'
+import type { Column, Row } from '~/components/DocumentTableTypes'
 import type { Assignment } from '~/rpctracker_client'
 import type { Tab } from '~/components/TabNavTypes'
 
@@ -77,6 +77,7 @@ const api = useApi()
 
 const tabs: Tab[] = [
   { id: 'submissions', name: 'Submissions', to: '/queue/submissions', icon: 'uil:bolt-alt' },
+  { id: 'enqueuing', name: 'Enqueuing', to: '/queue/enqueuing', icon: 'ic:outline-queue' },
   { id: 'pending', name: 'Pending Assignment', to: '/queue/pending', icon: 'uil:clock' },
   { id: 'exceptions', name: 'Exceptions', to: '/queue/exceptions', icon: 'uil:exclamation-triangle' },
   { id: 'inprocess', name: 'In Process', to: '/queue/inprocess', icon: 'solar:refresh-circle-line-duotone' },
@@ -98,6 +99,17 @@ const { data: people } = await useAsyncData(
   { server: false, default: () => [] }
 )
 
+const getDocLink = (tab: string, row: Row) => {
+  switch (tab) {
+    case 'submissions':
+      return `/docs/import/?documentId=${row.id}`
+    case 'enqueuing':
+      return `/docs/${row.name}/enqueue`
+    default:
+      return `/docs/${row.name}`
+  }
+}
+
 const columns = computed(() => {
   const cols: Column[] = [
     {
@@ -105,7 +117,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: (row) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.id}` : `/docs/${row.name}`
+      link: (row: Row) => getDocLink(currentTab.value, row)
     },
     {
       key: 'labels',
@@ -113,7 +125,7 @@ const columns = computed(() => {
       labels: (row) => (row.labels || []) as string[]
     }
   ]
-  if (['submissions', 'exceptions'].includes(currentTab.value.toString())) {
+  if (['submissions', 'enqueuing', 'exceptions'].includes(currentTab.value.toString())) {
     cols.push({
       key: 'submitted',
       label: 'Submitted',
@@ -251,14 +263,17 @@ const filteredDocuments = computed(() => {
     case 'submissions':
       docs = documents.value
       break
+    case 'enqueuing':
+      docs = documents.value?.filter((d: any) => d.disposition === 'created')
+      break
     case 'pending':
-      docs = documents.value?.filter((d: any) => d.assignmentSet?.length === 0)
+      docs = documents.value?.filter((d: any) => (d.disposition === 'in_progress') && (d.assignmentSet?.length === 0))
       break
     case 'exceptions':
-      docs = documents.value?.filter((d: any) => d.labels?.filter((lbl: any) => lbl.isException).length)
+      docs = documents.value?.filter((d: any) => (d.disposition === 'in_progress') && (d.labels?.filter((lbl: any) => lbl.isException).length))
       break
     case 'inprocess':
-      docs = documents.value?.filter((d: any) => d.assignmentSet?.length > 0).map((d: any) => ({
+      docs = documents.value?.filter((d: any) => (d.disposition === 'in_progress') && (d.assignmentSet?.length > 0)).map((d: any) => ({
         ...d,
         currentState: `${d.assignmentSet[0].role} (${d.assignmentSet[0].state})`,
         assignee: d.assignmentSet[0],

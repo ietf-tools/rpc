@@ -80,6 +80,11 @@ def forward(apps, schema_editor):
 
     DispositionName = apps.get_model("rpc", "DispositionName")
     DispositionName.objects.create(
+        slug="created",
+        name="Created",
+        desc="RfcToBe has been created but has not yet entered the work queue",
+    )
+    DispositionName.objects.create(
         slug="in_progress", name="In Progress", desc="RfcToBe is a work in progress"
     )
     DispositionName.objects.create(

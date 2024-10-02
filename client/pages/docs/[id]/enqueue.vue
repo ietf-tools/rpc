@@ -6,8 +6,8 @@
       summary="Ready the incoming document for the editing queue."/>
 
     <div class="space-y-4">
+      <DocInfoCard :draft="rfcToBe"/>
       <div class="flex space-x-4">
-        <DocInfoCard :draft="rfcToBe"/>
         <DocComplexityCard :capabilities="capabilities"/>
         <DocExceptionsCard :labels="labels"/>
       </div>

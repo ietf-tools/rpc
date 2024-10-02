@@ -53,7 +53,7 @@ import Fuse from 'fuse.js/basic'
 import { groupBy } from 'lodash-es'
 import { useSiteStore } from '@/stores/site'
 import Badge from '../../components/BaseBadge.vue'
-import type { Column } from '~/components/DocumentTableTypes'
+import type { Column, Row } from '~/components/DocumentTableTypes'
 import type { Assignment } from '~/rpctracker_client'
 import type { Tab } from '~/components/TabNavTypes'
 
@@ -99,6 +99,17 @@ const { data: people } = await useAsyncData(
   { server: false, default: () => [] }
 )
 
+const getDocLink = (tab: string, row: Row) => {
+  switch (tab) {
+    case 'submissions':
+      return `/docs/import/?documentId=${row.id}`
+    case 'enqueuing':
+      return `/docs/${row.name}/enqueue`
+    default:
+      return `/docs/${row.name}`
+  }
+}
+
 const columns = computed(() => {
   const cols: Column[] = [
     {
@@ -106,7 +117,7 @@ const columns = computed(() => {
       label: 'Document',
       field: 'name',
       classes: 'text-sm font-medium',
-      link: (row) => currentTab.value === 'submissions' ? `/docs/import/?documentId=${row.id}` : `/docs/${row.name}`
+      link: (row: Row) => getDocLink(currentTab.value, row)
     },
     {
       key: 'labels',

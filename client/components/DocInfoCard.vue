@@ -44,7 +44,7 @@
 import type { RfcToBe } from '~/rpctracker_client'
 
 type Props = {
-  draft: RfcToBe | null
+  draft: (Record<PropertyKey, unknown> & RfcToBe) | null
 }
 
 defineProps<Props>()

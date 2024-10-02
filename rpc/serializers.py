@@ -476,9 +476,11 @@ class Submission:
                 SubmissionAuthor.from_rpcapi_draft_author(a) for a in draft.authors
             ],
             shepherd=draft.shepherd,
-            std_level=StdLevelName.objects.from_slug(draft.intended_std_level)
-            if draft.intended_std_level
-            else None,
+            std_level=(
+                StdLevelName.objects.from_slug(draft.intended_std_level)
+                if draft.intended_std_level
+                else None
+            ),
             datatracker_url=urljoin(
                 settings.DATATRACKER_BASE, f"/doc/{draft.name}-{draft.rev}"
             ),

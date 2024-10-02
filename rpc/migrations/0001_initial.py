@@ -10,6 +10,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+
     initial = True
 
     dependencies = [
@@ -232,7 +233,9 @@ class Migration(migrations.Migration):
                     ),
                 ),
             ],
-            options={"ordering": ["order"]},
+            options={
+                "ordering": ["order"],
+            },
         ),
         migrations.AddField(
             model_name="cluster",
@@ -437,7 +440,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         blank=True,
                         db_constraint=False,
-                        help_text='TLP IPR boilerplate option applicable when document entered the queue',
+                        help_text="TLP IPR boilerplate option applicable when document entered the queue",
                         null=True,
                         on_delete=django.db.models.deletion.DO_NOTHING,
                         related_name="+",
@@ -498,10 +501,43 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
+                ("titlepage_name", models.CharField(max_length=128)),
+                ("is_editor", models.BooleanField(default=False)),
                 ("auth48_approved", models.DateTimeField(null=True)),
                 (
                     "datatracker_person",
                     models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to="datatracker.datatrackerperson",
+                    ),
+                ),
+                (
+                    "rfc_to_be",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="IanaAction",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("requested", models.DateTimeField(default=django.utils.timezone.now)),
+                ("completed", models.DateTimeField(null=True)),
+                (
+                    "iana_person",
+                    models.ForeignKey(
+                        null=True,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="datatracker.datatrackerperson",
                     ),
@@ -572,15 +608,38 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
+                ("body", models.CharField(max_length=64, null=True)),
                 ("requested", models.DateTimeField(default=django.utils.timezone.now)),
                 ("approved", models.DateTimeField(null=True)),
                 (
                     "approver",
                     models.ForeignKey(
+                        null=True,
                         on_delete=django.db.models.deletion.PROTECT,
                         to="datatracker.datatrackerperson",
                     ),
                 ),
+                (
+                    "rfc_to_be",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="AdditionalEmail",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254)),
                 (
                     "rfc_to_be",
                     models.ForeignKey(
@@ -905,7 +964,7 @@ class Migration(migrations.Migration):
             model_name="rfctobe",
             name="intended_boilerplate",
             field=models.ForeignKey(
-                help_text='TLP IPR boilerplate option intended to apply upon publication as RFC',
+                help_text="TLP IPR boilerplate option intended to apply upon publication as RFC",
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name="+",
                 to="rpc.tlpboilerplatechoicename",
@@ -915,7 +974,7 @@ class Migration(migrations.Migration):
             model_name="rfctobe",
             name="submitted_boilerplate",
             field=models.ForeignKey(
-                help_text='TLP IPR boilerplate option applicable when document entered the queue',
+                help_text="TLP IPR boilerplate option applicable when document entered the queue",
                 on_delete=django.db.models.deletion.PROTECT,
                 related_name="+",
                 to="rpc.tlpboilerplatechoicename",

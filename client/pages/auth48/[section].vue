@@ -117,7 +117,7 @@ const docs = computed(() => {
 // DATA
 
 const columns = computed(() => {
-  const cols: Column[] = [
+  const cols: Column<typeof docs.value[number]>[] = [
     {
       key: 'ed',
       label: 'Managing Editor',

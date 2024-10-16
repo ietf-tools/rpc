@@ -4,7 +4,8 @@ configMapGenerator:
     files:
       - nginx-logging.conf
       - nginx-datatracker.conf
+      - nginx-purple.conf
       - settings_local.py
 resources:
   - datatracker.yaml
-  - rpc.yaml
+  - purple.yaml

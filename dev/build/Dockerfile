@@ -8,7 +8,7 @@ RUN groupadd -g 1000 rpc && \
 
 COPY . .
 COPY ./dev/build/start.sh ./start.sh
-COPY ./dev/build/purple-start.sh ./datatracker-start.sh
+COPY ./dev/build/purple-start.sh ./purple-start.sh
 COPY ./dev/build/migration-start.sh ./migration-start.sh
 COPY ./dev/build/gunicorn.conf.py ./gunicorn.conf.py
 

@@ -29,14 +29,9 @@ spec:
               mountPath: /tmp
             - name: purple-home
               mountPath: /home/purple
-            - name: dt-xml2rfc-cache
-              mountPath: /var/cache/xml2rfc
-            - name: dt-cfg
-              mountPath: /workspace/ietf/settings_local.py
-              subPath: settings_local.py
           env:
             - name: "CONTAINER_ROLE"
-              value: "datatracker"
+              value: "purple"
             # ensures the pod gets recreated on every deploy:
             - name: "DEPLOY_UID"
               value: "$DEPLOY_UID"
@@ -82,8 +77,8 @@ spec:
               mountPath: /etc/nginx/conf.d/00logging.conf
               subPath: nginx-logging.conf
             - name: dt-cfg
-              mountPath: /etc/nginx/conf.d/datatracker.conf
-              subPath: nginx-datatracker.conf
+              mountPath: /etc/nginx/conf.d/purple.conf
+              subPath: nginx-purple.conf
         # -----------------------------------------------------
         # ScoutAPM Container
         # -----------------------------------------------------

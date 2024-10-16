@@ -7,3 +7,4 @@ configMapGenerator:
       - settings_local.py
 resources:
   - datatracker.yaml
+  - rpc.yaml

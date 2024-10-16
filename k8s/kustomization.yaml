@@ -1,0 +1,9 @@
+namespace: rpc
+configMapGenerator:
+  - name: rpc-files-cfgmap
+    files:
+      - nginx-logging.conf
+      - nginx-datatracker.conf
+      - settings_local.py
+resources:
+  - datatracker.yaml

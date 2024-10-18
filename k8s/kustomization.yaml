@@ -3,9 +3,9 @@ configMapGenerator:
   - name: rpc-files-cfgmap
     files:
       - nginx-logging.conf
-      - nginx-datatracker.conf
+#      - nginx-datatracker.conf
       - nginx-purple.conf
-      - settings_local.py
+#      - settings_local.py
 resources:
-  - datatracker.yaml
+#  - datatracker.yaml
   - purple.yaml

@@ -19,19 +19,19 @@ spec:
         runAsNonRoot: true
       containers:
         # -----------------------------------------------------
-        # Purple App Container
+        # Backend Container
         # -----------------------------------------------------
-        - name: rpc-purple
-          image: "ghcr.io/ietf-tools/rpc-purple:$APP_IMAGE_TAG"  <----
+        - name: rpc-backend
+          image: "ghcr.io/ietf-tools/rpc-purple:$APP_IMAGE_TAG"
           imagePullPolicy: Always
           volumeMounts:
-            - name: purple-tmp
+            - name: backend-tmp
               mountPath: /tmp
-            - name: purple-home
-              mountPath: /home/purple
+#            - name: backend-home
+#              mountPath: /home/purple
           env:
             - name: "CONTAINER_ROLE"
-              value: "purple"
+              value: "backend"
             # ensures the pod gets recreated on every deploy:
             - name: "DEPLOY_UID"
               value: "$DEPLOY_UID"
@@ -41,6 +41,43 @@ spec:
           startupProbe:
             httpGet:
               port: 8000
+              path: /health/
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            failureThreshold: 30
+            timeoutSeconds: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            readOnlyRootFilesystem: true
+            runAsUser: 1000
+            runAsGroup: 1000
+        # -----------------------------------------------------
+        # Frontend Container
+        # -----------------------------------------------------
+        - name: rpc-frontend
+          image: "ghcr.io/ietf-tools/rpc-purple:$APP_IMAGE_TAG"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: frontend-tmp
+              mountPath: /tmp
+          env:
+            - name: "CONTAINER_ROLE"
+              value: "frontend"
+            # ensures the pod gets recreated on every deploy:
+            - name: "DEPLOY_UID"
+              value: "$DEPLOY_UID"
+          envFrom:
+            - secretRef:
+                name: rpc-secrets-env
+          startupProbe:
+            httpGet:
+              port: 3000
               path: /health/
             initialDelaySeconds: 10
             periodSeconds: 5
@@ -59,7 +96,7 @@ spec:
         # -----------------------------------------------------
         - name: rpc-nginx
           image: "ghcr.io/nginxinc/nginx-unprivileged:1.27"
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: http
@@ -79,34 +116,10 @@ spec:
             - name: dt-cfg
               mountPath: /etc/nginx/conf.d/purple.conf
               subPath: nginx-purple.conf
-        # -----------------------------------------------------
-        # ScoutAPM Container
-        # -----------------------------------------------------
-        - name: rpc-scoutapm
-          image: "scoutapp/scoutapm:version-1.4.0"
-          imagePullPolicy: IfNotPresent
-          # Replace command with one that will shut down on a TERM signal
-          # The ./core-agent start command line is from the scoutapm docker image
-          command:
-            - "sh"
-            - "-c"
-            - >-
-              trap './core-agent shutdown --tcp 0.0.0.0:6590' TERM;
-              ./core-agent start --daemonize false --log-level debug --tcp 0.0.0.0:6590 &
-              wait $!
-          livenessProbe:
-            exec:
-              command:
-                - "sh"
-                - "-c"
-                - "./core-agent probe --tcp 0.0.0.0:6590 | grep -q 'Agent found'"
-          securityContext:
-            readOnlyRootFilesystem: true
-            runAsUser: 65534 # "nobody" user by default
-            runAsGroup: 65534  # "nogroup" group by default
       initContainers:
         - name: rpc-migration
           image: "ghcr.io/ietf-tools/datatracker:$APP_IMAGE_TAG"
+          imagePullPolicy: IfNotPresent
           env:
             - name: "CONTAINER_ROLE"
               value: "migrations"
@@ -122,29 +135,15 @@ spec:
             runAsUser: 1000
             runAsGroup: 1000
           volumeMounts:
-            - name: dt-vol
-              mountPath: /a
-            - name: dt-tmp
+            - name: backend-tmp
               mountPath: /tmp
-            - name: dt-home
-              mountPath: /home/datatracker
-            - name: dt-xml2rfc-cache
-              mountPath: /var/cache/xml2rfc
-            - name: dt-cfg
-              mountPath: /workspace/ietf/settings_local.py
-              subPath: settings_local.py
       volumes:
-        # To be overriden with the actual shared volume
-        - name: dt-vol
-        - name: dt-tmp
+        - name: backend-tmp
           emptyDir:
-            sizeLimit: "2Gi"
-        - name: dt-xml2rfc-cache
+            sizeLimit: "500Mi"
+        - name: frontend-tmp
           emptyDir:
-            sizeLimit: "2Gi"
-        - name: dt-home
-          emptyDir:
-            sizeLimit: "2Gi"
+            sizeLimit: "500Mi"
         - name: dt-cfg
           configMap:
             name: rpc-files-cfgmap
@@ -158,7 +157,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: rpc-datatracker
+  name: rpc-purple
 spec:
   type: ClusterIP
   ports:
@@ -167,4 +166,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app: datatracker
+    app: purple

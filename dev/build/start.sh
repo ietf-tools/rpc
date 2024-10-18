@@ -2,11 +2,14 @@
 #
 # Environment config:
 #
-#  CONTAINER_ROLE - purple or migrations
+#  CONTAINER_ROLE - frontend, backend, or migrations
 #
-case "${CONTAINER_ROLE:-purple}" in
-    purple)
-        exec ./purple-start.sh
+case "${CONTAINER_ROLE:-backend}" in
+    frontend)
+        exec ./frontend-start.sh
+        ;;
+    backend)
+        exec ./backend-start.sh
         ;;
     migrations)
         exec ./migration-start.sh

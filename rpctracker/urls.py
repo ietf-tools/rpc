@@ -68,7 +68,7 @@ router.register(
 )
 
 urlpatterns = [
-    path("health/", lambda _: HttpResponse()),
+    path("health/", lambda _: HttpResponse(status=204)),  # no content
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("login/", views.index),

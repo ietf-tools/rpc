@@ -108,13 +108,26 @@ OIDC_RP_CLIENT_SECRET = os.environ["OIDC_RP_CLIENT_SECRET"]
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_RP_SCOPES = "openid profile roles"
 
-OIDC_OP_ISSUER_ID = "http://localhost:8000/api/openid"
-OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
-OIDC_OP_AUTHORIZATION_ENDPOINT = (
-    "http://localhost:8000/api/openid/authorize/"  # URL for user agent
+OIDC_OP_ISSUER_ID = os.environ.get(
+    "OIDC_OP_ISSUER_ID",
+    "http://localhost:8000/api/openid",
 )
-OIDC_OP_TOKEN_ENDPOINT = "http://host.docker.internal:8000/api/openid/token/"
-OIDC_OP_USER_ENDPOINT = "http://host.docker.internal:8000/api/openid/userinfo/"
+OIDC_OP_JWKS_ENDPOINT = os.environ.get(
+    "OIDC_OP_AUTHORIZATION_ENDPOINT",
+    "http://host.docker.internal:8000/api/openid/jwks/",
+)
+OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get(
+    "OIDC_OP_AUTHORIZATION_ENDPOINT",  # URL for user agent
+    "http://localhost:8000/api/openid/authorize/",
+)
+OIDC_OP_TOKEN_ENDPOINT = os.environ.get(
+    "OIDC_OP_TOKEN_ENDPOINT",
+    "http://host.docker.internal:8000/api/openid/token/",
+)
+OIDC_OP_USER_ENDPOINT = os.environ.get(
+    "OIDC_OP_USER_ENDPOINT",
+    "http://host.docker.internal:8000/api/openid/userinfo/",
+)
 
 # How often to renew tokens? Default is 15 minutes. Needs SessionRefresh middleware.
 # OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = 15 * 60
@@ -191,8 +204,14 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-DATATRACKER_RPC_API_BASE = "http://host.docker.internal:8000/api/rpc"
+DATATRACKER_RPC_API_BASE = os.environ.get(
+    "DATATRACKER_RPC_API_BASE",
+    "http://host.docker.internal:8000/api/rpc",
+)
 DATATRACKER_RPC_API_TOKEN = os.environ["RPC_API_TOKEN"]
-DATATRACKER_API_V1_BASE = "http://host.docker.internal:8000/api/v1"
+DATATRACKER_API_V1_BASE = os.environ.get(
+    "DATATRACKER_API_V1_BASE",
+    "http://host.docker.internal:8000/api/v1",
+)
 
 DATATRACKER_BASE = "http://localhost:8000"

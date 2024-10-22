@@ -23,9 +23,9 @@ services:
       - "8888:8000"
     environment:
       - PURPLE_DEPLOYMENT_MODE=development
-      - PURPLE_POSTGRES_DB=rpctools
-      - PURPLE_POSTGRES_USER=rpc
-      - PURPLE_POSTGRES_PASSWORD=abcd1234
+      - POSTGRES_DB=rpctools
+      - POSTGRES_USER=rpc
+      - POSTGRES_PASSWORD=abcd1234
       - PURPLE_RPC_API_TOKEN=devtoken
       # OIDC RP client credential for dev instance of datatracker (not secret for dev, will be for production)
       - PURPLE_OIDC_RP_CLIENT_ID=502412

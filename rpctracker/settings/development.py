@@ -12,7 +12,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 # Datatracker
-DATATRACKER_RPC_API_TOKEN = os.environ["PURPLE_RPC_API_TOKEN"]
+DATATRACKER_RPC_API_TOKEN = os.environ["RPC_API_TOKEN"]
 DATATRACKER_RPC_API_BASE = "http://host.docker.internal:8000/api/rpc"
 DATATRACKER_API_V1_BASE = "http://host.docker.internal:8000/api/v1"
 DATATRACKER_BASE = "http://localhost:8000"
@@ -32,3 +32,18 @@ OIDC_OP_USER_ENDPOINT = "http://host.docker.internal:8000/api/openid/userinfo/"
 SESSION_COOKIE_NAME = (
     "rpcsessionid"  # need to set this if oidc provider is on same domain as client
 )
+
+
+# Database
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("POSTGRES_DB"),
+        "USER": os.environ.get("POSTGRES_USER"),
+        "PASSWORD": os.environ.get("POSTGRES_PASSWORD"),
+        "HOST": "db",
+        "PORT": 5432,
+    }
+}

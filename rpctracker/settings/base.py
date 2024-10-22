@@ -64,21 +64,6 @@ TEMPLATES = [
 WSGI_APPLICATION = "rpctracker.wsgi.application"
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("PURPLE_POSTGRES_DB"),
-        "USER": os.environ.get("PURPLE_POSTGRES_USER"),
-        "PASSWORD": os.environ.get("PURPLE_POSTGRES_PASSWORD"),
-        "HOST": "db",
-        "PORT": 5432,
-    }
-}
-
-
 # Authentication
 AUTHENTICATION_BACKENDS = (
     "rpcauth.backends.RpcOIDCAuthBackend",

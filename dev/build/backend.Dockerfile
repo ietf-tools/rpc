@@ -13,11 +13,7 @@ COPY ./dev/build/frontend-start.sh ./frontend-start.sh
 COPY ./dev/build/migration-start.sh ./migration-start.sh
 COPY ./dev/build/gunicorn.conf.py ./gunicorn.conf.py
 
-RUN pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt && \
-    cd client && \
-    npm install && \
-    npm run build && \
-    cd ..
+RUN pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt
 
 RUN chmod +x start.sh && \
     chmod +x backend-start.sh && \
@@ -25,3 +21,5 @@ RUN chmod +x start.sh && \
     chmod +x migration-start.sh
 
 CMD ["./start.sh"]
+
+EXPOSE 8000

@@ -22,7 +22,7 @@ spec:
         # Backend Container
         # -----------------------------------------------------
         - name: rpc-backend
-          image: "ghcr.io/ietf-tools/rpc-purple:$APP_IMAGE_TAG"
+          image: "ghcr.io/ietf-tools/rpc-purple-backend:$APP_IMAGE_TAG"
           imagePullPolicy: Always
           volumeMounts:
             - name: backend-tmp
@@ -61,14 +61,12 @@ spec:
         # Frontend Container
         # -----------------------------------------------------
         - name: rpc-frontend
-          image: "ghcr.io/ietf-tools/rpc-purple:$APP_IMAGE_TAG"
+          image: "ghcr.io/ietf-tools/rpc-purple-frontend:$APP_IMAGE_TAG"
           imagePullPolicy: Always
           volumeMounts:
             - name: frontend-tmp
               mountPath: /tmp
           env:
-            - name: "CONTAINER_ROLE"
-              value: "frontend"
             # ensures the pod gets recreated on every deploy:
             - name: "DEPLOY_UID"
               value: "$DEPLOY_UID"

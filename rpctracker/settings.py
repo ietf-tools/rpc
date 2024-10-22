@@ -113,7 +113,7 @@ OIDC_OP_ISSUER_ID = os.environ.get(
     "http://localhost:8000/api/openid",
 )
 OIDC_OP_JWKS_ENDPOINT = os.environ.get(
-    "OIDC_OP_AUTHORIZATION_ENDPOINT",
+    "OIDC_OP_JWKS_ENDPOINT",
     "http://host.docker.internal:8000/api/openid/jwks/",
 )
 OIDC_OP_AUTHORIZATION_ENDPOINT = os.environ.get(

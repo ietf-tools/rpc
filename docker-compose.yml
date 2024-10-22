@@ -22,6 +22,7 @@ services:
     ports:
       - "8888:8000"
     environment:
+      - DJANGO_SETTINGS_MODULE=rpctracker.settings.development
       - POSTGRES_DB=rpctools
       - POSTGRES_USER=rpc
       - POSTGRES_PASSWORD=abcd1234

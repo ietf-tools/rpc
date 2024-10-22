@@ -1,6 +1,7 @@
 #!/bin/bash -e
 
 echo "Running migrations..."
-./manage.py migrate
+env DJANGO_SETTINGS_MODULE=rpctracker.settings.production \
+    ./manage.py migrate
 
 echo "Done!"

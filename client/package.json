@@ -35,6 +35,7 @@
     "nuxt": "3.13.2",
     "nuxt-headlessui": "1.2.0",
     "nuxt-icon": "0.6.10",
+    "nuxt-security": "2.0.0",
     "nuxt-svgo": "4.0.6",
     "sass-embedded": "1.79.3",
     "vue-tsc": "2.1.6"

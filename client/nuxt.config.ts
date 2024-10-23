@@ -26,7 +26,8 @@ export default defineNuxtConfig({
     'nuxt-headlessui',
     'nuxt-icon',
     'nuxt-snackbar',
-    'nuxt-svgo'
+    'nuxt-svgo',
+    'nuxt-security'
   ],
   robots: {
     credits: false,

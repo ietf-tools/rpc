@@ -9,7 +9,6 @@ RUN groupadd -g 1000 rpc && \
 COPY . .
 COPY ./dev/build/start.sh ./start.sh
 COPY ./dev/build/backend-start.sh ./backend-start.sh
-COPY ./dev/build/frontend-start.sh ./frontend-start.sh
 COPY ./dev/build/migration-start.sh ./migration-start.sh
 COPY ./dev/build/gunicorn.conf.py ./gunicorn.conf.py
 
@@ -17,7 +16,6 @@ RUN pip3 --disable-pip-version-check --no-cache-dir install -r requirements.txt
 
 RUN chmod +x start.sh && \
     chmod +x backend-start.sh && \
-    chmod +x frontend-start.sh && \
     chmod +x migration-start.sh
 
 CMD ["./start.sh"]

@@ -71,8 +71,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # OIDC configuration (see also production.py/development.py)
-OIDC_RP_CLIENT_ID = os.environ["PURPLE_OIDC_RP_CLIENT_ID"]
-OIDC_RP_CLIENT_SECRET = os.environ["PURPLE_OIDC_RP_CLIENT_SECRET"]
 OIDC_RP_SIGN_ALGO = "RS256"
 OIDC_RP_SCOPES = "openid profile roles"
 

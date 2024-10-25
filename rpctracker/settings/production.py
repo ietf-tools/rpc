@@ -37,6 +37,8 @@ DATATRACKER_API_V1_BASE = os.environ.get(
 
 
 # OIDC configuration (see also base.py)
+OIDC_RP_CLIENT_ID = os.environ["PURPLE_OIDC_RP_CLIENT_ID"]
+OIDC_RP_CLIENT_SECRET = os.environ["PURPLE_OIDC_RP_CLIENT_SECRET"]
 OIDC_OP_ISSUER_ID = os.environ.get(
     "PURPLE_OIDC_OP_ISSUER_ID", f"{DATATRACKER_BASE}/api/openid"
 )

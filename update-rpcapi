@@ -2,7 +2,7 @@
 # Run this in the container after updating rpcapi.yaml!
 
 # Generate OpenAPI for the RpcTracker's api
-./manage.py spectacular --file rpctracker_api.yaml
+./manage.py spectacular --file purple-api.yaml
 
 # Generate clients
 # Configure the generator in openapitools.json

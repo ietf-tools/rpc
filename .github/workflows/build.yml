@@ -1,0 +1,48 @@
+name: Build K8s Images
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-api-clients:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dev/build/backend.Dockerfile
+          tags: purple-build
+
+      - name: Checkout Datatracker API spec
+        uses: actions/checkout@v4
+        with:
+          repository: ietf-tools/datatracker
+          ref: feat/rpc-api
+          sparse-checkout: |
+            rpcapi.yaml
+          sparse-checkout-cone-mode: false
+
+      - name: Generate API Client
+        run: |
+          docker cp purple-build:/workspace/purple-api.yaml ./
+          npx --yes @openapitools/openapi-generator-cli generate
+          tar cfz rpcapi_client.tgz -C openapi rpcapi_client
+          tar cfz rpctracker_client.tgz -C client rpctracker_client
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-clients
+          path: |
+            rpcapi_client.tgz
+            rpctracker_client.tgz
+
+

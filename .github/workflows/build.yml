@@ -14,6 +14,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Generate Datatracker API client
         run: |
           wget -O rpcapi.yaml https://raw.githubusercontent.com/ietf-tools/datatracker/feat/rpc-api/rpcapi.yaml
@@ -28,11 +35,13 @@ jobs:
         with:
           context: .
           file: dev/build/backend.Dockerfile
-          tags: rpc-purple-backend:latest
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/ietf-tools/rpc-purple-backend:latest
 
       - name: Generate Purple API client
         run: |
-          container_id="$(docker create rpc-purple-backend:latest)"
+          container_id="$(docker create ghcr.io/ietf-tools/rpc-purple-backend:latest)"
           docker cp "${container_id}:/workspace/purple-api.yaml" ./
           docker rm "${container_id}"
           npx --yes @openapitools/openapi-generator-cli generate --generator-key purple
@@ -43,6 +52,8 @@ jobs:
         with:
           name: api-clients
           path: |
+            purple-api.yaml
+            rpcapi.yaml
             rpcapi_client.tgz
             rpctracker_client.tgz
 
@@ -54,4 +65,6 @@ jobs:
         with:
           context: .
           file: dev/build/frontend.Dockerfile
-          tags: rpc-purple-frontend:latest
+          platforms: linux/amd64
+          push: true
+          tags: ghcr.io/ietf-tools/rpc-purple-frontend:latest

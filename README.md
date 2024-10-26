@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/ietf-tools/rpc)](https://github.com/ietf-tools/rpc/blob/main/LICENSE)
 ![Python Version](https://img.shields.io/badge/python-3.12-blue?logo=python&logoColor=white)
 ![Django Version](https://img.shields.io/badge/django-5.0-teal?logo=django&logoColor=white)
-![Node Version](https://img.shields.io/badge/node.js-20-green?logo=node.js&logoColor=white)
+![Node Version](https://img.shields.io/badge/node.js-22-green?logo=node.js&logoColor=white)
 ![Nuxt Version](https://img.shields.io/badge/nuxt-3-green?logo=nuxt.js&logoColor=white)
 ![Vue Version](https://img.shields.io/badge/vue-3-green?logo=vue.js&logoColor=white)
 

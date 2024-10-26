@@ -13,9 +13,9 @@
           "disallowAdditionalPropertiesIfNotPresent": false
         }
       },
-      "rpctracker": {
+      "purple": {
         "generatorName": "typescript-fetch",
-        "inputSpec": "#{cwd}/rpctracker_api.yaml",
+        "inputSpec": "#{cwd}/purple-api.yaml",
         "output": "#{cwd}/client/rpctracker_client",
         "additionalProperties": {
           "packageName": "rpctracker_client",

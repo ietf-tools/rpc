@@ -19,6 +19,8 @@ DATATRACKER_BASE = "http://localhost:8000"
 
 
 # OIDC configuration (see also base.py)
+OIDC_RP_CLIENT_ID = os.environ["PURPLE_OIDC_RP_CLIENT_ID"]
+OIDC_RP_CLIENT_SECRET = os.environ["PURPLE_OIDC_RP_CLIENT_SECRET"]
 OIDC_OP_ISSUER_ID = "http://localhost:8000/api/openid"
 OIDC_OP_JWKS_ENDPOINT = "http://host.docker.internal:8000/api/openid/jwks/"
 OIDC_OP_AUTHORIZATION_ENDPOINT = (

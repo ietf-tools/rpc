@@ -29,7 +29,9 @@ jobs:
 
       - name: Generate Purple API Client
         run: |
-          docker cp purple-build:/workspace/purple-api.yaml ./
+          container_id="$(docker create purple-build)"
+          docker cp "${container_id}:/workspace/purple-api.yaml" ./
+          docker rm "${container_id}"
           npx --yes @openapitools/openapi-generator-cli generate --generator-key purple
           tar cfz rpctracker_client.tgz -C client rpctracker_client
 

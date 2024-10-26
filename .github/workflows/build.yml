@@ -14,28 +14,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Generate Datatracker API Client
+      - name: Generate Datatracker API client
         run: |
           wget -O rpcapi.yaml https://raw.githubusercontent.com/ietf-tools/datatracker/feat/rpc-api/rpcapi.yaml
           npx --yes @openapitools/openapi-generator-cli generate --generator-key datatracker
           tar cfz rpcapi_client.tgz -C openapi rpcapi_client
 
-      - name: Build
+      - name: Build backend image
         uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_SUMMARY: false
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           file: dev/build/backend.Dockerfile
-          tags: purple-build
+          tags: rpc-purple-backend:latest
 
-      - name: Generate Purple API Client
+      - name: Generate Purple API client
         run: |
-          container_id="$(docker create purple-build)"
+          container_id="$(docker create rpc-purple-backend:latest)"
           docker cp "${container_id}:/workspace/purple-api.yaml" ./
           docker rm "${container_id}"
           npx --yes @openapitools/openapi-generator-cli generate --generator-key purple
           tar cfz rpctracker_client.tgz -C client rpctracker_client
 
-      - name: Upload artifacts
+      - name: Upload API
         uses: actions/upload-artifact@v4
         with:
           name: api-clients
@@ -43,4 +46,12 @@ jobs:
             rpcapi_client.tgz
             rpctracker_client.tgz
 
-
+      - name: Build frontend image
+        uses: docker/build-push-action@v6
+        env:
+          DOCKER_BUILD_SUMMARY: false
+          DOCKER_BUILD_RECORD_UPLOAD: false
+        with:
+          context: .
+          file: dev/build/frontend.Dockerfile
+          tags: rpc-purple-frontend:latest

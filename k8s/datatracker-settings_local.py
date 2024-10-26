@@ -29,7 +29,7 @@ _SECRET_KEY = os.environ.get("DATATRACKER_DJANGO_SECRET_KEY", None)
 if _SECRET_KEY is not None:
     SECRET_KEY = _SECRET_KEY
 else:
-    raise RuntimeError("DATATRACKER_DJANGO_SECRET_KEY must be set")    
+    raise RuntimeError("DATATRACKER_DJANGO_SECRET_KEY must be set")
 
 _NOMCOM_APP_SECRET_B64 = os.environ.get("DATATRACKER_NOMCOM_APP_SECRET_B64", None)
 if _NOMCOM_APP_SECRET_B64 is not None:
@@ -41,7 +41,7 @@ _IANA_SYNC_PASSWORD = os.environ.get("DATATRACKER_IANA_SYNC_PASSWORD", None)
 if _IANA_SYNC_PASSWORD is not None:
     IANA_SYNC_PASSWORD = _IANA_SYNC_PASSWORD
 else:
-    raise RuntimeError("DATATRACKER_IANA_SYNC_PASSWORD must be set")    
+    raise RuntimeError("DATATRACKER_IANA_SYNC_PASSWORD must be set")
 
 _RFC_EDITOR_SYNC_PASSWORD = os.environ.get("DATATRACKER_RFC_EDITOR_SYNC_PASSWORD", None)
 if _RFC_EDITOR_SYNC_PASSWORD is not None:
@@ -59,25 +59,25 @@ _GITHUB_BACKUP_API_KEY = os.environ.get("DATATRACKER_GITHUB_BACKUP_API_KEY", Non
 if _GITHUB_BACKUP_API_KEY is not None:
     GITHUB_BACKUP_API_KEY = _GITHUB_BACKUP_API_KEY
 else:
-    raise RuntimeError("DATATRACKER_GITHUB_BACKUP_API_KEY must be set")    
+    raise RuntimeError("DATATRACKER_GITHUB_BACKUP_API_KEY must be set")
 
 _API_KEY_TYPE = os.environ.get("DATATRACKER_API_KEY_TYPE", None)
 if _API_KEY_TYPE is not None:
     API_KEY_TYPE = _API_KEY_TYPE
 else:
-    raise RuntimeError("DATATRACKER_API_KEY_TYPE must be set")    
+    raise RuntimeError("DATATRACKER_API_KEY_TYPE must be set")
 
 _API_PUBLIC_KEY_PEM_B64 = os.environ.get("DATATRACKER_API_PUBLIC_KEY_PEM_B64", None)
 if _API_PUBLIC_KEY_PEM_B64 is not None:
     API_PUBLIC_KEY_PEM = b64decode(_API_PUBLIC_KEY_PEM_B64)
 else:
-    raise RuntimeError("DATATRACKER_API_PUBLIC_KEY_PEM_B64 must be set")    
+    raise RuntimeError("DATATRACKER_API_PUBLIC_KEY_PEM_B64 must be set")
 
 _API_PRIVATE_KEY_PEM_B64 = os.environ.get("DATATRACKER_API_PRIVATE_KEY_PEM_B64", None)
 if _API_PRIVATE_KEY_PEM_B64 is not None:
     API_PRIVATE_KEY_PEM = b64decode(_API_PRIVATE_KEY_PEM_B64)
 else:
-    raise RuntimeError("DATATRACKER_API_PRIVATE_KEY_PEM_B64 must be set")    
+    raise RuntimeError("DATATRACKER_API_PRIVATE_KEY_PEM_B64 must be set")
 
 # Set DEBUG if DATATRACKER_DEBUG env var is the word "true"
 DEBUG = os.environ.get("DATATRACKER_DEBUG", "false").lower() == "true"
@@ -114,7 +114,7 @@ _admins_str = os.environ.get("DATATRACKER_ADMINS", None)
 if _admins_str is not None:
     ADMINS = [parseaddr(admin) for admin in _multiline_to_list(_admins_str)]
 else:
-    raise RuntimeError("DATATRACKER_ADMINS must be set")    
+    raise RuntimeError("DATATRACKER_ADMINS must be set")
 
 USING_DEBUG_EMAIL_SERVER = os.environ.get("DATATRACKER_EMAIL_DEBUG", "false").lower() == "true"
 EMAIL_HOST = os.environ.get("DATATRACKER_EMAIL_HOST", "localhost")
@@ -155,7 +155,7 @@ _MEETECHO_CLIENT_SECRET = os.environ.get("DATATRACKER_MEETECHO_CLIENT_SECRET", N
 if _MEETECHO_CLIENT_ID is not None and _MEETECHO_CLIENT_SECRET is not None:
     MEETECHO_API_CONFIG = {
         "api_base": os.environ.get(
-            "DATATRACKER_MEETECHO_API_BASE", 
+            "DATATRACKER_MEETECHO_API_BASE",
             "https://meetings.conf.meetecho.com/api/v1/",
         ),
         "client_id": _MEETECHO_CLIENT_ID,
@@ -231,43 +231,33 @@ DJANGO_VITE_MANIFEST_PATH = os.path.join(BASE_DIR, 'static/dist-neue/manifest.js
 DE_GFM_BINARY = "/usr/local/bin/de-gfm"
 IDSUBMIT_IDNITS_BINARY = "/usr/local/bin/idnits"
 
-# Duplicating production cache from settings.py and using it whether we're in production mode or not
-MEMCACHED_HOST = os.environ.get("DT_MEMCACHED_SERVICE_HOST", "127.0.0.1")
-MEMCACHED_PORT = os.environ.get("DT_MEMCACHED_SERVICE_PORT", "11211")
-from ietf import __version__
+# Use dummy caches
 CACHES = {
     "default": {
-        "BACKEND": "ietf.utils.cache.LenientMemcacheCache",
-        "LOCATION": f"{MEMCACHED_HOST}:{MEMCACHED_PORT}",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
         "VERSION": __version__,
         "KEY_PREFIX": "ietf:dt",
-        "KEY_FUNCTION": lambda key, key_prefix, version: (
-            f"{key_prefix}:{version}:{sha384(str(key).encode('utf8')).hexdigest()}"
-        ),
     },
     "sessions": {
-        "BACKEND": "ietf.utils.cache.LenientMemcacheCache",
-        "LOCATION": f"{MEMCACHED_HOST}:{MEMCACHED_PORT}",
-        # No release-specific VERSION setting.
-        "KEY_PREFIX": "ietf:dt",
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
     },
     "htmlized": {
-        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": "/a/cache/datatracker/htmlized",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "LOCATION": "/var/cache/datatracker/htmlized",
         "OPTIONS": {
-            "MAX_ENTRIES": 100000,  # 100,000
+            "MAX_ENTRIES": 1000,
         },
     },
     "pdfized": {
-        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": "/a/cache/datatracker/pdfized",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "LOCATION": "/var/cache/datatracker/pdfized",
         "OPTIONS": {
-            "MAX_ENTRIES": 100000,  # 100,000
+            "MAX_ENTRIES": 1000,
         },
     },
     "slowpages": {
-        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": "/a/cache/datatracker/slowpages",
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "LOCATION": "/var/cache/datatracker/",
         "OPTIONS": {
             "MAX_ENTRIES": 5000,
         },

@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: rpc-datatracker
 spec:
@@ -8,8 +8,7 @@ spec:
   selector:
     matchLabels:
       app: datatracker
-  strategy:
-    type: Recreate
+  serviceName: "rpc-datatracker"
   template:
     metadata:
       labels:
@@ -35,7 +34,7 @@ spec:
               mountPath: /var/cache/xml2rfc
             - name: dt-cfg
               mountPath: /workspace/ietf/settings_local.py
-              subPath: settings_local.py
+              subPath: datatracker-settings_local.py
           env:
             - name: "CONTAINER_ROLE"
               value: "datatracker"
@@ -86,32 +85,30 @@ spec:
             - name: dt-cfg
               mountPath: /etc/nginx/conf.d/datatracker.conf
               subPath: nginx-datatracker.conf
-        # -----------------------------------------------------
-        # ScoutAPM Container
-        # -----------------------------------------------------
-        - name: rpc-scoutapm
-          image: "scoutapp/scoutapm:version-1.4.0"
-          imagePullPolicy: IfNotPresent
-          # Replace command with one that will shut down on a TERM signal
-          # The ./core-agent start command line is from the scoutapm docker image
+      initContainers:
+        - name: fs-setup
+          image: busybox:stable
           command:
             - "sh"
             - "-c"
-            - >-
-              trap './core-agent shutdown --tcp 0.0.0.0:6590' TERM;
-              ./core-agent start --daemonize false --log-level debug --tcp 0.0.0.0:6590 &
-              wait $!
-          livenessProbe:
-            exec:
-              command:
-                - "sh"
-                - "-c"
-                - "./core-agent probe --tcp 0.0.0.0:6590 | grep -q 'Agent found'"
+            - |-
+              cd /a
+              mkdir -p ietfdata/doc/draft/repository &&\
+              mkdir -p www/www6s/staging &&\
+              mkdir -p ietfdata/doc/draft/collection/draft-archive &&\
+              mkdir -p www/www6s/lib/dt/media/photo &&\
+              mkdir -p www/www6s/proceedings &&\
+              mkdir -p www/ietf-ftp/yang/catalogmod &&\
+              mkdir -p www/ietf-ftp/yang/draftmod &&\
+              mkdir -p www/ietf-ftp/yang/ianamod &&\
+              mkdir -p www/ietf-ftp/yang/rfcmod
           securityContext:
+            runAsNonRoot: false
+            runAsUser: 0
             readOnlyRootFilesystem: true
-            runAsUser: 65534 # "nobody" user by default
-            runAsGroup: 65534  # "nogroup" group by default
-      initContainers:
+          volumeMounts:
+            - name: dt-vol
+              mountPath: "/a"
         - name: rpc-migration
           image: "ghcr.io/ietf-tools/datatracker:$APP_IMAGE_TAG"
           env:
@@ -139,10 +136,12 @@ spec:
               mountPath: /var/cache/xml2rfc
             - name: dt-cfg
               mountPath: /workspace/ietf/settings_local.py
-              subPath: settings_local.py
+              subPath: datatracker-settings_local.py
       volumes:
         # To be overriden with the actual shared volume
         - name: dt-vol
+          emptyDir:
+            sizeLimit: "2Gi"
         - name: dt-tmp
           emptyDir:
             sizeLimit: "2Gi"
@@ -154,7 +153,7 @@ spec:
             sizeLimit: "2Gi"
         - name: dt-cfg
           configMap:
-            name: rpc-files-cfgmap
+            name: rpc-dt-files-cfgmap
         - name: nginx-tmp
           emptyDir:
             sizeLimit: "500Mi"

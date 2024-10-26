@@ -14,18 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout Datatracker API spec
-        uses: actions/checkout@v4
-        with:
-          repository: ietf-tools/datatracker
-          ref: feat/rpc-api
-          sparse-checkout: |
-            rpcapi.yaml
-          sparse-checkout-cone-mode: false
-
       - name: Generate Datatracker API Client
         run: |
-          npx --yes @openapitools/openapi-generator-cli generate -g datatracker
+          wget -O rpcapi.yaml https://raw.githubusercontent.com/ietf-tools/datatracker/feat/rpc-api/rpcapi.yaml
+          npx --yes @openapitools/openapi-generator-cli generate --generator-key datatracker
           tar cfz rpcapi_client.tgz -C openapi rpcapi_client
 
       - name: Build
@@ -38,7 +30,7 @@ jobs:
       - name: Generate Purple API Client
         run: |
           docker cp purple-build:/workspace/purple-api.yaml ./
-          npx --yes @openapitools/openapi-generator-cli generate -g purple
+          npx --yes @openapitools/openapi-generator-cli generate --generator-key purple
           tar cfz rpctracker_client.tgz -C client rpctracker_client
 
       - name: Upload artifacts

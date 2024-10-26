@@ -14,13 +14,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: dev/build/backend.Dockerfile
-          tags: purple-build
-
       - name: Checkout Datatracker API spec
         uses: actions/checkout@v4
         with:
@@ -30,11 +23,22 @@ jobs:
             rpcapi.yaml
           sparse-checkout-cone-mode: false
 
-      - name: Generate API Client
+      - name: Generate Datatracker API Client
+        run: |
+          npx --yes @openapitools/openapi-generator-cli generate -g datatracker
+          tar cfz rpcapi_client.tgz -C openapi rpcapi_client
+
+      - name: Build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: dev/build/backend.Dockerfile
+          tags: purple-build
+
+      - name: Generate Purple API Client
         run: |
           docker cp purple-build:/workspace/purple-api.yaml ./
-          npx --yes @openapitools/openapi-generator-cli generate
-          tar cfz rpcapi_client.tgz -C openapi rpcapi_client
+          npx --yes @openapitools/openapi-generator-cli generate -g purple
           tar cfz rpctracker_client.tgz -C client rpctracker_client
 
       - name: Upload artifacts

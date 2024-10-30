@@ -515,7 +515,9 @@ class Migration(migrations.Migration):
                 (
                     "rfc_to_be",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.PROTECT, to="rpc.rfctobe"
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="authors",
+                        to="rpc.rfctobe",
                     ),
                 ),
             ],

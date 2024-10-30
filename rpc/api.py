@@ -4,7 +4,12 @@ import datetime
 
 from django.http import JsonResponse
 from drf_spectacular.types import OpenApiTypes
-from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
+from rest_framework.decorators import (
+    action,
+    api_view,
+    permission_classes,
+    authentication_classes,
+)
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -123,6 +128,7 @@ class RpcPersonAssignmentViewSet(mixins.ListModelMixin, viewsets.GenericViewSet)
 
     TODO: permissions
     """
+
     queryset = Assignment.objects.exclude(state="done")
     serializer_class = AssignmentSerializer
 

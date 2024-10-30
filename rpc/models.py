@@ -291,7 +291,9 @@ class RfcAuthor(models.Model):
     datatracker_person = models.ForeignKey(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT, null=True
     )
-    rfc_to_be = models.ForeignKey(RfcToBe, on_delete=models.PROTECT)
+    rfc_to_be = models.ForeignKey(
+        RfcToBe, on_delete=models.PROTECT, related_name="authors"
+    )
     auth48_approved = models.DateTimeField(null=True)
 
     def __str__(self):

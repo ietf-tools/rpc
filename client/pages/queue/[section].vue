@@ -111,7 +111,8 @@ const getDocLink = (tab: string, row: Row) => {
 }
 
 const columns = computed(() => {
-  const cols: Column[] = [
+  // todo: actually work out the typing of the columns
+  const cols: Column<typeof filteredDocuments.value[number]>[] = [
     {
       key: 'name',
       label: 'Document',

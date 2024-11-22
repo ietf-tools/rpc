@@ -116,7 +116,7 @@ spec:
               subPath: nginx-purple.conf
       initContainers:
         - name: rpc-migration
-          image: "ghcr.io/ietf-tools/datatracker:$APP_IMAGE_TAG"
+          image: "ghcr.io/ietf-tools/rpc-purple-frontend:$APP_IMAGE_TAG"
           imagePullPolicy: IfNotPresent
           env:
             - name: "CONTAINER_ROLE"

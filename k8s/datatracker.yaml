@@ -21,7 +21,7 @@ spec:
         # Datatracker Container
         # -----------------------------------------------------
         - name: rpc-datatracker
-          image: "ghcr.io/ietf-tools/datatracker:$APP_IMAGE_TAG"
+          image: "ghcr.io/ietf-tools/datatracker:feat-rpc-api-latest"
           imagePullPolicy: Always
           volumeMounts:
             - name: dt-vol
@@ -110,7 +110,8 @@ spec:
             - name: dt-vol
               mountPath: "/a"
         - name: rpc-migration
-          image: "ghcr.io/ietf-tools/datatracker:$APP_IMAGE_TAG"
+          image: "ghcr.io/ietf-tools/datatracker:feat-rpc-api-latest"
+          imagePullPolicy: Always
           env:
             - name: "CONTAINER_ROLE"
               value: "migrations"

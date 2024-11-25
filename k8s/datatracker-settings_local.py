@@ -69,6 +69,7 @@ else:
 
 _API_PUBLIC_KEY_PEM_B64 = os.environ.get("DATATRACKER_API_PUBLIC_KEY_PEM_B64", None)
 if _API_PUBLIC_KEY_PEM_B64 is not None:
+    print(f">>> _API_PUBLIC_KEY_PEM_B64 = {repr(_API_PUBLIC_KEY_PEM_B64)}")  # debug!
     API_PUBLIC_KEY_PEM = b64decode(_API_PUBLIC_KEY_PEM_B64)
 else:
     raise RuntimeError("DATATRACKER_API_PUBLIC_KEY_PEM_B64 must be set")

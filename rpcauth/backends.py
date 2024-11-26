@@ -2,15 +2,122 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import requests
 
 from django.core.exceptions import SuspiciousOperation
 from django.db import IntegrityError
-from mozilla_django_oidc.auth import OIDCAuthenticationBackend
+from django.utils.encoding import smart_str
+from josepy.jws import JWS, Header
+from mozilla_django_oidc.auth import OIDCAuthenticationBackend, import_from_settings
+from requests.auth import HTTPBasicAuth
+from urllib.parse import urlparse
 
-from datatracker.models import DatatrackerPerson
+
+class ServiceTokenOIDCAuthenticationBackend(OIDCAuthenticationBackend):
+    """OIDCAuthenticationBackend that adds Cloudflare service token headers"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.CF_SERVICE_TOKEN_HOSTS = self.get_settings("CF_SERVICE_TOKEN_HOSTS", [])
+        self.CF_SERVICE_TOKEN_ID = self.get_settings("CF_SERVICE_TOKEN_ID", None)
+        self.CF_SERVICE_TOKEN_SECRET = self.get_settings(
+            "CF_SERVICE_TOKEN_SECRET", None
+        )
+
+    def _request_get(self, url, *args, **kwargs):
+        if urlparse(url).hostname in self.CF_SERVICE_TOKEN_HOSTS:
+            if (
+                self.CF_SERVICE_TOKEN_ID is not None
+                and self.CF_SERVICE_TOKEN_SECRET is not None
+            ):
+                extra_headers = {
+                    "CF-Access-Client-Id": self.CF_SERVICE_TOKEN_ID,
+                    "CF-Access-Client-Secret": self.CF_SERVICE_TOKEN_SECRET,
+                }
+                kwargs["headers"] = kwargs.get("headers", {}) | extra_headers
+        return requests.get(url, *args, **kwargs)
+
+    def _request_post(self, url, *args, **kwargs):
+        if urlparse(url).hostname in self.CF_SERVICE_TOKEN_HOSTS:
+            if (
+                self.CF_SERVICE_TOKEN_ID is not None
+                and self.CF_SERVICE_TOKEN_SECRET is not None
+            ):
+                extra_headers = {
+                    "CF-Access-Client-Id": self.CF_SERVICE_TOKEN_ID,
+                    "CF-Access-Client-Secret": self.CF_SERVICE_TOKEN_SECRET,
+                }
+                kwargs["headers"] = kwargs.get("headers", {}) | extra_headers
+        return requests.post(url, *args, **kwargs)
+
+    def retrieve_matching_jwk(self, token):
+        """Get the signing key by exploring the JWKS endpoint of the OP."""
+        response_jwks = self._request_get(
+            self.OIDC_OP_JWKS_ENDPOINT,
+            verify=self.get_settings("OIDC_VERIFY_SSL", True),
+            timeout=self.get_settings("OIDC_TIMEOUT", None),
+            proxies=self.get_settings("OIDC_PROXY", None),
+        )
+        response_jwks.raise_for_status()
+        jwks = response_jwks.json()
+
+        # Compute the current header from the given token to find a match
+        jws = JWS.from_compact(token)
+        json_header = jws.signature.protected
+        header = Header.json_loads(json_header)
+
+        key = None
+        for jwk in jwks["keys"]:
+            if import_from_settings("OIDC_VERIFY_KID", True) and jwk[
+                "kid"
+            ] != smart_str(header.kid):
+                continue
+            if "alg" in jwk and jwk["alg"] != smart_str(header.alg):
+                continue
+            key = jwk
+        if key is None:
+            raise SuspiciousOperation("Could not find a valid JWKS.")
+        return key
+
+    def get_token(self, payload):
+        """Return token object as a dictionary."""
+
+        auth = None
+        if self.get_settings("OIDC_TOKEN_USE_BASIC_AUTH", False):
+            # When Basic auth is defined, create the Auth Header and remove secret from payload.
+            user = payload.get("client_id")
+            pw = payload.get("client_secret")
+
+            auth = HTTPBasicAuth(user, pw)
+            del payload["client_secret"]
+
+        response = self._request_post(
+            self.OIDC_OP_TOKEN_ENDPOINT,
+            data=payload,
+            auth=auth,
+            verify=self.get_settings("OIDC_VERIFY_SSL", True),
+            timeout=self.get_settings("OIDC_TIMEOUT", None),
+            proxies=self.get_settings("OIDC_PROXY", None),
+        )
+        self.raise_token_response_error(response)
+        return response.json()
+
+    def get_userinfo(self, access_token, id_token, payload):
+        """Return user details dictionary. The id_token and payload are not used in
+        the default implementation, but may be used when overriding this method"""
+
+        user_response = self._request_get(
+            self.OIDC_OP_USER_ENDPOINT,
+            headers={"Authorization": "Bearer {0}".format(access_token)},
+            verify=self.get_settings("OIDC_VERIFY_SSL", True),
+            timeout=self.get_settings("OIDC_TIMEOUT", None),
+            proxies=self.get_settings("OIDC_PROXY", None),
+        )
+        user_response.raise_for_status()
+        return user_response.json()
 
 
-class RpcOIDCAuthBackend(OIDCAuthenticationBackend):
+class RpcOIDCAuthBackend(ServiceTokenOIDCAuthenticationBackend):
     """Customized OIDC auth backend
 
     Assumes the datatracker makes the following claims:

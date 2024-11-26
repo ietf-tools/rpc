@@ -6,6 +6,7 @@ export const useApi = () => {
   const csrf = useCookie('csrftoken', { sameSite: 'strict' })
 
   const configuration = new Configuration({
+    basePath: '',
     middleware: [{
       pre: async ({ init: { method, headers } }) => {
         if (!method) {

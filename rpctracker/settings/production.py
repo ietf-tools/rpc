@@ -57,6 +57,15 @@ OIDC_OP_USER_ENDPOINT = os.environ.get(
 )
 
 
+# Config for Cloudflare service token auth
+_CF_SERVICE_TOKEN_HOSTS = os.environ.get("PURPLE_SERVICE_TOKEN_HOSTS", None)
+if _CF_SERVICE_TOKEN_HOSTS is not None:
+    # include token id/secret headers for these hosts
+    CF_SERVICE_TOKEN_HOSTS = _multiline_to_list(_CF_SERVICE_TOKEN_HOSTS)
+    CF_SERVICE_TOKEN_ID = os.environ.get("PURPLE_SERVICE_TOKEN_ID", None)
+    CF_SERVICE_TOKEN_SECRET = os.environ.get("PURPLE_SERVICE_TOKEN_SECRET", None)
+
+
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 

@@ -31,7 +31,7 @@ class ServiceTokenOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 and self.CF_SERVICE_TOKEN_SECRET is not None
             ):
                 extra_headers = {
-                    "CF-Access-Client-ID": self.CF_SERVICE_TOKEN_ID,
+                    "CF-Access-Client-Id": self.CF_SERVICE_TOKEN_ID,
                     "CF-Access-Client-Secret": self.CF_SERVICE_TOKEN_SECRET,
                 }
                 kwargs["headers"] = kwargs.get("headers", {}) | extra_headers
@@ -44,7 +44,7 @@ class ServiceTokenOIDCAuthenticationBackend(OIDCAuthenticationBackend):
                 and self.CF_SERVICE_TOKEN_SECRET is not None
             ):
                 extra_headers = {
-                    "CF-Access-Client-ID": self.CF_SERVICE_TOKEN_ID,
+                    "CF-Access-Client-Id": self.CF_SERVICE_TOKEN_ID,
                     "CF-Access-Client-Secret": self.CF_SERVICE_TOKEN_SECRET,
                 }
                 kwargs["headers"] = kwargs.get("headers", {}) | extra_headers

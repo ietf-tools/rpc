@@ -18,6 +18,7 @@ assert not SECRET_KEY.startswith(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+# PURPLE_ALLOWED_HOSTS is a newline-separated list of allowed hosts
 ALLOWED_HOSTS = _multiline_to_list(os.environ["PURPLE_ALLOWED_HOSTS"])
 
 # Datatracker config

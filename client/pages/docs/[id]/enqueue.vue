@@ -44,7 +44,7 @@
 
 <script setup lang="ts">
 
-import type { Capability, Label, RfcToBe } from '~/rpctracker_client'
+import type { Capability, Label, RfcToBe } from '~/purple_client'
 import type { Column } from '~/components/DocumentTableTypes'
 
 const route = useRoute()

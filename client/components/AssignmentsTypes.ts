@@ -1,4 +1,4 @@
-import type { Assignment, RfcToBe, RpcPerson, RpcRole } from '~/rpctracker_client'
+import type { Assignment, RfcToBe, RpcPerson, RpcRole } from '~/purple_client'
 
 export type ResolvedAssignment = Omit<Assignment, 'person'> & {
   person?: RpcPerson

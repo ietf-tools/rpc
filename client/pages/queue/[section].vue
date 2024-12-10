@@ -54,7 +54,7 @@ import { groupBy } from 'lodash-es'
 import { useSiteStore } from '@/stores/site'
 import Badge from '../../components/BaseBadge.vue'
 import type { Column, Row } from '~/components/DocumentTableTypes'
-import type { Assignment } from '~/rpctracker_client'
+import type { Assignment } from '~/purple_client'
 import type { Tab } from '~/components/TabNavTypes'
 
 // ROUTING

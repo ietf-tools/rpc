@@ -143,8 +143,8 @@ REST_FRAMEWORK = {
 
 # DRF OpenApi schema settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "RpcTracker",
-    "DESCRIPTION": "Backend API for the RpcTracker",
+    "TITLE": "Purple",
+    "DESCRIPTION": "Backend API for the Purple app",
     "VERSION": "0.1",
     "SCHEMA_PATH_PREFIX": "/api/rpc/",
     "COMPONENT_NO_READ_ONLY_REQUIRED": True,

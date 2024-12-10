@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RfcToBe } from '~/rpctracker_client'
+import type { RfcToBe } from '~/purple_client'
 
 type Props = {
   draft: (Record<PropertyKey, unknown> & RfcToBe) | null

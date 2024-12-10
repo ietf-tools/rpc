@@ -72,8 +72,8 @@
 </template>
 
 <script setup lang="ts">
-import { ColorEnum } from '~/rpctracker_client'
-import type { Label } from '~/rpctracker_client'
+import { ColorEnum } from '~/purple_client'
+import type { Label } from '~/purple_client'
 import { overlayModalMethodsKey } from '../providers/providerKeys'
 
 const api = useApi()

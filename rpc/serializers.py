@@ -19,6 +19,7 @@ from .models import (
     ClusterMember,
     DispositionName,
     Label,
+    RfcAuthor,
     RfcToBe,
     RpcPerson,
     RpcRole,
@@ -115,6 +116,20 @@ class HistorySerializer(serializers.Serializer):
         list_serializer_class = HistoryListSerializer
 
 
+class RfcAuthorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RfcAuthor
+        fields = [
+            "id",
+            "titlepage_name",
+            "is_editor",
+            "auth48_approved",
+            "datatracker_person",
+        ]
+        read_only_fields = ["id", "datatracker_person"]
+
+
 class RfcToBeSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
     rev = serializers.SerializerMethodField()
@@ -125,6 +140,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
     # Need to explicitly specify labels as a PK because it uses a through model
     labels = serializers.PrimaryKeyRelatedField(many=True, queryset=Label.objects.all())
     history = HistorySerializer(many=True, read_only=True)
+    authors = RfcAuthorSerializer(many=True)
 
     class Meta:
         model = RfcToBe
@@ -149,6 +165,7 @@ class RfcToBeSerializer(serializers.ModelSerializer):
             "intended_std_level",
             "intended_stream",
             "history",
+            "authors",
         ]
         read_only_fields = ["id", "draft"]
 

@@ -15,10 +15,10 @@
       },
       "purple": {
         "generatorName": "typescript-fetch",
-        "inputSpec": "#{cwd}/purple-api.yaml",
-        "output": "#{cwd}/client/rpctracker_client",
+        "inputSpec": "#{cwd}/purple_api.yaml",
+        "output": "#{cwd}/client/purple_client",
         "additionalProperties": {
-          "packageName": "rpctracker_client",
+          "packageName": "purple_client",
           "disallowAdditionalPropertiesIfNotPresent": false
         }
       }

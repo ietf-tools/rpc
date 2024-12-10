@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/github/license/ietf-tools/rpc)](https://github.com/ietf-tools/rpc/blob/main/LICENSE)
 ![Python Version](https://img.shields.io/badge/python-3.12-blue?logo=python&logoColor=white)
 ![Django Version](https://img.shields.io/badge/django-5.0-teal?logo=django&logoColor=white)
-![Node Version](https://img.shields.io/badge/node.js-20-green?logo=node.js&logoColor=white)
+![Node Version](https://img.shields.io/badge/node.js-22-green?logo=node.js&logoColor=white)
 ![Nuxt Version](https://img.shields.io/badge/nuxt-3-green?logo=nuxt.js&logoColor=white)
 ![Vue Version](https://img.shields.io/badge/vue-3-green?logo=vue.js&logoColor=white)
 
@@ -93,9 +93,9 @@ and all data in the RPC tool's database will be reset. The Datatracker _will not
 
 This project uses two distinct HTTP APIs. Both are accessed using clients generated from OpenAPI specifications. The clients are generated using [OpenAPI Generator](https://openapi-generator.tech/).
 
-### Front-end to Back-end: `rpctracker_api`
+### Front-end to Back-end: `purple_api`
 
-This API is used by the Nuxt Client front end to communicate with the Django back end. This API is defined by this project through an OpenAPI specification in `rpctracker_api.json`. The API is implemented using the `django-rest-framework` and the spec is generated using `drf-spectacular`.
+This API is used by the Nuxt Client front end to communicate with the Django back end. This API is defined by this project through an OpenAPI specification in `purple_api.json`. The API is implemented using the `django-rest-framework` and the spec is generated using `drf-spectacular`.
 
 ### Back-end to Datatracker: `rpcapi`
 
@@ -107,7 +107,7 @@ If changes are made to the APIs, you will need to update the clients. If this in
 ```sh
 ./update-rpcapi
 ```
-This uses [OpenAPI Generator](https://openapi-generator.tech/) to regenerate `rpctracker_api.json` and builds both the API clients. It may take a minute or two. When it is done, restart the Django dev server. The Nuxt server normally picks up the changes automatically.
+This uses [OpenAPI Generator](https://openapi-generator.tech/) to regenerate `purple_api.json` and builds both the API clients. It may take a minute or two. When it is done, restart the Django dev server. The Nuxt server normally picks up the changes automatically.
 
 ## Cleanup
 

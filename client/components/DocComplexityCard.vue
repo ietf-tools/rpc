@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 
-import type { Capability } from '~/rpctracker_client'
+import type { Capability } from '~/purple_client'
 
 type Props = {
   capabilities: Capability[]

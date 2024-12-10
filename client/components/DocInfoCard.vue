@@ -6,7 +6,23 @@
     <div v-if="draft">
       <DescriptionList>
         <DescriptionListItem term="Title" :details="draft.title"/>
-        <DescriptionListItem term="Authors" details="J. Doe (mocked)"/>
+        <DescriptionListItem term="Authors">
+          <DescriptionListDetails>
+            <div class="mx-4 text-sm font-medium ">
+              <div v-if="draft.authors.length === 0">
+                None
+              </div>
+              <div v-else>
+                <div
+                  v-for="author of draft.authors"
+                  :key="author.id"
+                  class="py-1 grid grid-cols-2">
+                  <div>{{ author.titlepageName }}</div>
+                </div>
+              </div>
+            </div>
+          </DescriptionListDetails>
+        </DescriptionListItem>
         <DescriptionListItem term="Submitted Pages" :details="draft.pages?.toString()"/>
         <DescriptionListItem term="Document Shepherd" details="Dolly Shepherd (mocked)"/>
         <DescriptionListItem term="Stream">
@@ -41,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import type { RfcToBe } from '~/rpctracker_client'
+import type { RfcToBe } from '~/purple_client'
 
 type Props = {
   draft: (Record<PropertyKey, unknown> & RfcToBe) | null

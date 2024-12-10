@@ -32,7 +32,7 @@
 
 import { Duration } from 'luxon'
 import humanizeDuration from 'humanize-duration'
-import type { LabelStats } from '../rpctracker_client'
+import type { LabelStats } from '../purple_client'
 
 const api = useApi()
 

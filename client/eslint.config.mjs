@@ -44,7 +44,7 @@ export default withNuxt(
     ignores: [
       '.nuxt/',
       '.output/',
-      'rpctracker_client/'
+      'purple_client/'
     ]
   }
 )

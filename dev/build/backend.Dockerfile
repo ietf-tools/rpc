@@ -1,4 +1,4 @@
-FROM ghcr.io/ietf-tools/rpc-app-base:latest
+FROM ghcr.io/ietf-tools/purple-app-base:latest
 LABEL maintainer="IETF Tools Team <tools-discuss@ietf.org>"
 
 ENV DEBIAN_FRONTEND=noninteractive

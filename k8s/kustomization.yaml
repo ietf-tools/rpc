@@ -1,10 +1,10 @@
 namespace: rpc
 configMapGenerator:
-  - name: rpc-files-cfgmap
+  - name: purple-files-cfgmap
     files:
       - nginx-logging.conf
       - nginx-purple.conf
-  - name: rpc-dt-files-cfgmap
+  - name: rpc-datatracker-files-cfgmap
     files:
       - datatracker-settings_local.py
       - nginx-datatracker.conf

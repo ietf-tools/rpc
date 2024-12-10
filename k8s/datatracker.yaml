@@ -20,7 +20,7 @@ spec:
         # -----------------------------------------------------
         # Datatracker Container
         # -----------------------------------------------------
-        - name: rpc-datatracker
+        - name: datatracker
           image: "ghcr.io/ietf-tools/datatracker:feat-rpc-api-latest"
           imagePullPolicy: Always
           volumeMounts:
@@ -43,7 +43,7 @@ spec:
               value: "$DEPLOY_UID"
           envFrom:
             - secretRef:
-                name: rpc-secrets-env
+                name: purple-secrets-env
           startupProbe:
             httpGet:
               port: 8000
@@ -63,7 +63,7 @@ spec:
         # -----------------------------------------------------
         # Nginx Container
         # -----------------------------------------------------
-        - name: rpc-nginx
+        - name: nginx
           image: "ghcr.io/nginxinc/nginx-unprivileged:1.27"
           imagePullPolicy: IfNotPresent
           ports:
@@ -109,7 +109,7 @@ spec:
           volumeMounts:
             - name: dt-vol
               mountPath: "/a"
-        - name: rpc-migration
+        - name: migration
           image: "ghcr.io/ietf-tools/datatracker:feat-rpc-api-latest"
           imagePullPolicy: Always
           env:
@@ -117,7 +117,7 @@ spec:
               value: "migrations"
           envFrom:
             - secretRef:
-                name: rpc-secrets-env
+                name: purple-secrets-env
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -154,7 +154,7 @@ spec:
             sizeLimit: "2Gi"
         - name: dt-cfg
           configMap:
-            name: rpc-dt-files-cfgmap
+            name: rpc-datatracker-files-cfgmap
         - name: nginx-tmp
           emptyDir:
             sizeLimit: "500Mi"

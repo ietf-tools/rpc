@@ -37,11 +37,11 @@ jobs:
           file: dev/build/backend.Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/ietf-tools/rpc-purple-backend:latest
+          tags: ghcr.io/ietf-tools/purple-backend:latest
 
       - name: Generate Purple API client
         run: |
-          container_id="$(docker create ghcr.io/ietf-tools/rpc-purple-backend:latest)"
+          container_id="$(docker create ghcr.io/ietf-tools/purple-backend:latest)"
           docker cp "${container_id}:/workspace/purple_api.yaml" ./
           docker rm "${container_id}"
           npx --yes @openapitools/openapi-generator-cli generate --generator-key purple
@@ -67,4 +67,4 @@ jobs:
           file: dev/build/frontend.Dockerfile
           platforms: linux/amd64
           push: true
-          tags: ghcr.io/ietf-tools/rpc-purple-frontend:latest
+          tags: ghcr.io/ietf-tools/purple-frontend:latest

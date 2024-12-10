@@ -68,7 +68,7 @@
 
 <script setup lang="ts">
 import type { ResolvedDocument, ResolvedPerson } from '~/components/AssignmentsTypes'
-import type { Assignment, RfcToBe, RpcPerson, RpcRole } from '~/rpctracker_client'
+import type { Assignment, RfcToBe, RpcPerson, RpcRole } from '~/purple_client'
 import { DateTime } from 'luxon'
 
 const csrf = useCookie('csrftoken', { sameSite: 'strict' })

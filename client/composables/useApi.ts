@@ -1,4 +1,4 @@
-import { Configuration, RpcTrackerApi } from '~/rpctracker_client'
+import { Configuration, PurpleApi } from '~/purple_client'
 
 const safeMethods = ['GET', 'HEAD', 'OPTIONS', 'TRACE']
 
@@ -26,5 +26,5 @@ export const useApi = () => {
       }
     }]
   })
-  return new RpcTrackerApi(configuration)
+  return new PurpleApi(configuration)
 }

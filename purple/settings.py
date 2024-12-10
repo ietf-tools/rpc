@@ -60,7 +60,7 @@ MIDDLEWARE = [
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
-ROOT_URLCONF = "rpctracker.urls"
+ROOT_URLCONF = "purple.urls"
 
 TEMPLATES = [
     {
@@ -78,7 +78,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "rpctracker.wsgi.application"
+WSGI_APPLICATION = "purple.wsgi.application"
 
 
 # Database
@@ -138,13 +138,13 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.JSONParser",
     ],
-    "DEFAULT_SCHEMA_CLASS": "rpctracker.openapi.RpcAutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "purple.openapi.RpcAutoSchema",
 }
 
 # DRF OpenApi schema settings
 SPECTACULAR_SETTINGS = {
-    "TITLE": "RpcTracker",
-    "DESCRIPTION": "Backend API for the RpcTracker",
+    "TITLE": "Purple",
+    "DESCRIPTION": "Backend API for the Purple app",
     "VERSION": "0.1",
     "SCHEMA_PATH_PREFIX": "/api/rpc/",
     "COMPONENT_NO_READ_ONLY_REQUIRED": True,

@@ -40,7 +40,7 @@
 <script setup lang="ts">
 import { RpcLabelEditDialog } from '#components'
 import { overlayModalKey } from '~/providers/providerKeys'
-import type { Label } from '~/rpctracker_client'
+import type { Label } from '~/purple_client'
 
 const api = useApi()
 const snackbar = useSnackbar()

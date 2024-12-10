@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ColorEnum } from '~/rpctracker_client'
+import type { ColorEnum } from '~/purple_client'
 
 type Props = {
   /**

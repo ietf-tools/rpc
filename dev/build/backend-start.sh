@@ -33,6 +33,6 @@ gunicorn \
     --capture-output \
     --access-logfile -\
     ${PURPLE_GUNICORN_EXTRA_ARGS} \
-    rpctracker.wsgi:application &
+    purple.wsgi:application &
 gunicorn_pid=$!
 wait "${gunicorn_pid}"

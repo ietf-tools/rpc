@@ -10,7 +10,7 @@ git config oh-my-zsh.hide-info 1
 
 # Install requirements.txt dependencies
 wget -O rpcapi.yaml https://raw.githubusercontent.com/ietf-tools/datatracker/feat/rpc-api/rpcapi.yaml
-npx --yes @openapitools/openapi-generator-cli generate  # config in openapitools.json
+npx --yes @openapitools/openapi-generator-cli generate  --generator-key datatracker # config in openapitools.json
 pip3 --disable-pip-version-check --no-cache-dir install --user --no-warn-script-location -r requirements.txt
 
 # Run nginx
@@ -29,6 +29,10 @@ cd ..
 # Run migrations
 echo "Running migrations..."
 ./manage.py migrate --no-input || true
+
+# Django should be operational now. Build purple API client.
+./manage.py spectacular --file purple_api.yaml && \
+    npx --yes @openapitools/openapi-generator-cli generate --generator-key purple  || true
 
 sudo touch /.dev-ready
 

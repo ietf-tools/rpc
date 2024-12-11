@@ -1,0 +1,15 @@
+.devcontainer
+.github
+.vscode
+.git
+./dev
+./docker
+./venv
+.editorconfig
+.eslintrc.js
+.gitignore
+.npmrc
+.pylintrc
+node_modules
+./rebuild_migrations.sh
+release.tar.gz

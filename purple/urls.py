@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
+from django.http import HttpResponse
 from django.urls import include, path, register_converter
 from rest_framework import routers
 from rpc import views
@@ -67,6 +68,7 @@ router.register(
 )
 
 urlpatterns = [
+    path("health/", lambda _: HttpResponse(status=204)),  # no content
     path("admin/", admin.site.urls),
     path("oidc/", include("mozilla_django_oidc.urls")),
     path("login/", views.index),

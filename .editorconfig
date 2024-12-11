@@ -13,3 +13,6 @@ insert_final_newline = true
 
 [*.py]
 indent_size = 4
+
+[*.sh]
+indent_size = 4

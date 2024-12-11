@@ -56,6 +56,15 @@ export default defineNuxtConfig({
         }
       }
     },
+    optimizeDeps: {
+      // Deps that vite does not detect statically
+      include: [
+        'lodash-es',
+        'luxon',
+        'humanize-duration',
+        'vue3-snackbar'
+      ]
+    },
     plugins: [
       {
         name: 'vue-docs',

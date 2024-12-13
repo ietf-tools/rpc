@@ -1,8 +1,20 @@
-# Copyright The IETF Trust 2023, All Rights Reserved
+# Copyright The IETF Trust 2023-2024, All Rights Reserved
 # -*- coding: utf-8 -*-
 from django.db.models import Max
 
-from .models import RfcToBe, UnusableRfcNumber
+from .models import RfcToBe, UnusableRfcNumber, DumpInfo
+
+
+class VersionInfo:
+    """Application version information model"""
+
+    version = "version-access-not-yet-implemented"
+
+    def __init__(self):
+        # If we have a DumpInfo, populate the dump_timestamp property
+        dumpinfo = DumpInfo.objects.order_by("-timestamp").first()
+        if dumpinfo is not None:
+            self.dump_timestamp = dumpinfo.timestamp
 
 
 def next_rfc_number(count=1) -> list[int]:

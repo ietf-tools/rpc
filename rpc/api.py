@@ -51,7 +51,15 @@ from .serializers import (
     StdLevelNameSerializer,
     StreamNameSerializer,
     TlpBoilerplateChoiceNameSerializer,
+    VersionInfoSerializer,
 )
+from .utils import VersionInfo
+
+
+@api_view(["GET"])
+def version(request):
+    """Get application version information"""
+    return JsonResponse(VersionInfoSerializer(VersionInfo()).data)
 
 
 @api_view(["GET"])

@@ -29,6 +29,13 @@ from .models import (
 )
 
 
+class VersionInfoSerializer(serializers.Serializer):
+    """Serialize version information"""
+
+    version = serializers.CharField(read_only=True)
+    dump_timestamp = serializers.DateTimeField(required=False, read_only=True)
+
+
 class UserSerializer(serializers.Serializer):
     """Serialize a User record"""
 

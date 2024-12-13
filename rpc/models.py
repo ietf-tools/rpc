@@ -19,6 +19,10 @@ from rpc.dt_v1_api_utils import (
 from simple_history.models import HistoricalRecords
 
 
+class DumpInfo(models.Model):
+    timestamp = models.DateTimeField()
+
+
 class RpcPerson(models.Model):
     datatracker_person = models.OneToOneField(
         "datatracker.DatatrackerPerson", on_delete=models.PROTECT
@@ -279,7 +283,6 @@ class Assignment(models.Model):
 
 
 class RfcAuthor(models.Model):
-
     # The abbreviated name that appears on the first page of the RFC is
     # captured for search and metadata purposes. (The datatracker name
     # for the person may be different that what appeared on an older RFC

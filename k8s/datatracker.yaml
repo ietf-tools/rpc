@@ -106,7 +106,7 @@ spec:
               mountPath: /var/cache/xml2rfc
             - name: dt-cfg
               mountPath: /workspace/ietf/settings_local.py
-              subPath: settings_local.py
+              subPath: datatracker-settings_local.py
           env:
             - name: "CONTAINER_ROLE"
               value: "celery"
